@@ -815,3 +815,18 @@ img {
 [style*='background: var(--lav)'] :is([style*='background: var(--white)'], [style*='background: rgba(255']) {
   color: var(--ink);
 }
+
+/* Gentle floating for the welcome bubbles and logo (uses `translate` so it adds to any rotate) */
+@keyframes float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 -9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*="animation: float"] {
+    animation: none !important;
+  }
+}

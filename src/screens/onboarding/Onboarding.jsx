@@ -81,6 +81,7 @@ export function Welcome() {
               top: '37%',
               width: 190,
               height: 190,
+              animation: 'float 4.6s ease-in-out 0.9s infinite alternate',
             }}
           >
             <Flower
