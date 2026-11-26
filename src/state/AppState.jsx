@@ -43,6 +43,7 @@ export const defaults = {
     pronouns: '',
     verifiedBy: '',
     showBadges: true,
+    hostCardMoved: false,
     bio: 'Always on the move: football, a run or bike ride in between. I also enjoy cooking a big dinner.',
   },
   joined: ['bowling-monday', 'football-beer'],

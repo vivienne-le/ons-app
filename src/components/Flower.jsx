@@ -37,6 +37,8 @@ export function Flower({ accent = 'lime', size = 40, color, children, className:
           position: 'relative',
           display: 'grid',
           placeItems: 'center',
+          // icons on the strong blue flower are white, like in Figma
+          color: !color && accent === 'lav' ? '#fff' : undefined,
         }}
       >
         {children}

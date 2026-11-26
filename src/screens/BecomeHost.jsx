@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BadgeCheck, Building2, Check, Coffee } from 'lucide-react'
+import { BadgeCheck, Building2, Check, Coffee, X } from 'lucide-react'
 import { Flower } from '../components/Flower'
 import { BackButton, Progress, Screen } from '../components/UI'
 import { interestOptions, organisations } from '../data/events'
@@ -456,12 +456,17 @@ export function BecomeHostSent() {
     </Screen>
   )
 }
-export function BecomeHostCard() {
+/**
+ * Card on the guest's profile: invite → pending → (demo) approved.
+ * The invite can be hidden with ×; it then moves to the bottom of the profile (placement="bottom").
+ */
+export function BecomeHostCard({ placement = 'top' }) {
   const nav = useNavigate()
   const { user, hostRequest, setHostRequest, setUser, showToast } = useApp()
   const { t } = useI18n()
   if (user.role === 'host') return null
-  if (!hostRequest)
+  const moved = !!user.hostCardMoved
+  if (!hostRequest && placement === (moved ? 'bottom' : 'top'))
     return (
       <div
         className="card"
@@ -469,8 +474,22 @@ export function BecomeHostCard() {
           background: 'var(--turq)',
           padding: 16,
           marginTop: 24,
+          position: 'relative',
         }}
       >
+        {!moved && (
+          <button
+            className="icon-btn white"
+            aria-label={t('hideCard')}
+            onClick={() => {
+              setUser({ hostCardMoved: true })
+              showToast(t('movedToBottom'), { label: t('undo'), run: () => setUser({ hostCardMoved: false }) })
+            }}
+            style={{ position: 'absolute', top: 10, insetInlineEnd: 10, width: 32, height: 32 }}
+          >
+            <X size={16} />
+          </button>
+        )}
         <div
           className="row"
           style={{
@@ -490,7 +509,7 @@ export function BecomeHostCard() {
           >
             <BadgeCheck size={22} aria-hidden />
           </span>
-          <span>
+          <span style={{ paddingInlineEnd: moved ? 0 : 32 }}>
             <strong
               style={{
                 display: 'block',
@@ -520,6 +539,7 @@ export function BecomeHostCard() {
         </button>
       </div>
     )
+  if (!hostRequest || placement !== 'top') return null
   const org = organisations.find((b) => b.id === hostRequest.org)
   return (
     <div

@@ -27,23 +27,22 @@ export function EditProfile({ open, onClose }) {
   const [lastName, setLastName] = useState(user.lastName)
   const [pronouns, setPronouns] = useState(user.pronouns)
   const [customPronouns, setCustomPronouns] = useState(!pronounOptions.includes(user.pronouns) && !!user.pronouns)
+  const [bio, setBio] = useState(user.bio ?? '')
   const [tried, setTried] = useState(false)
-  if (
-    (useEffect(() => {
-      if (!open) return
-      setPhoto(user.photo)
-      setFirstName(user.firstName)
-      setLastName(user.lastName)
-      setPronouns(user.pronouns)
-      setCustomPronouns(!pronounOptions.includes(user.pronouns) && !!user.pronouns)
-      setTried(false)
-      const p = (S) => S.key === 'Escape' && onClose()
-      window.addEventListener('keydown', p)
-      return () => window.removeEventListener('keydown', p)
-    }, [open]),
-    !open)
-  )
-    return null
+  useEffect(() => {
+    if (!open) return
+    setPhoto(user.photo)
+    setFirstName(user.firstName)
+    setLastName(user.lastName)
+    setPronouns(user.pronouns)
+    setCustomPronouns(!pronounOptions.includes(user.pronouns) && !!user.pronouns)
+    setBio(user.bio ?? '')
+    setTried(false)
+    const onKey = (ev) => ev.key === 'Escape' && onClose()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
+  if (!open) return null
   const pronounLabels = {
     'he/him': t('pronHe'),
     'she/her': t('pronShe'),
@@ -57,6 +56,7 @@ export function EditProfile({ open, onClose }) {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         pronouns: pronouns.trim(),
+        bio: bio.trim(),
       }),
       showToast(t('profileSaved')),
       onClose())
@@ -241,6 +241,24 @@ export function EditProfile({ open, onClose }) {
         >
           {t('onlyFirstName')}
         </p>
+        <div className="row" style={{ justifyContent: 'space-between', marginTop: 18 }}>
+          <label className="eyebrow label" htmlFor="ep-bio" style={{ margin: 0 }}>
+            {t('bioLabel')} <span style={{ textTransform: 'none' }}>{t('optional')}</span>
+          </label>
+          <span className="tiny" aria-live="polite">
+            {bio.length}/160
+          </span>
+        </div>
+        <textarea
+          id="ep-bio"
+          className="field"
+          rows={3}
+          maxLength={160}
+          placeholder={t('bioPh')}
+          value={bio}
+          onChange={(ev) => setBio(ev.target.value)}
+          style={{ height: 'auto', marginTop: 8, padding: '12px 16px', fontSize: 16, lineHeight: 1.4, resize: 'none' }}
+        />
         <div
           className="eyebrow label"
           style={{

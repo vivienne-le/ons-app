@@ -207,6 +207,23 @@ export function Profile() {
               )}
             </div>
           </div>
+          {user.bio ? (
+            <p style={{ fontSize: 15, margin: '14px 0 0', position: 'relative' }}>{user.bio}</p>
+          ) : (
+            <button
+              onClick={() => setEditing(true)}
+              style={{
+                marginTop: 12,
+                fontSize: 14,
+                fontWeight: 600,
+                textDecoration: 'underline',
+                textUnderlineOffset: 3,
+                position: 'relative',
+              }}
+            >
+              + {t('addBio')}
+            </button>
+          )}
           <div
             style={{
               display: 'grid',
@@ -264,7 +281,7 @@ export function Profile() {
           </div>
         </div>
         <div className="pad">
-          <BecomeHostCard />
+          <BecomeHostCard placement="top" />
           <button
             ref={gardenRef}
             className="card row"
@@ -573,6 +590,7 @@ export function Profile() {
               <RotateCcw size={16} /> {t('resetDemo')}
             </button>
           </section>
+          <BecomeHostCard placement="bottom" />
         </div>
       </div>
       <NavBar />
