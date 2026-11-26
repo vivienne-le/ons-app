@@ -46,13 +46,6 @@ export const bubblePlaces = [
     light: true,
   },
   {
-    bg: 'var(--ink)',
-    x: 50,
-    y: 384,
-    r: 4,
-    light: true,
-  },
-  {
     bg: 'var(--white)',
     x: 256,
     y: 388,
@@ -90,7 +83,7 @@ export function Welcome() {
               height: 190,
             }}
           >
-            <Flower color="#352E29" size={190} style={{ position: 'absolute', left: 0, top: -4 }} />
+            <Flower gradient={['#F4EFFF', '#DCD0FF']} size={190} style={{ position: 'absolute', left: 0, top: -4 }} />
             <span style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
               <OnsLogo width={118} />
             </span>

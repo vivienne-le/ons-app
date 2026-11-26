@@ -26,7 +26,7 @@ export const en = {
   getStarted: 'Get started',
   haveAccount: 'I already have an account',
   chooseLanguage: 'Choose language',
-  bubbles: 'Hoi!|Koffie?|Zin in?|Ik ook!|See you there|Gezellig',
+  bubbles: 'Hoi!|Koffie?|Zin in?|Ik ook!|Gezellig',
   roleTitle: 'How will you use the app?',
   roleSub: 'You can only have one type of account per login.',
   guestText: 'Join activities in your neighbourhood. Sign in with your own phone number or email.',

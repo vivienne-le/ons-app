@@ -27,7 +27,7 @@ export const tr = {
     getStarted: 'Başla',
     haveAccount: 'Zaten hesabım var',
     chooseLanguage: 'Dil seç',
-    bubbles: 'Merhaba!|Kahve?|Var mısın?|Ben de!|Görüşürüz|Çok keyifli',
+    bubbles: 'Merhaba!|Kahve?|Var mısın?|Ben de!|Çok keyifli',
     roleTitle: 'Uygulamayı nasıl kullanacaksın?',
     roleSub: 'Her girişte yalnızca bir hesap türün olabilir.',
     guestText: 'Mahallendeki etkinliklere katıl. Kendi telefon numaran veya e-postanla giriş yap.',
