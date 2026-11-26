@@ -1295,13 +1295,22 @@ export function InterestsStep() {
             {t('add')}
           </button>
         </form>
+        {/* Flowers in 3 rows that scroll sideways; every other column sits a bit lower */}
         <div
+          role="group"
+          aria-label={t('interestsTitle')}
+          className="scroll-x"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '4px 0',
-            marginTop: 20,
-            justifyItems: 'center',
+            gridAutoFlow: 'column',
+            gridTemplateRows: 'repeat(3, auto)',
+            gridAutoColumns: 104,
+            gap: '4px 8px',
+            overflowX: 'auto',
+            margin: '20px calc(-1 * var(--pad)) 0',
+            padding: '0 var(--pad) 34px',
+            scrollSnapType: 'x proximity',
+            scrollPaddingInline: 'var(--pad)',
           }}
         >
           {chips.map((chip, k) => {
@@ -1312,7 +1321,9 @@ export function InterestsStep() {
                 aria-pressed={l}
                 onClick={() => toggle(chip.id)}
                 style={{
-                  marginTop: k % 3 === 1 ? 28 : 0,
+                  position: 'relative',
+                  top: Math.floor(k / 3) % 2 === 1 ? 30 : 0,
+                  scrollSnapAlign: 'start',
                 }}
                 className={l ? 'pop' : ''}
               >

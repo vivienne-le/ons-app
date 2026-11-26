@@ -17,6 +17,7 @@ export const people = {
   thijs: {
     id: 'thijs',
     name: 'Thijs',
+    avatar: 'thijs',
   },
   mo: {
     id: 'mo',
@@ -26,6 +27,7 @@ export const people = {
   anna: {
     id: 'anna',
     name: 'Anna',
+    avatar: 'anna',
   },
   lisa: {
     id: 'lisa',
@@ -1123,6 +1125,7 @@ export const organisations = [
     id: 'cvd',
     name: 'CVD Middelland',
     domain: 'cvd.nl',
+    logo: 'cvd.svg',
     events: ['bowling-monday', 'open-kitchen', 'christmas-dinner'],
   },
   {

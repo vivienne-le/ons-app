@@ -2,6 +2,7 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Check, Clock, Globe, UserPlus, Users } from 'lucide-react'
 import { BadgeRow } from '../components/Badges'
 import { RowCard } from '../components/Cards'
+import { OrgLogo } from '../components/OrgLogo'
 import { Flower } from '../components/Flower'
 import { Avatar } from '../components/Img'
 import { BackButton, NavBar, Screen, SegTabs } from '../components/UI'
@@ -397,15 +398,7 @@ export function OrgScreen() {
               marginTop: 4,
             }}
           >
-            <Flower color="var(--white)" size={96}>
-              <strong
-                style={{
-                  fontSize: 30,
-                }}
-              >
-                {org.name.replace(/^(Het|De) /, '').slice(0, 1)}
-              </strong>
-            </Flower>
+            <OrgLogo org={org} size={96} />
             <h1
               className="h1"
               style={{
@@ -619,9 +612,7 @@ export function ConnectionsScreen() {
                       }}
                       onClick={() => nav(`/org/${g.id}`)}
                     >
-                      <Flower color="var(--turq)" size={44}>
-                        <strong>{g.name.replace(/^(Het|De) /, '').slice(0, 1)}</strong>
-                      </Flower>
+                      <OrgLogo org={g} size={44} background="var(--turq)" />
                       <span>
                         <strong
                           style={{

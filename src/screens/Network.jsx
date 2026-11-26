@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Users } from 'lucide-react'
 import { Avatar } from '../components/Img'
+import { OrgLogo } from '../components/OrgLogo'
 import { BackButton, Screen, Sheet } from '../components/UI'
 import { organisations } from '../data/events'
 import { profiles } from '../data/people'
@@ -139,16 +140,15 @@ export function Network() {
     .filter(([, f]) => f === 'sent')
     .map(([f]) => profiles[f])
     .filter(Boolean)
-  const followed = following.map((f) => {
-    const [l, m] = f.split(':')
+  const followed = following.map((key) => {
+    const [kind, id] = key.split(':')
+    const org = kind === 'org' ? organisations.find((o) => o.id === id) : null
     return {
-      k: f,
-      name:
-        l === 'org'
-          ? (organisations.find((organisation) => organisation.id === m)?.name ?? m)
-          : (profiles[m]?.name ?? m),
-      avatar: l === 'person' ? profiles[m]?.avatar : undefined,
-      link: l === 'org' ? `/org/${m}` : `/person/${m}`,
+      k: key,
+      org,
+      name: org ? org.name : (profiles[id]?.name ?? id),
+      avatar: kind === 'person' ? profiles[id]?.avatar : undefined,
+      link: org ? `/org/${id}` : `/person/${id}`,
     }
   })
   const isEmpty = flowers.length + seeds.length === 0
@@ -216,8 +216,10 @@ export function Network() {
                 >
                   {f.avatar ? (
                     <Avatar name={f.name} img={f.avatar} size={24} />
+                  ) : f.org ? (
+                    <OrgLogo org={f.org} size={26} />
                   ) : (
-                    <span>{f.name.replace(/^(Het|De) /, '').slice(0, 1)}</span>
+                    <span>{f.name.slice(0, 1)}</span>
                   )}
                 </button>
               ))}

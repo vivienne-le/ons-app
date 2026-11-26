@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { BadgeCheck, Building2, Check, Coffee, X } from 'lucide-react'
 import { Flower } from '../components/Flower'
+import { OrgLogo } from '../components/OrgLogo'
 import { BackButton, Progress, Screen } from '../components/UI'
 import { interestOptions, organisations } from '../data/events'
 import { orgInfo } from '../data/people'
@@ -223,15 +224,7 @@ export function BecomeHostOrg() {
                   boxShadow: k ? 'inset 0 0 0 2px var(--ink)' : 'inset 0 0 0 1px var(--grey-2)',
                 }}
               >
-                <Flower color={k ? 'var(--white)' : 'var(--turq)'} size={40}>
-                  <strong
-                    style={{
-                      fontSize: 15,
-                    }}
-                  >
-                    {organisation.name.replace(/^(Het|De) /, '').slice(0, 1)}
-                  </strong>
-                </Flower>
+                <OrgLogo org={organisation} size={40} background={k ? 'var(--white)' : 'var(--turq)'} />
                 <span
                   style={{
                     flex: 1,
