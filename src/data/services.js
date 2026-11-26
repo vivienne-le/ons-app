@@ -1,0 +1,193 @@
+export const serviceKinds = ['toilet', 'sleep', 'meals', 'shower', 'water', 'warm', 'health', 'charge']
+export const services = [
+  {
+    id: 'toilet-heemraad',
+    kind: 'toilet',
+    name: 'Public toilet Heemraadsplein',
+    address: 'Heemraadsplein',
+    coords: [51.9125, 4.4566],
+    hours: '24/7',
+    tags: ['free', 'accessible'],
+  },
+  {
+    id: 'toilet-middelland',
+    kind: 'toilet',
+    name: 'Toilet at Buurthuis Middelland',
+    address: 'Middellandstraat',
+    coords: [51.9101, 4.4608],
+    hours: {
+      days: 'daily',
+      from: '08:00',
+      to: '22:00',
+    },
+    tags: ['free', 'walkIn'],
+  },
+  {
+    id: 'toilet-park',
+    kind: 'toilet',
+    name: 'Public toilet Het Park',
+    address: 'Baden Powelllaan',
+    coords: [51.9068, 4.4672],
+    hours: {
+      days: 'daily',
+      from: '07:00',
+      to: '21:00',
+    },
+    tags: ['free', 'accessible'],
+  },
+  {
+    id: 'sleep-west',
+    kind: 'sleep',
+    name: 'Night shelter West',
+    address: 'Nieuwe Binnenweg',
+    coords: [51.9133, 4.4625],
+    hours: {
+      days: 'daily',
+      from: '19:00',
+      to: '09:00',
+    },
+    tags: ['free', 'noId', 'walkIn'],
+  },
+  {
+    id: 'sleep-pets',
+    kind: 'sleep',
+    name: 'Night shelter with room for pets',
+    address: 'Henegouwerlaan',
+    coords: [51.9076, 4.459],
+    hours: {
+      days: 'daily',
+      from: '20:00',
+      to: '08:30',
+    },
+    tags: ['free', 'pets'],
+  },
+  {
+    id: 'meals-kitchen',
+    kind: 'meals',
+    name: 'Open kitchen Middelland',
+    address: 'Middellandstraat',
+    coords: [51.9088, 4.4566],
+    hours: {
+      days: 'daily',
+      from: '17:30',
+      to: '19:30',
+    },
+    tags: ['free', 'walkIn', 'noId'],
+  },
+  {
+    id: 'meals-breakfast',
+    kind: 'meals',
+    name: 'Free breakfast',
+    address: '’s-Gravendijkwal',
+    coords: [51.9056, 4.4626],
+    hours: {
+      days: 'weekdays',
+      from: '08:00',
+      to: '10:00',
+    },
+    tags: ['free', 'walkIn'],
+  },
+  {
+    id: 'shower-day',
+    kind: 'shower',
+    name: 'Showers at the day centre',
+    address: 'Claes de Vrieselaan',
+    coords: [51.9079, 4.4535],
+    hours: {
+      days: 'weekdays',
+      from: '09:00',
+      to: '16:00',
+    },
+    tags: ['free', 'accessible'],
+  },
+  {
+    id: 'water-plein',
+    kind: 'water',
+    name: 'Water tap Heemraadsplein',
+    address: 'Heemraadsplein',
+    coords: [51.9136, 4.4562],
+    hours: '24/7',
+    tags: ['free'],
+  },
+  {
+    id: 'water-park',
+    kind: 'water',
+    name: 'Water tap Het Park',
+    address: 'Het Park',
+    coords: [51.906, 4.4685],
+    hours: '24/7',
+    tags: ['free'],
+  },
+  {
+    id: 'warm-library',
+    kind: 'warm',
+    name: 'Warm room at the library',
+    address: 'Middellandstraat',
+    coords: [51.9118, 4.4642],
+    hours: {
+      days: 'daily',
+      from: '10:00',
+      to: '17:00',
+    },
+    tags: ['free', 'walkIn', 'accessible'],
+  },
+  {
+    id: 'warm-day',
+    kind: 'warm',
+    name: 'Day centre',
+    address: 'Claes de Vrieselaan',
+    coords: [51.9083, 4.4542],
+    hours: {
+      days: 'weekdays',
+      from: '09:00',
+      to: '17:00',
+    },
+    tags: ['free', 'walkIn', 'pets'],
+  },
+  {
+    id: 'health-street',
+    kind: 'health',
+    name: 'Street doctor walk-in',
+    address: 'Nieuwe Binnenweg',
+    coords: [51.913, 4.4588],
+    hours: {
+      days: 'weekdays',
+      from: '10:00',
+      to: '12:00',
+    },
+    tags: ['free', 'noId', 'walkIn'],
+  },
+  {
+    id: 'charge-library',
+    kind: 'charge',
+    name: 'Charging point at the library',
+    address: 'Middellandstraat',
+    coords: [51.9114, 4.465],
+    hours: {
+      days: 'daily',
+      from: '10:00',
+      to: '17:00',
+    },
+    tags: ['free'],
+  },
+  {
+    id: 'charge-buurthuis',
+    kind: 'charge',
+    name: 'Charging at Buurthuis Middelland',
+    address: 'Middellandstraat',
+    coords: [51.9097, 4.46],
+    hours: {
+      days: 'daily',
+      from: '08:00',
+      to: '22:00',
+    },
+    tags: ['free', 'walkIn'],
+  },
+]
+export function distanceM(from, to) {
+  const rad = Math.PI / 180
+  const dLat = (to[0] - from[0]) * rad
+  const dLng = (to[1] - from[1]) * rad
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(from[0] * rad) * Math.cos(to[0] * rad) * Math.sin(dLng / 2) ** 2
+  return Math.round((2 * 6371e3 * Math.asin(Math.sqrt(h))) / 10) * 10
+}
