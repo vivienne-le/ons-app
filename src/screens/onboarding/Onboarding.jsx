@@ -81,7 +81,7 @@ export function Welcome() {
           }}
         >
           <Flower
-            color="var(--white)"
+            color="#352E29"
             size={190}
             style={{
               position: 'absolute',
@@ -89,7 +89,7 @@ export function Welcome() {
               top: '37%',
             }}
           >
-            <OnsLogo width={122} />
+            <OnsLogo width={118} />
           </Flower>
           <button
             onClick={() => setLangOpen(true)}
