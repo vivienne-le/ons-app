@@ -49,7 +49,7 @@ export function Search() {
   const [freeOnly, setFreeOnly] = useState(false)
   const filterCount = (when !== 'Any day' ? 1 : 0) + cats.length + (freeOnly ? 1 : 0)
   const results = useMemo(() => {
-    const n = list ? list.ids.map((q) => byId(q)) : [...events].sort((q, S) => q.date - S.date)
+    const n = list ? list.ids.map((id) => byId(id)) : [...events].sort((q, S) => q.date - S.date)
     const p = query.trim().toLowerCase()
     return n.filter((q) => {
       const S = ev(q)
@@ -179,8 +179,8 @@ export function Search() {
               })}
           {filterCount ? ` · ${t('filtered')}` : ''}
         </p>
-        {results.map((n) => (
-          <RowCard key={n.id} e={n} />
+        {results.map((result) => (
+          <RowCard key={result.id} e={result} />
         ))}
         {results.length === 0 && (
           <div
@@ -234,14 +234,14 @@ export function Search() {
             gap: 8,
           }}
         >
-          {whenOptions.map((n) => (
+          {whenOptions.map((whenOption) => (
             <button
-              key={n}
-              className={`chip ${when === n ? 'on' : ''}`}
-              aria-pressed={when === n}
-              onClick={() => setWhen(n)}
+              key={whenOption}
+              className={`chip ${when === whenOption ? 'on' : ''}`}
+              aria-pressed={when === whenOption}
+              onClick={() => setWhen(whenOption)}
             >
-              {t(whenKey[n])}
+              {t(whenKey[whenOption])}
             </button>
           ))}
         </div>
@@ -260,16 +260,16 @@ export function Search() {
             gap: 8,
           }}
         >
-          {catOptions.map((n) => {
-            const p = cats.includes(n)
+          {catOptions.map((catOption) => {
+            const p = cats.includes(catOption)
             return (
               <button
-                key={n}
+                key={catOption}
                 className={`chip ${p ? 'on' : ''}`}
                 aria-pressed={p}
-                onClick={() => setCats(p ? cats.filter((q) => q !== n) : [...cats, n])}
+                onClick={() => setCats(p ? cats.filter((cat) => cat !== catOption) : [...cats, catOption])}
               >
-                {t(catKey[n])}
+                {t(catKey[catOption])}
               </button>
             )
           })}

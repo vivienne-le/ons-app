@@ -122,20 +122,20 @@ export function Updates() {
                   {t('noInvites')}
                 </p>
               )}
-              {visibleInvites.map((f) => {
-                const g = ev(byId(f.eventId))
-                const h = app.invites[f.id] === 'joined' || app.joined.includes(g.id)
+              {visibleInvites.map((visibleInvite) => {
+                const g = ev(byId(visibleInvite.eventId))
+                const h = app.invites[visibleInvite.id] === 'joined' || app.joined.includes(g.id)
                 return (
                   <article
-                    key={f.id}
+                    key={visibleInvite.id}
                     className="card"
                     style={{
-                      background: `var(--${f.accent})`,
+                      background: `var(--${visibleInvite.accent})`,
                       padding: 16,
                     }}
                   >
                     <div className="row">
-                      <Avatar name={f.from.name} img={f.from.avatar} size={40} />
+                      <Avatar name={visibleInvite.from.name} img={visibleInvite.from.avatar} size={40} />
                       <div>
                         <strong
                           style={{
@@ -143,7 +143,7 @@ export function Updates() {
                           }}
                         >
                           {t('invitedYou', {
-                            name: f.from.name,
+                            name: visibleInvite.from.name,
                           })}
                         </strong>
                         <div
@@ -154,7 +154,7 @@ export function Updates() {
                           }}
                         >
                           {t('fromHost', {
-                            when: f.when === '2h ago' ? t('ago2h') : t('yesterday'),
+                            when: visibleInvite.when === '2h ago' ? t('ago2h') : t('yesterday'),
                           })}
                         </div>
                       </div>
@@ -171,7 +171,7 @@ export function Updates() {
                         textAlign: 'start',
                       }}
                     >
-                      <Flower accent={f.accent} size={40} color="var(--white)">
+                      <Flower accent={visibleInvite.accent} size={40} color="var(--white)">
                         <Icon name={g.icon} size={18} />
                       </Flower>
                       <span>
@@ -202,7 +202,7 @@ export function Updates() {
                         fontSize: 15,
                       }}
                     >
-                      “{invite(f.id, f.note)}”
+                      “{invite(visibleInvite.id, visibleInvite.note)}”
                     </p>
                     {h ? (
                       <button
@@ -228,7 +228,7 @@ export function Updates() {
                           style={{
                             height: 48,
                           }}
-                          onClick={() => accept(f.id, g.id)}
+                          onClick={() => accept(visibleInvite.id, g.id)}
                         >
                           {t('join')}
                         </button>
@@ -237,7 +237,7 @@ export function Updates() {
                           style={{
                             height: 48,
                           }}
-                          onClick={() => dismiss(f.id)}
+                          onClick={() => dismiss(visibleInvite.id)}
                         >
                           {t('notNow')}
                         </button>
@@ -255,9 +255,9 @@ export function Updates() {
                 })}
               </span>
             </div>
-            {suggestions.map((f) => {
-              const g = byId(f.eventId)
-              return <FlowerRow key={f.eventId} e={g} line2={why(f.eventId, f.why)} />
+            {suggestions.map((suggestion) => {
+              const g = byId(suggestion.eventId)
+              return <FlowerRow key={suggestion.eventId} e={g} line2={why(suggestion.eventId, suggestion.why)} />
             })}
             <p
               className="tiny"

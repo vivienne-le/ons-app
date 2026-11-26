@@ -14,7 +14,7 @@ import {
 } from 'lucide-react'
 import { Flower } from '../../components/Flower'
 import { Avatar } from '../../components/Img'
-import { OnsLogo } from '../../components/Logo'
+import { OnsLogo } from '../../components/OnsLogo'
 import { BackButton, Progress, Screen, Sheet } from '../../components/UI'
 import { byId, interestOptions, languages } from '../../data/events'
 import { useI18n } from '../../i18n/index'
@@ -83,8 +83,23 @@ export function Welcome() {
               height: 190,
             }}
           >
-            <Flower gradient={['#F4EFFF', '#DCD0FF']} size={190} style={{ position: 'absolute', left: 0, top: -4 }} />
-            <span style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
+            <Flower
+              gradient={['#F4EFFF', '#DCD0FF']}
+              size={190}
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: -4,
+              }}
+            />
+            <span
+              style={{
+                position: 'absolute',
+                inset: 0,
+                display: 'grid',
+                placeItems: 'center',
+              }}
+            >
               <OnsLogo width={118} />
             </span>
           </div>
@@ -105,19 +120,19 @@ export function Welcome() {
               zIndex: 2,
             }}
           >
-            <Globe size={16} /> {languages.find((e) => e.id === user.language)?.name ?? 'English'}
+            <Globe size={16} /> {languages.find((language) => language.id === user.language)?.name ?? 'English'}
           </button>
-          {bubblePlaces.map((e, f) => (
+          {bubblePlaces.map((bubblePlace, f) => (
             <span
               key={f}
               aria-hidden
               style={{
                 position: 'absolute',
-                left: `${(e.x / 402) * 100}%`,
-                top: `${(e.y / 470) * 100}%`,
-                transform: `rotate(${e.r}deg)`,
-                background: e.bg,
-                color: e.light ? 'var(--white)' : 'var(--ink)',
+                left: `${(bubblePlace.x / 402) * 100}%`,
+                top: `${(bubblePlace.y / 470) * 100}%`,
+                transform: `rotate(${bubblePlace.r}deg)`,
+                background: bubblePlace.bg,
+                color: bubblePlace.light ? 'var(--white)' : 'var(--ink)',
                 fontWeight: 600,
                 fontSize: 15,
                 padding: '10px 14px',
@@ -175,23 +190,23 @@ export function Welcome() {
             gap: 8,
           }}
         >
-          {languages.map((e) => (
+          {languages.map((language) => (
             <button
-              key={e.id}
+              key={language.id}
               className="card"
               onClick={() => {
                 setUser({
-                  language: e.id,
+                  language: language.id,
                 })
                 setLangOpen(false)
               }}
               style={{
                 padding: '12px 16px',
                 textAlign: 'start',
-                background: user.language === e.id ? 'var(--lime)' : 'var(--grey)',
+                background: user.language === language.id ? 'var(--lime)' : 'var(--grey)',
               }}
             >
-              <strong>{e.name}</strong>
+              <strong>{language.name}</strong>
             </button>
           ))}
         </div>
@@ -674,16 +689,16 @@ export function LanguageStep() {
             gap: 8,
           }}
         >
-          {languages.map((a) => {
-            const b = user.language === a.id
+          {languages.map((language) => {
+            const b = user.language === language.id
             return (
               <button
-                key={a.id}
+                key={language.id}
                 role="radio"
                 aria-checked={b}
                 onClick={() =>
                   setUser({
-                    language: a.id,
+                    language: language.id,
                   })
                 }
                 className="card"
@@ -707,9 +722,9 @@ export function LanguageStep() {
                       fontSize: 17,
                     }}
                   >
-                    {a.name}
+                    {language.name}
                   </strong>
-                  <span className="tiny">{langName(a.id)}</span>
+                  <span className="tiny">{langName(language.id)}</span>
                 </span>
                 <span
                   style={{
@@ -1147,8 +1162,8 @@ export function AboutStep() {
               borderColor: 'var(--ink)',
             }}
           >
-            {areas.map((b) => (
-              <option key={b}>{b}</option>
+            {areas.map((area) => (
+              <option key={area}>{area}</option>
             ))}
           </select>
           <ChevronDown
@@ -1187,7 +1202,7 @@ export function InterestsStep() {
   const { user, setUser, showToast } = useApp()
   const { t, interest } = useI18n()
   const [custom, setCustom] = useState('')
-  const presetIds = interestOptions.map((j) => j.id)
+  const presetIds = interestOptions.map((interestOption) => interestOption.id)
   const customInterests = user.interests.filter((j) => !presetIds.includes(j))
   const toggle = (j) =>
     setUser({
@@ -1217,12 +1232,12 @@ export function InterestsStep() {
   }
   const count = user.interests.length
   const chips = [
-    ...interestOptions.map((j) => ({
-      id: j.id,
-      accent: j.accent,
+    ...interestOptions.map((interestOption) => ({
+      id: interestOption.id,
+      accent: interestOption.accent,
     })),
-    ...customInterests.map((j, k) => ({
-      id: j,
+    ...customInterests.map((customInterest, k) => ({
+      id: customInterest,
       accent: interestAccents[k % interestAccents.length],
     })),
   ]
@@ -1289,19 +1304,19 @@ export function InterestsStep() {
             justifyItems: 'center',
           }}
         >
-          {chips.map((j, k) => {
-            const l = user.interests.includes(j.id)
+          {chips.map((chip, k) => {
+            const l = user.interests.includes(chip.id)
             return (
               <button
-                key={j.id}
+                key={chip.id}
                 aria-pressed={l}
-                onClick={() => toggle(j.id)}
+                onClick={() => toggle(chip.id)}
                 style={{
                   marginTop: k % 3 === 1 ? 28 : 0,
                 }}
                 className={l ? 'pop' : ''}
               >
-                <Flower accent={j.accent} color={l ? undefined : 'var(--grey)'} size={104}>
+                <Flower accent={chip.accent} color={l ? undefined : 'var(--grey)'} size={104}>
                   <span
                     style={{
                       fontWeight: 600,
@@ -1312,7 +1327,7 @@ export function InterestsStep() {
                       overflowWrap: 'anywhere',
                     }}
                   >
-                    {interest(j.id)}
+                    {interest(chip.id)}
                   </span>
                 </Flower>
               </button>
@@ -1428,13 +1443,13 @@ export function DoneStep() {
               gap: 10,
             }}
           >
-            {suggestedIds.map((c) => (
+            {suggestedIds.map((suggestedId) => (
               <button
-                key={c.id}
-                onClick={() => finish(`/event/${c.id}`)}
+                key={suggestedId.id}
+                onClick={() => finish(`/event/${suggestedId.id}`)}
                 className="card"
                 style={{
-                  background: `var(--${c.id === 'pool-tournament' ? 'turq' : c.id === 'football-beer' ? 'lav' : 'lime'})`,
+                  background: `var(--${suggestedId.id === 'pool-tournament' ? 'turq' : suggestedId.id === 'football-beer' ? 'lav' : 'lime'})`,
                   padding: '14px 16px',
                   textAlign: 'start',
                   display: 'flex',
@@ -1452,9 +1467,9 @@ export function DoneStep() {
                       color: 'var(--ink)',
                     }}
                   >
-                    {wd(c.date)}
+                    {wd(suggestedId.date)}
                     {' · '}
-                    {c.start}
+                    {suggestedId.start}
                   </span>
                   <strong
                     style={{
@@ -1463,7 +1478,7 @@ export function DoneStep() {
                       marginTop: 4,
                     }}
                   >
-                    {c.title}
+                    {suggestedId.title}
                   </strong>
                 </span>
                 <span
@@ -1474,10 +1489,10 @@ export function DoneStep() {
                     padding: '6px 10px',
                   }}
                 >
-                  {c.id === 'bowling-monday'
+                  {suggestedId.id === 'bowling-monday'
                     ? t('free')
                     : t('going', {
-                        n: goingCount(c.id),
+                        n: goingCount(suggestedId.id),
                       })}
                 </span>
               </button>

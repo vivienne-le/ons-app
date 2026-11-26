@@ -145,18 +145,18 @@ export function SegTabs({ value, options, onChange }) {
         height: 50,
       }}
     >
-      {options.map((a) => (
+      {options.map((option) => (
         <button
-          key={a.id}
+          key={option.id}
           role="tab"
-          aria-selected={value === a.id}
-          onClick={() => onChange(a.id)}
+          aria-selected={value === option.id}
+          onClick={() => onChange(option.id)}
           style={{
             borderRadius: 999,
             fontWeight: 600,
             fontSize: 15,
-            background: value === a.id ? 'var(--ink)' : 'transparent',
-            color: value === a.id ? 'var(--white)' : 'var(--ink)',
+            background: value === option.id ? 'var(--ink)' : 'transparent',
+            color: value === option.id ? 'var(--white)' : 'var(--ink)',
             transition: 'background .2s, color .2s',
             display: 'flex',
             alignItems: 'center',
@@ -164,7 +164,7 @@ export function SegTabs({ value, options, onChange }) {
             gap: 6,
           }}
         >
-          {a.label}
+          {option.label}
         </button>
       ))}
     </div>

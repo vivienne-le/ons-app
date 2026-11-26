@@ -100,14 +100,14 @@ export function AvatarStack({ ids, label }) {
           display: 'flex',
         }}
       >
-        {ids.map((a, b) => (
+        {ids.map((id, b) => (
           <span
-            key={a}
+            key={id}
             style={{
               marginLeft: b ? -7 : 0,
             }}
           >
-            <Avatar name={neighbourNames[a] ?? a} img={a} size={23} ring />
+            <Avatar name={neighbourNames[id] ?? id} img={id} size={23} ring />
           </span>
         ))}
       </span>

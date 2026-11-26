@@ -148,7 +148,9 @@ export function BecomeHostOrg() {
   const [what, setWhat] = useState(user.interests.slice(0, 1))
   const [message, setMessage] = useState('')
   const [cohost, setCohost] = useState(true)
-  const interestChoices = [...new Set([...user.interests, ...interestOptions.map((j) => j.id)])].slice(0, 10)
+  const interestChoices = [
+    ...new Set([...user.interests, ...interestOptions.map((interestOption) => interestOption.id)]),
+  ].slice(0, 10)
   return (
     <Screen>
       <form
@@ -201,15 +203,15 @@ export function BecomeHostOrg() {
             marginTop: 18,
           }}
         >
-          {organisations.map((j) => {
-            const k = org === j.id
+          {organisations.map((organisation) => {
+            const k = org === organisation.id
             return (
               <button
-                key={j.id}
+                key={organisation.id}
                 type="button"
                 role="radio"
                 aria-checked={k}
-                onClick={() => setOrg(j.id)}
+                onClick={() => setOrg(organisation.id)}
                 className="row"
                 style={{
                   width: '100%',
@@ -227,7 +229,7 @@ export function BecomeHostOrg() {
                       fontSize: 15,
                     }}
                   >
-                    {j.name.replace(/^(Het|De) /, '').slice(0, 1)}
+                    {organisation.name.replace(/^(Het|De) /, '').slice(0, 1)}
                   </strong>
                 </Flower>
                 <span
@@ -241,7 +243,7 @@ export function BecomeHostOrg() {
                       fontSize: 16,
                     }}
                   >
-                    {j.name}
+                    {organisation.name}
                   </strong>
                   <span
                     className="tiny"
@@ -249,7 +251,7 @@ export function BecomeHostOrg() {
                       color: 'var(--muted-2)',
                     }}
                   >
-                    {t(kindKey[orgInfo[j.id].kind])}
+                    {t(kindKey[orgInfo[organisation.id].kind])}
                   </span>
                 </span>
                 {k && <Check size={20} aria-hidden />}
@@ -273,18 +275,18 @@ export function BecomeHostOrg() {
             gap: 8,
           }}
         >
-          {interestChoices.map((j) => {
-            const k = what.includes(j)
+          {interestChoices.map((interestChoice) => {
+            const k = what.includes(interestChoice)
             return (
               <button
-                key={j}
+                key={interestChoice}
                 type="button"
                 aria-pressed={k}
                 className={`chip ${k ? 'on' : ''}`}
-                onClick={() => setWhat(k ? what.filter((l) => l !== j) : [...what, j])}
+                onClick={() => setWhat(k ? what.filter((l) => l !== interestChoice) : [...what, interestChoice])}
               >
                 {k && <Check size={14} aria-hidden />}
-                {interest(j)}
+                {interest(interestChoice)}
               </button>
             )
           })}
@@ -357,8 +359,8 @@ export function BecomeHostSent() {
   const nav = useNavigate()
   const { hostRequest } = useApp()
   const { t } = useI18n()
-  const org = organisations.find((d) => d.id === (hostRequest == null ? undefined : hostRequest.org))
-  const orgName = (org == null ? undefined : org.name) ?? ''
+  const org = organisations.find((organisation) => organisation.id === hostRequest?.org)
+  const orgName = org?.name ?? ''
   const nextSteps = ['bhS1', 'bhS2', 'bhS3']
   return (
     <Screen lime>
@@ -406,9 +408,9 @@ export function BecomeHostSent() {
             gap: 10,
           }}
         >
-          {nextSteps.map((d, e) => (
+          {nextSteps.map((nextStep, e) => (
             <li
-              key={d}
+              key={nextStep}
               className="row"
               style={{
                 gap: 10,
@@ -435,7 +437,7 @@ export function BecomeHostSent() {
                   fontSize: 16,
                 }}
               >
-                {t(d)}
+                {t(nextStep)}
               </span>
             </li>
           ))}
@@ -482,10 +484,24 @@ export function BecomeHostCard({ placement = 'top' }) {
             className="icon-btn white"
             aria-label={t('hideCard')}
             onClick={() => {
-              setUser({ hostCardMoved: true })
-              showToast(t('movedToBottom'), { label: t('undo'), run: () => setUser({ hostCardMoved: false }) })
+              setUser({
+                hostCardMoved: true,
+              })
+              showToast(t('movedToBottom'), {
+                label: t('undo'),
+                run: () =>
+                  setUser({
+                    hostCardMoved: false,
+                  }),
+              })
             }}
-            style={{ position: 'absolute', top: 10, insetInlineEnd: 10, width: 32, height: 32 }}
+            style={{
+              position: 'absolute',
+              top: 10,
+              insetInlineEnd: 10,
+              width: 32,
+              height: 32,
+            }}
           >
             <X size={16} />
           </button>
@@ -509,7 +525,11 @@ export function BecomeHostCard({ placement = 'top' }) {
           >
             <BadgeCheck size={22} aria-hidden />
           </span>
-          <span style={{ paddingInlineEnd: moved ? 0 : 32 }}>
+          <span
+            style={{
+              paddingInlineEnd: moved ? 0 : 32,
+            }}
+          >
             <strong
               style={{
                 display: 'block',
@@ -540,7 +560,7 @@ export function BecomeHostCard({ placement = 'top' }) {
       </div>
     )
   if (!hostRequest || placement !== 'top') return null
-  const org = organisations.find((b) => b.id === hostRequest.org)
+  const org = organisations.find((organisation) => organisation.id === hostRequest.org)
   return (
     <div
       className="card"

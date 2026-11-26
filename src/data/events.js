@@ -941,7 +941,7 @@ export const beenTo = [
     last: '26 Oct',
   },
 ]
-export const byId = (id) => events.find((b) => b.id === id)
+export const byId = (id) => events.find((event) => event.id === id)
 export const forYou = ['pool-tournament', 'kerststol-kitchen', 'football-beer', 'bowling-monday']
 export const popular = ['warm-hats', 'bike-repair', 'football-beer']
 export const joinToday = ['walk-talk', 'open-kitchen', 'board-games']

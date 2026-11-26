@@ -101,11 +101,11 @@ export function Ring({ r: radius, dur, reverse, offset = 0, children }) {
         animationDirection: reverse ? 'reverse' : 'normal',
       }}
     >
-      {children.map((b, c) => {
+      {children.map((child, c) => {
         const d = offset + (360 / Math.max(count, 1)) * c
         return (
           <div
-            key={b.key ?? c}
+            key={child.key ?? c}
             className="orbit-slot"
             style={{
               transform: `rotate(${d}deg) translateY(-${radius}px) rotate(${-d}deg)`,
@@ -118,7 +118,7 @@ export function Ring({ r: radius, dur, reverse, offset = 0, children }) {
                 animationDirection: reverse ? 'normal' : 'reverse',
               }}
             >
-              {b}
+              {child}
             </div>
           </div>
         )
@@ -143,7 +143,10 @@ export function Network() {
     const [l, m] = f.split(':')
     return {
       k: f,
-      name: l === 'org' ? (organisations.find((k) => k.id === m)?.name ?? m) : (profiles[m]?.name ?? m),
+      name:
+        l === 'org'
+          ? (organisations.find((organisation) => organisation.id === m)?.name ?? m)
+          : (profiles[m]?.name ?? m),
       avatar: l === 'person' ? profiles[m]?.avatar : undefined,
       link: l === 'org' ? `/org/${m}` : `/person/${m}`,
     }
@@ -222,38 +225,38 @@ export function Network() {
           )}
           {seeds.length > 0 && (
             <Ring r={RING_RADIUS.seeds} dur={90} reverse offset={45}>
-              {seeds.map((f, g) => (
+              {seeds.map((seed, g) => (
                 <button
-                  key={f.id}
-                  onClick={() => setOpenSeed(f)}
-                  aria-label={`${t('seedPlanted')}: ${f.name}`}
+                  key={seed.id}
+                  onClick={() => setOpenSeed(seed)}
+                  aria-label={`${t('seedPlanted')}: ${seed.name}`}
                   style={{
                     display: 'grid',
                     justifyItems: 'center',
                   }}
                 >
                   <Seed i={g} />
-                  <span className="orbit-name">{f.name}</span>
+                  <span className="orbit-name">{seed.name}</span>
                 </button>
               ))}
             </Ring>
           )}
           {flowers.length > 0 && (
             <Ring r={RING_RADIUS.friends} dur={60}>
-              {flowers.map((f, g) => (
+              {flowers.map((flower, g) => (
                 <button
-                  key={f.id}
-                  onClick={() => nav(`/person/${f.id}`)}
+                  key={flower.id}
+                  onClick={() => nav(`/person/${flower.id}`)}
                   aria-label={t('viewProfile', {
-                    name: f.name,
+                    name: flower.name,
                   })}
                   style={{
                     display: 'grid',
                     justifyItems: 'center',
                   }}
                 >
-                  <BloomFlower p={f} size={62} i={g} />
-                  <span className="orbit-name">{f.name}</span>
+                  <BloomFlower p={flower} size={62} i={g} />
+                  <span className="orbit-name">{flower.name}</span>
                 </button>
               ))}
             </Ring>

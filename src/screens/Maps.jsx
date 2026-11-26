@@ -31,7 +31,7 @@ export function EventPin({ e: event, label, onClick: a }) {
       className={`pin ${label ? '' : 'small'}`}
       onClick={(b) => {
         b.stopPropagation()
-        a == null || a()
+        a?.()
       }}
       aria-label={t('atPlace', {
         title: ev(event).title,
@@ -323,9 +323,11 @@ export function MapTab() {
   const [filter, setFilter] = useState(null)
   const [selectedId, setSelectedId] = useState('kerststol-kitchen')
   const serviceList = isService(filter)
-    ? services.filter((m) => m.kind === filter).sort((m, n) => distanceM(YOU, m.coords) - distanceM(YOU, n.coords))
+    ? services
+        .filter((service) => service.kind === filter)
+        .sort((m, n) => distanceM(YOU, m.coords) - distanceM(YOU, n.coords))
     : []
-  const eventList = isService(filter) ? [] : events.filter((m) => !filter || m.category === filter)
+  const eventList = isService(filter) ? [] : events.filter((event) => !filter || event.category === filter)
   const places = Object.values(
     eventList.reduce((m, n) => {
       const S = n.coords.join()
@@ -340,11 +342,11 @@ export function MapTab() {
     const n = filter === m ? null : m
     if ((setFilter(n), isService(n))) {
       const S = services
-        .filter((N) => N.kind === n)
+        .filter((service) => service.kind === n)
         .sort((N, E) => distanceM(YOU, N.coords) - distanceM(YOU, E.coords))[0]
       S && setSelectedId(S.id)
     } else {
-      const S = events.find((N) => !n || N.category === n)
+      const S = events.find((event) => !n || event.category === n)
       S && setSelectedId(S.id)
     }
   }
@@ -386,26 +388,16 @@ export function MapTab() {
     <Screen>
       <CityMap you={YOU}>
         {serviceList.map((m) => (
-          <MapPin
-            key={m.id}
-            at={m.coords}
-            z={m.id === (selectedService == null ? undefined : selectedService.id) ? 5 : 1}
-          >
-            <ServicePin
-              s={m}
-              label={m.id === (selectedService == null ? undefined : selectedService.id)}
-              onClick={() => setSelectedId(m.id)}
-            />
+          <MapPin key={m.id} at={m.coords} z={m.id === selectedService?.id ? 5 : 1}>
+            <ServicePin s={m} label={m.id === selectedService?.id} onClick={() => setSelectedId(m.id)} />
           </MapPin>
         ))}
-        {places.map((m) => (
-          <MapPin key={m.id} at={m.coords} z={m.id === (current == null ? undefined : current.id) ? 5 : 1}>
+        {places.map((place) => (
+          <MapPin key={place.id} at={place.coords} z={place.id === current?.id ? 5 : 1}>
             <EventPin
-              e={m}
-              label={m.id === (current == null ? undefined : current.id)}
-              onClick={() =>
-                m.id === (current == null ? undefined : current.id) ? nav(`/event/${m.id}`) : setSelectedId(m.id)
-              }
+              e={place}
+              label={place.id === current?.id}
+              onClick={() => (place.id === current?.id ? nav(`/event/${place.id}`) : setSelectedId(place.id))}
             />
           </MapPin>
         ))}
@@ -445,7 +437,9 @@ export function MapTab() {
             scrollPaddingInline: 20,
           }}
         >
-          {serviceKinds.map((m) => renderChip(m, t(svcKey[m]), svcIcon[m], true))}
+          {serviceKinds.map((serviceKind) =>
+            renderChip(serviceKind, t(svcKey[serviceKind]), svcIcon[serviceKind], true),
+          )}
           <span
             aria-hidden
             style={{
@@ -456,7 +450,7 @@ export function MapTab() {
               background: 'rgba(32,30,31,.25)',
             }}
           />
-          {activityCats.map((m) => renderChip(m, t(catKey[m])))}
+          {activityCats.map((activityCat) => renderChip(activityCat, t(catKey[activityCat])))}
         </div>
       </div>
       <button
@@ -559,18 +553,18 @@ export function MapTab() {
                   marginTop: 10,
                 }}
               >
-                {selectedService.tags.map((m) => (
+                {selectedService.tags.map((tag) => (
                   <span
-                    key={m}
+                    key={tag}
                     style={{
                       fontSize: 13,
                       fontWeight: 600,
                       padding: '4px 10px',
                       borderRadius: 999,
-                      background: m === 'free' ? 'var(--lime)' : 'var(--grey)',
+                      background: tag === 'free' ? 'var(--lime)' : 'var(--grey)',
                     }}
                   >
-                    {t(tagKey[m])}
+                    {t(tagKey[tag])}
                   </span>
                 ))}
               </div>

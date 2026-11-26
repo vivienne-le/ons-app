@@ -77,8 +77,8 @@ export const orgForPerson = {
 }
 export const profileLink = (id) =>
   id === 'me' ? '/profile' : orgForPerson[id] ? `/org/${orgForPerson[id]}` : profiles[id] ? `/person/${id}` : null
-export const hostedBy = (personId) => events.filter((b) => b.host.id === personId)
-export const orgOfEvent = (eventId) => organisations.find((b) => b.events.includes(eventId))
+export const hostedBy = (personId) => events.filter((event) => event.host.id === personId)
+export const orgOfEvent = (eventId) => organisations.find((organisation) => organisation.events.includes(eventId))
 export const orgsOfHost = (personId) => [
   ...new Set(
     hostedBy(personId)
@@ -105,10 +105,10 @@ export function goingPeople(event) {
 }
 export const eventsOf = (personId) =>
   events.filter(
-    (b) =>
-      goingPeople(b).some((c) => c.id === personId) ||
-      b.comments.some((c) => {
-        return c.author.id === personId || c.replies?.some((e) => e.author.id === personId)
+    (event) =>
+      goingPeople(event).some((c) => c.id === personId) ||
+      event.comments.some((comment) => {
+        return comment.author.id === personId || comment.replies?.some((e) => e.author.id === personId)
       }),
   )
 export const orgInfo = {

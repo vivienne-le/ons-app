@@ -6,7 +6,7 @@ import { EditProfile, usePronounLabel } from '../components/EditProfile'
 import { Flower } from '../components/Flower'
 import { Avatar } from '../components/Img'
 import { NavBar, Screen, Sheet } from '../components/UI'
-import { interestOptions, languages } from '../data/events'
+import { languages } from '../data/events'
 import { profiles } from '../data/people'
 import { useI18n } from '../i18n/index'
 import { BecomeHostCard } from './BecomeHost'
@@ -49,7 +49,7 @@ export function Profile() {
   const nav = useNavigate()
   const [params] = useSearchParams()
   const app = useApp()
-  const { t, interest } = useI18n()
+  const { t } = useI18n()
   const { user } = app
   const [prefs, setPrefs] = useState({
     showJoined: true,
@@ -384,14 +384,27 @@ export function Profile() {
             </button>
           </div>
           {user.bio ? (
-            <p className="card" style={{ padding: '12px 14px', fontSize: 15, margin: 0 }}>
+            <p
+              className="card"
+              style={{
+                padding: '12px 14px',
+                fontSize: 15,
+                margin: 0,
+              }}
+            >
               {user.bio}
             </p>
           ) : (
             <button
               className="card"
               onClick={() => setEditing(true)}
-              style={{ width: '100%', padding: '12px 14px', textAlign: 'start', fontSize: 15, color: 'var(--muted)' }}
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                textAlign: 'start',
+                fontSize: 15,
+                color: 'var(--muted)',
+              }}
             >
               + {t('addBio')}
             </button>
@@ -402,12 +415,26 @@ export function Profile() {
               {t('edit')}
             </button>
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {interests.map((id, i) => (
-              <InterestChip key={id} id={id} index={i} />
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: 8,
+            }}
+          >
+            {interests.map((interest, i) => (
+              <InterestChip key={interest} id={interest} index={i} />
             ))}
           </div>
-          <p style={{ fontSize: 15, color: 'var(--muted)', margin: '12px 0 0' }}>{t('interestsHint')}</p>
+          <p
+            style={{
+              fontSize: 15,
+              color: 'var(--muted)',
+              margin: '12px 0 0',
+            }}
+          >
+            {t('interestsHint')}
+          </p>
           <BadgeSection />
           <section ref={settingsRef}>
             <div className="section-head">
@@ -432,7 +459,7 @@ export function Profile() {
               >
                 {t('appLanguage')}
               </span>
-              <span className="tiny">{languages.find((f) => f.id === user.language)?.name}</span>
+              <span className="tiny">{languages.find((language) => language.id === user.language)?.name}</span>
               <ChevronRight size={18} className="flip-rtl" />
             </button>
             {[
@@ -588,28 +615,28 @@ export function Profile() {
             gap: 8,
           }}
         >
-          {languages.map((f) => (
+          {languages.map((language) => (
             <button
-              key={f.id}
+              key={language.id}
               className="card"
               onClick={() => {
                 app.setUser({
-                  language: f.id,
+                  language: language.id,
                 })
                 setLangOpen(false)
                 app.showToast(
                   t('languageSet', {
-                    lang: f.name,
+                    lang: language.name,
                   }),
                 )
               }}
               style={{
                 padding: '12px 16px',
                 textAlign: 'start',
-                background: user.language === f.id ? 'var(--lime)' : 'var(--grey)',
+                background: user.language === language.id ? 'var(--lime)' : 'var(--grey)',
               }}
             >
-              <strong>{f.name}</strong>
+              <strong>{language.name}</strong>
             </button>
           ))}
         </div>

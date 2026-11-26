@@ -17,8 +17,8 @@
   --pad: 20px;
   --nav-h: 62px;
   --orange-soft: #fbd9cb;
-  --font: "Inter", system-ui, -apple-system, sans-serif;
-  --mono: "Roboto Mono", ui-monospace, monospace;
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'Roboto Mono', ui-monospace, monospace;
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 * {
@@ -604,15 +604,15 @@ img {
     padding-top: max(40px, env(safe-area-inset-top));
   }
 }
-[dir="rtl"] .flip-rtl {
+[dir='rtl'] .flip-rtl {
   transform: scaleX(-1);
 }
-[dir="rtl"] body,
-[dir="rtl"] input,
-[dir="rtl"] button {
-  font-family: "Noto Sans Arabic", var(--font);
+[dir='rtl'] body,
+[dir='rtl'] input,
+[dir='rtl'] button {
+  font-family: 'Noto Sans Arabic', var(--font);
 }
-[dir="rtl"] .eyebrow {
+[dir='rtl'] .eyebrow {
   letter-spacing: 0;
 }
 .garden-screen {
@@ -802,17 +802,16 @@ img {
 
 /* Text on the strong blue accent (Figma: #4A58C0).
    Anything with an inline `background: var(--lav)` gets white text, like the Figma cards. */
-.on-blue,
-[style*="background: var(--lav)"] {
+[style*='background: var(--lav)'] {
   color: #fff;
 }
-:is(.on-blue, [style*="background: var(--lav)"]) :is(.tiny, .small, .eyebrow, [style*="color: var(--muted"]) {
+[style*='background: var(--lav)'] :is(.tiny, .small, .eyebrow, [style*='color: var(--muted']) {
   color: rgba(255, 255, 255, 0.85) !important;
 }
-:is(.on-blue, [style*="background: var(--lav)"]) [style*="color: var(--ink)"] {
+[style*='background: var(--lav)'] [style*='color: var(--ink)'] {
   color: #fff !important;
 }
 /* …but light panels inside a blue card keep dark text */
-:is(.on-blue, [style*="background: var(--lav)"]) :is([style*="background: var(--white)"], [style*="background: rgba(255"], [style*="background: rgba(255"]) {
+[style*='background: var(--lav)'] :is([style*='background: var(--white)'], [style*='background: rgba(255']) {
   color: var(--ink);
 }

@@ -103,7 +103,7 @@ export function CityMap({ children, route, you, onBackgroundClick }) {
             <line key={j} x1={e} y1={f} x2={g} y2={h} stroke="#FFFFFF" strokeWidth={i} strokeLinecap="round" />
           ))}
           {streets
-            .filter((e) => e[5])
+            .filter((street) => street[5])
             .map(([e, f, g, h, , i], j) => {
               const k = Math.abs(g - e) < Math.abs(h - f)
               const l = k ? e + (g - e) * 0.12 : e + (g - e) * 0.62

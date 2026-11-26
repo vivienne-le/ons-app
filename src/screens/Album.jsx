@@ -150,21 +150,21 @@ export function Album() {
                   overflow: 'hidden',
                 }}
               >
-                {photos.map((h, i) => (
+                {photos.map((photo, i) => (
                   <button
-                    key={h.id}
+                    key={photo.id}
                     onClick={() => setOpenIndex(i)}
                     aria-label={`${t('photoOf', {
                       n: i + 1,
                       m: photos.length,
-                    })} · ${h.name}`}
+                    })} · ${photo.name}`}
                     style={{
                       aspectRatio: '1',
                       position: 'relative',
                     }}
                   >
                     <img
-                      src={h.src}
+                      src={photo.src}
                       alt=""
                       loading="lazy"
                       style={{
@@ -174,7 +174,7 @@ export function Album() {
                         display: 'block',
                       }}
                     />
-                    {h.mine && (
+                    {photo.mine && (
                       <span
                         style={{
                           position: 'absolute',

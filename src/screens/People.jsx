@@ -274,7 +274,7 @@ export function PersonScreen() {
             }}
           >
             {person.interests.map((h) => {
-              const i = interestOptions.find((k) => k.id === h)
+              const i = interestOptions.find((interestOption) => interestOption.id === h)
               const j = myInterests.includes(h)
               return (
                 <span
@@ -300,15 +300,15 @@ export function PersonScreen() {
                   })}
                 </span>
               </div>
-              {orgs.map((h) => (
+              {orgs.map((org) => (
                 <button
-                  key={h.id}
+                  key={org.id}
                   className="row"
                   style={{
                     marginBottom: 12,
                     gap: 8,
                   }}
-                  onClick={() => nav(`/org/${h.id}`)}
+                  onClick={() => nav(`/org/${org.id}`)}
                 >
                   <Users size={16} aria-hidden />
                   <span
@@ -319,14 +319,14 @@ export function PersonScreen() {
                     }}
                   >
                     {t('hostsWith', {
-                      org: h.name,
+                      org: org.name,
                     })}
                   </span>
                 </button>
               ))}
               <div className="stack">
-                {hosts.map((h) => (
-                  <RowCard key={h.id} e={h} />
+                {hosts.map((host) => (
+                  <RowCard key={host.id} e={host} />
                 ))}
               </div>
             </>
@@ -352,7 +352,7 @@ export function OrgScreen() {
   const { id = '' } = useParams()
   const { following } = useApp()
   const { t } = useI18n()
-  const org = organisations.find((f) => f.id === id)
+  const org = organisations.find((organisation) => organisation.id === id)
   if (!org)
     return (
       <Screen>
@@ -366,8 +366,8 @@ export function OrgScreen() {
   const hostIds = [
     ...new Set(
       eventIds
-        .map((f) => {
-          return byId(f)?.host.id
+        .map((eventId) => {
+          return byId(eventId)?.host.id
         })
         .filter((f) => !!f && !!profiles[f]),
     ),
@@ -464,9 +464,9 @@ export function OrgScreen() {
             </span>
           </div>
           <div className="stack">
-            {eventIds.map((f) => {
-              const g = byId(f)
-              return g ? <RowCard key={f} e={g} /> : null
+            {eventIds.map((eventId) => {
+              const g = byId(eventId)
+              return g ? <RowCard key={eventId} e={g} /> : null
             })}
           </div>
           {hostIds.length > 0 && (
@@ -474,11 +474,11 @@ export function OrgScreen() {
               <div className="section-head">
                 <h2 className="h2">{t('hostsLabel')}</h2>
               </div>
-              {hostIds.map((f) => (
+              {hostIds.map((hostId) => (
                 <PersonRow
-                  key={f}
-                  p={profiles[f]}
-                  right={<FollowButton compact k={`person:${f}`} name={profiles[f].name} />}
+                  key={hostId}
+                  p={profiles[hostId]}
+                  right={<FollowButton compact k={`person:${hostId}`} name={profiles[hostId].name} />}
                 />
               ))}
             </>
@@ -600,7 +600,7 @@ export function ConnectionsScreen() {
                   return (
                     <PersonRow key={d} p={profiles[f]} right={<FollowButton compact k={d} name={profiles[f].name} />} />
                   )
-                const g = organisations.find((h) => h.id === f)
+                const g = organisations.find((organisation) => organisation.id === f)
                 return g ? (
                   <div
                     key={d}

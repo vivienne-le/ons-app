@@ -170,7 +170,7 @@ export function HostLoginStep() {
   const [listOpen, setListOpen] = useState(!user.org)
   const [orgQuery, setOrgQuery] = useState('')
   const [tried, setTried] = useState(false)
-  const orgInfo = organisations.find((F) => F.name === org)
+  const orgInfo = organisations.find((organisation) => organisation.name === org)
   const domain = email.split('@')[1]?.toLowerCase() ?? ''
   const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
   const isPersonal = personalDomains.includes(domain)
@@ -186,7 +186,9 @@ export function HostLoginStep() {
         : ''
     : t('emailInvalid')
   const canContinue = !!orgName && !emailError
-  const orgResults = organisations.filter((F) => F.name.toLowerCase().includes(orgQuery.toLowerCase()))
+  const orgResults = organisations.filter((organisation) =>
+    organisation.name.toLowerCase().includes(orgQuery.toLowerCase()),
+  )
   const submit = () => {
     setTried(true)
     canContinue &&
@@ -312,7 +314,7 @@ export function HostLoginStep() {
                 marginTop: 6,
               }}
             >
-              {[...orgResults.map((F) => F.name), 'Other'].map((F) => (
+              {[...orgResults.map((orgResult) => orgResult.name), 'Other'].map((F) => (
                 <button
                   key={F}
                   type="button"
@@ -730,7 +732,7 @@ export function HostDoneStep() {
   const nav = useNavigate()
   const { user, finishOnboarding } = useApp()
   const { t } = useI18n()
-  const knownOrg = organisations.some((c) => c.name === user.org)
+  const knownOrg = organisations.some((organisation) => organisation.name === user.org)
   const finish = (c) => {
     finishOnboarding()
     nav(c, {

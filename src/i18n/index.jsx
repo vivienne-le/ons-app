@@ -87,30 +87,28 @@ export function useI18n() {
       const d = o.of(P) ?? P
       return d.charAt(0).toLocaleUpperCase(locales[lang]) + d.slice(1)
     }
-    const q = (P) => (content == null ? undefined : content.tags[P]) ?? P
+    const q = (P) => content?.tags[P] ?? P
     const r = (P) => {
-      const t = content == null ? undefined : content.events[P.id]
+      const t = content?.events[P.id]
       const B =
-        P.host.role === 'CVD'
-          ? ((content == null ? undefined : content.roles.cvd) ?? 'CVD')
-          : ((content == null ? undefined : content.roles.neighbourhoodHost) ?? P.host.role)
+        P.host.role === 'CVD' ? (content?.roles.cvd ?? 'CVD') : (content?.roles.neighbourhoodHost ?? P.host.role)
       return {
         ...P,
-        title: (t == null ? undefined : t.title) ?? P.title,
-        short: (t == null ? undefined : t.short) ?? P.short,
-        desc: (t == null ? undefined : t.desc) ?? P.desc,
-        steps: P.steps.map((F, d) => {
+        title: t?.title ?? P.title,
+        short: t?.short ?? P.short,
+        desc: t?.desc ?? P.desc,
+        steps: P.steps.map((step, d) => {
           return {
-            ...F,
-            title: (t == null ? undefined : t.steps[d])?.[0] ?? F.title,
-            sub: (t == null ? undefined : t.steps[d])?.[1] ?? F.sub,
+            ...step,
+            title: t?.steps[d]?.[0] ?? step.title,
+            sub: t?.steps[d]?.[1] ?? step.sub,
           }
         }),
         good: P.good.map((F, d) => {
           return {
             ...F,
-            title: (t == null ? undefined : t.good[d])?.[0] ?? F.title,
-            sub: (t == null ? undefined : t.good[d])?.[1] ?? F.sub,
+            title: t?.good[d]?.[0] ?? F.title,
+            sub: t?.good[d]?.[1] ?? F.sub,
           }
         }),
         tags: P.tags.map(q),
@@ -129,12 +127,7 @@ export function useI18n() {
         })(),
       }
     }
-    const s = (P) =>
-      P.lang === lang
-        ? P.text
-        : lang === 'en'
-          ? (P.en ?? P.text)
-          : ((content == null ? undefined : content.comments[P.id]) ?? P.text)
+    const s = (P) => (P.lang === lang ? P.text : lang === 'en' ? (P.en ?? P.text) : (content?.comments[P.id] ?? P.text))
     return {
       t: translate,
       lang,
@@ -151,12 +144,12 @@ export function useI18n() {
       canTranslate: (P) => P.lang !== lang && s(P) !== P.text,
       update: (P, d) => ({
         ...d,
-        ...((content == null ? undefined : content.updates[P]) ?? {}),
+        ...(content?.updates[P] ?? {}),
       }),
-      invite: (P, d) => (content == null ? undefined : content.invites[P]) ?? d,
-      why: (P, d) => (content == null ? undefined : content.why[P]) ?? d,
-      beenTo: (P) => (content == null ? undefined : content.beenTo[P]) ?? P,
-      interest: (P) => (content == null ? undefined : content.interests[P]) ?? P,
+      invite: (P, d) => content?.invites[P] ?? d,
+      why: (P, d) => content?.why[P] ?? d,
+      beenTo: (P) => content?.beenTo[P] ?? P,
+      interest: (P) => content?.interests[P] ?? P,
       tag: q,
     }
   }, [translate, lang, dir, content, pack])

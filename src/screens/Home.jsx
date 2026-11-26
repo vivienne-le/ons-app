@@ -14,7 +14,7 @@ export const sortKey = (id) => {
 export const TODAY = 13
 export function upcomingOnly(ids) {
   return ids
-    .map((b) => byId(b))
+    .map((id) => byId(id))
     .filter((b) => b && b.date > TODAY)
     .sort((b, c) => sortKey(b.id) - sortKey(c.id))[0]
 }
@@ -23,7 +23,7 @@ export function Home() {
   const { user, joined, invites: inviteState, updatesRead, goingCount, posts } = useApp()
   const { t, ev, wd } = useI18n()
   const upcoming = upcomingOnly(joined)
-  const hasNews = !updatesRead || invites.some((e) => !inviteState[e.id])
+  const hasNews = !updatesRead || invites.some((invite) => !inviteState[invite.id])
   const dayLabel = (e) => (e === TODAY + 1 ? t('tomorrow') : e === TODAY ? t('today') : `${wd(e)} ${e}`)
   return (
     <Screen>
@@ -233,7 +233,9 @@ export function Home() {
           )}
           {user.role === 'host' &&
             (() => {
-              const f = organisations.find((g) => g.name === user.org)?.events.map((g) => ev(byId(g))) ?? []
+              const f =
+                organisations.find((organisation) => organisation.name === user.org)?.events.map((g) => ev(byId(g))) ??
+                []
               return (
                 <>
                   <div className="section-head">
@@ -252,10 +254,10 @@ export function Home() {
                         marginBottom: 8,
                       }}
                     >
-                      {posts.map((g) => (
+                      {posts.map((post) => (
                         <button
-                          key={g.id}
-                          onClick={() => nav(`/post/mine/${g.id}`)}
+                          key={post.id}
+                          onClick={() => nav(`/post/mine/${post.id}`)}
                           className="card row"
                           style={{
                             padding: 12,
@@ -264,9 +266,9 @@ export function Home() {
                             boxShadow: 'inset 0 0 0 2px var(--ink)',
                           }}
                         >
-                          {g.photo ? (
+                          {post.photo ? (
                             <img
-                              src={g.photo}
+                              src={post.photo}
                               alt=""
                               style={{
                                 width: 44,
@@ -292,9 +294,9 @@ export function Home() {
                                 fontSize: 11,
                               }}
                             >
-                              {wd(g.date)} {g.date}
+                              {wd(post.date)} {post.date}
                               {' · '}
-                              {g.start}
+                              {post.start}
                             </span>
                             <strong
                               style={{
@@ -302,7 +304,7 @@ export function Home() {
                                 fontSize: 17,
                               }}
                             >
-                              {g.title}
+                              {post.title}
                             </strong>
                           </span>
                           <span

@@ -149,7 +149,7 @@ export function useStats() {
       ].filter(Boolean),
     )
     const d = user.role === 'host'
-    const e = d ? (organisations.find((g) => g.name === user.org)?.events ?? []) : []
+    const e = d ? (organisations.find((organisation) => organisation.name === user.org)?.events ?? []) : []
     const f = d ? (user.verifiedBy ? 0 : e.length * 4) : 0
     return {
       attended: b,
@@ -584,7 +584,7 @@ export function BadgeSection() {
   const [openBadge, setOpenBadge] = useState(null)
   const isHost = user.role === 'host'
   const groups = isHost ? ['host', 'guest'] : ['guest', 'host']
-  const earnedCount = badges.filter((g) => stats[g.stat] >= g.goal).length
+  const earnedCount = badges.filter((badge) => stats[badge.stat] >= badge.goal).length
   return (
     <section>
       <div className="section-head">
@@ -614,12 +614,12 @@ export function BadgeSection() {
           {t('badgesHidden')}
         </p>
       )}
-      {groups.map((g) => {
-        const h = badges.filter((j) => j.group === g)
-        const i = g === 'host' && !isHost
+      {groups.map((group) => {
+        const h = badges.filter((badge) => badge.group === group)
+        const i = group === 'host' && !isHost
         return (
           <div
-            key={g}
+            key={group}
             style={{
               marginBottom: 18,
             }}
@@ -630,7 +630,7 @@ export function BadgeSection() {
                 marginBottom: 10,
               }}
             >
-              {t(g === 'host' ? 'hostBadgesTitle' : 'guestBadgesTitle')}
+              {t(group === 'host' ? 'hostBadgesTitle' : 'guestBadgesTitle')}
             </div>
             {i && (
               <p
@@ -839,11 +839,11 @@ export function BadgeRow({ ids }) {
         flexWrap: 'wrap',
       }}
     >
-      {ids.map((a) => {
-        const b = badges.find((c) => c.id === a)
+      {ids.map((id) => {
+        const b = badges.find((badge) => badge.id === id)
         return (
           <span
-            key={a}
+            key={id}
             className="row"
             style={{
               gap: 8,
@@ -855,7 +855,7 @@ export function BadgeRow({ ids }) {
             }}
           >
             <BadgeIcon b={b} earned size={24} />
-            {t(badgeName(a))}
+            {t(badgeName(id))}
           </span>
         )
       })}
@@ -866,7 +866,7 @@ export function BadgeWatcher() {
   const { onboarded, showToast } = useApp()
   const { t } = useI18n()
   const stats = useStats()
-  const earned = badges.filter((d) => stats[d.stat] >= d.goal).map((d) => d.id)
+  const earned = badges.filter((badge) => stats[badge.stat] >= badge.goal).map((badge) => badge.id)
   const seen = useRef(null)
   useEffect(() => {
     if (!onboarded) {

@@ -241,9 +241,28 @@ export function EditProfile({ open, onClose }) {
         >
           {t('onlyFirstName')}
         </p>
-        <div className="row" style={{ justifyContent: 'space-between', marginTop: 18 }}>
-          <label className="eyebrow label" htmlFor="ep-bio" style={{ margin: 0 }}>
-            {t('bioLabel')} <span style={{ textTransform: 'none' }}>{t('optional')}</span>
+        <div
+          className="row"
+          style={{
+            justifyContent: 'space-between',
+            marginTop: 18,
+          }}
+        >
+          <label
+            className="eyebrow label"
+            htmlFor="ep-bio"
+            style={{
+              margin: 0,
+            }}
+          >
+            {t('bioLabel')}{' '}
+            <span
+              style={{
+                textTransform: 'none',
+              }}
+            >
+              {t('optional')}
+            </span>
           </label>
           <span className="tiny" aria-live="polite">
             {bio.length}/160
@@ -257,7 +276,14 @@ export function EditProfile({ open, onClose }) {
           placeholder={t('bioPh')}
           value={bio}
           onChange={(ev) => setBio(ev.target.value)}
-          style={{ height: 'auto', marginTop: 8, padding: '12px 16px', fontSize: 16, lineHeight: 1.4, resize: 'none' }}
+          style={{
+            height: 'auto',
+            marginTop: 8,
+            padding: '12px 16px',
+            fontSize: 16,
+            lineHeight: 1.4,
+            resize: 'none',
+          }}
         />
         <div
           className="eyebrow label"
@@ -277,18 +303,18 @@ export function EditProfile({ open, onClose }) {
             gap: 8,
           }}
         >
-          {pronounOptions.map((p) => (
+          {pronounOptions.map((pronounOption) => (
             <button
-              key={p}
+              key={pronounOption}
               role="radio"
-              aria-checked={!customPronouns && pronouns === p}
-              className={`chip ${!customPronouns && pronouns === p ? 'on' : ''}`}
+              aria-checked={!customPronouns && pronouns === pronounOption}
+              className={`chip ${!customPronouns && pronouns === pronounOption ? 'on' : ''}`}
               onClick={() => {
                 setCustomPronouns(false)
-                setPronouns(p)
+                setPronouns(pronounOption)
               }}
             >
-              {pronounLabels[p]}
+              {pronounLabels[pronounOption]}
             </button>
           ))}
           <button

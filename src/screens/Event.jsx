@@ -13,7 +13,6 @@ import { Lightbox, attended, useAddPhotos, useAlbum } from './Album'
 import { FriendButton } from './People'
 import { useApp } from '../state/AppState'
 export function EventScreen() {
-  var Jl
   const { id = '' } = useParams()
   const raw = byId(id)
   const nav = useNavigate()
@@ -53,11 +52,14 @@ export function EventScreen() {
     () =>
       e
         ? [
-            ...e.comments.map((J) => ({
-              ...J,
-              replies: [...(J.replies ?? []), ...myComments.filter((m) => m.replyTo === J.id)],
+            ...e.comments.map((comment) => ({
+              ...comment,
+              replies: [
+                ...(comment.replies ?? []),
+                ...myComments.filter((myComment) => myComment.replyTo === comment.id),
+              ],
             })),
-            ...myComments.filter((J) => !J.replyTo),
+            ...myComments.filter((myComment) => !myComment.replyTo),
           ]
         : [],
     [e, myComments],
@@ -80,7 +82,7 @@ export function EventScreen() {
     )
   const isMine =
     app.user.role === 'host' &&
-    !!((Jl = organisations.find((T) => T.name === app.user.org)) != null && Jl.events.includes(e.id))
+    !!organisations.find((organisation) => organisation.name === app.user.org)?.events.includes(e.id)
   const joined = app.joined.includes(e.id)
   const saved = app.saved.includes(e.id)
   const going = app.goingCount(e.id)
@@ -90,9 +92,11 @@ export function EventScreen() {
   const totalComments = allComments.reduce((T, J) => {
     return T + 1 + (J.replies?.length ?? 0)
   }, 0)
-  const flatComments = allComments.flatMap((T) => [T, ...(T.replies ?? [])])
+  const flatComments = allComments.flatMap((allComment) => [allComment, ...(allComment.replies ?? [])])
   const translatableCount = flatComments.filter(canTranslate).length
-  const foreignLangs = [...new Set(flatComments.filter(canTranslate).map((T) => T.lang))].map(langName).join(', ')
+  const foreignLangs = [...new Set(flatComments.filter(canTranslate).map((flatComment) => flatComment.lang))]
+    .map(langName)
+    .join(', ')
   const myLangName = langName(lang)
   const visibleComments = showAll ? allComments : allComments.slice(0, 2)
   const translate = () => {
@@ -103,7 +107,7 @@ export function EventScreen() {
   const send = () => {
     const T = draft.trim()
     T &&
-      (app.addComment(e.id, replyTo ? `@${replyTo.name} ${T}` : T, replyTo == null ? undefined : replyTo.id),
+      (app.addComment(e.id, replyTo ? `@${replyTo.name} ${T}` : T, replyTo?.id),
       setDraft(''),
       setReplyTo(null),
       setShowAll(true),
@@ -397,7 +401,7 @@ export function EventScreen() {
             }}
           >
             <AvatarStack
-              ids={people.slice(0, 4).map((T) => T.avatar ?? T.id)}
+              ids={people.slice(0, 4).map((person) => person.avatar ?? person.id)}
               label={t('nGoing', {
                 n: going,
               })}
@@ -418,7 +422,7 @@ export function EventScreen() {
               marginTop: 12,
             }}
           >
-            {e.tags.map((T) => `#${T}`).join(' · ')}
+            {e.tags.map((tag) => `#${tag}`).join(' · ')}
           </p>
           <h2
             className="h2"
@@ -445,21 +449,21 @@ export function EventScreen() {
                 borderLeft: '2px dotted #CFCDC7',
               }}
             />
-            {e.steps.map((T) => (
+            {e.steps.map((step) => (
               <div
-                key={T.title}
+                key={step.title}
                 className="row"
                 style={{
                   position: 'relative',
                 }}
               >
-                <Flower accent={T.accent} size={52}>
-                  <Icon name={T.icon} size={20} />
+                <Flower accent={step.accent} size={52}>
+                  <Icon name={step.icon} size={20} />
                 </Flower>
                 <div
                   style={{
                     flex: 1,
-                    background: `var(--${T.accent})`,
+                    background: `var(--${step.accent})`,
                     borderRadius: 18,
                     padding: '10px 14px',
                   }}
@@ -470,7 +474,7 @@ export function EventScreen() {
                       fontSize: 16,
                     }}
                   >
-                    {T.title}
+                    {step.title}
                   </strong>
                   <span
                     style={{
@@ -478,7 +482,7 @@ export function EventScreen() {
                       color: 'var(--muted-2)',
                     }}
                   >
-                    {T.sub}
+                    {step.sub}
                   </span>
                 </div>
               </div>
@@ -518,9 +522,9 @@ export function EventScreen() {
                         gap: 4,
                       }}
                     >
-                      {T.lines.map((J) => (
+                      {T.lines.map((line) => (
                         <span
-                          key={J}
+                          key={line}
                           style={{
                             minWidth: 26,
                             height: 26,
@@ -534,7 +538,7 @@ export function EventScreen() {
                             background: T.mode === 'TRAM' ? '#4B4FC4' : 'var(--orange)',
                           }}
                         >
-                          {J}
+                          {line}
                         </span>
                       ))}
                     </div>
@@ -638,9 +642,9 @@ export function EventScreen() {
                   gap: 4,
                 }}
               >
-                {photos.slice(0, 3).map((T, J) => (
+                {photos.slice(0, 3).map((photo, J) => (
                   <button
-                    key={T.id}
+                    key={photo.id}
                     onClick={() => setLightboxIndex(J)}
                     style={{
                       aspectRatio: '1',
@@ -653,7 +657,7 @@ export function EventScreen() {
                     })}
                   >
                     <img
-                      src={T.src}
+                      src={photo.src}
                       alt=""
                       loading="lazy"
                       style={{
@@ -899,7 +903,7 @@ export function EventScreen() {
               })}
             </p>
           )}
-          {visibleComments.map((T) => renderComment(T))}
+          {visibleComments.map((visibleComment) => renderComment(visibleComment))}
           {allComments.length > 2 && (
             <button
               className="tiny"
@@ -1164,9 +1168,9 @@ export function EventScreen() {
             gap: 0,
           }}
         >
-          {people.map((T) => (
+          {people.map((person) => (
             <div
-              key={T.id}
+              key={person.id}
               className="row"
               style={{
                 padding: '8px 0',
@@ -1180,24 +1184,24 @@ export function EventScreen() {
                   gap: 10,
                   textAlign: 'start',
                 }}
-                onClick={() => nav(`/person/${T.id}`)}
+                onClick={() => nav(`/person/${person.id}`)}
                 aria-label={t('viewProfile', {
-                  name: T.name,
+                  name: person.name,
                 })}
               >
-                <Avatar name={T.name} img={T.avatar} size={40} />
+                <Avatar name={person.name} img={person.avatar} size={40} />
                 <span>
                   <strong
                     style={{
                       display: 'block',
                     }}
                   >
-                    {T.name}
+                    {person.name}
                   </strong>
-                  <span className="tiny">{T.area}</span>
+                  <span className="tiny">{person.area}</span>
                 </span>
               </button>
-              <FriendButton compact p={T} />
+              <FriendButton compact p={person} />
             </div>
           ))}
         </div>

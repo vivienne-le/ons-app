@@ -43,63 +43,43 @@ export function MonthCalendar() {
   const [selected, setSelected] = useState(`2026-11-${TODAY}`)
   const [year, month] = calMonths[monthIndex]
   const locale = lang === 'ar' ? 'ar' : lang
+  // Everything that happens on a day, keyed "year-month-day" (month is 0-based like Date)
   const byDay = useMemo(() => {
-    const p = {}
-    const B = (H, G, q, Ne) => {
-      var D
-      ;(p[(D = `${H}-${G}-${q}`)] ?? (p[D] = [])).push(Ne)
-    }
-    const F = user.role === 'host' ? (organisations.find((H) => H.name === user.org)?.events ?? []) : []
-    for (const H of F) {
-      const G = byId(H)
-      G &&
-        B(2026, 11, G.date, {
-          kind: 'hosting',
-          title: ev(G).title,
-          time: G.start,
-          to: `/event/${H}`,
+    const map = {}
+    const add = (y, m, d, item) => (map[`${y}-${m}-${d}`] ??= []).push(item)
+    const hosting =
+      user.role === 'host' ? (organisations.find((organisation) => organisation.name === user.org)?.events ?? []) : []
+    const eventItem = (kind, id) => {
+      const event = byId(id)
+      if (event)
+        add(2026, 11, event.date, {
+          kind,
+          title: ev(event).title,
+          time: event.start,
+          to: `/event/${id}`,
         })
     }
-    for (const H of posts)
-      B(2026, 11, H.date, {
+    hosting.forEach((id) => eventItem('hosting', id))
+    posts.forEach((post) =>
+      add(2026, 11, post.date, {
         kind: 'hosting',
-        title: H.title,
-        time: H.start,
-        to: `/post/mine/${H.id}`,
-      })
-    for (const H of joined) {
-      const G = byId(H)
-      G &&
-        !F.includes(H) &&
-        B(2026, 11, G.date, {
-          kind: 'going',
-          title: ev(G).title,
-          time: G.start,
-          to: `/event/${H}`,
-        })
-    }
-    for (const H of saved) {
-      const G = byId(H)
-      G &&
-        !joined.includes(H) &&
-        !F.includes(H) &&
-        B(2026, 11, G.date, {
-          kind: 'saved',
-          title: ev(G).title,
-          time: G.start,
-          to: `/event/${H}`,
-        })
-    }
-    for (const H of beenTo) {
-      const [G, q] = H.last.split(' ')
-      const Ne = byId(H.eventId)
-      B(2026, monthIdx[q], +G, {
+        title: post.title,
+        time: post.start,
+        to: `/post/mine/${post.id}`,
+      }),
+    )
+    joined.filter((id) => !hosting.includes(id)).forEach((id) => eventItem('going', id))
+    saved.filter((id) => !joined.includes(id) && !hosting.includes(id)).forEach((id) => eventItem('saved', id))
+    for (const visit of beenTo) {
+      const [day, monthName] = visit.last.split(' ')
+      const event = byId(visit.eventId)
+      add(2026, monthIdx[monthName], +day, {
         kind: 'been',
-        title: Ne ? ev(Ne).title : H.title,
-        to: `/event/${H.eventId}`,
+        title: event ? ev(event).title : visit.title,
+        to: `/event/${visit.eventId}`,
       })
     }
-    return p
+    return map
   }, [joined, saved, posts, user, ev])
   const firstDay = new Date(year, month, 1)
   const leadingBlanks = (firstDay.getDay() + 6) % 7
@@ -183,7 +163,7 @@ export function MonthCalendar() {
           textAlign: 'center',
         }}
       >
-        {weekdayNames.map((n, B) => (
+        {weekdayNames.map((weekdayName, B) => (
           <span
             key={B}
             aria-hidden
@@ -194,7 +174,7 @@ export function MonthCalendar() {
               paddingBottom: 4,
             }}
           >
-            {n}
+            {weekdayName}
           </span>
         ))}
         {Array.from(
@@ -337,11 +317,11 @@ export function MonthCalendar() {
             })}
           </p>
         ) : (
-          selectedItems.map((n, B) => (
+          selectedItems.map((selectedItem, B) => (
             <button
               key={B}
               className="row"
-              onClick={() => nav(n.to)}
+              onClick={() => nav(selectedItem.to)}
               style={{
                 width: '100%',
                 padding: '8px 0',
@@ -355,7 +335,7 @@ export function MonthCalendar() {
                   width: 10,
                   height: 10,
                   borderRadius: '50%',
-                  background: kindStyle[n.kind].bg,
+                  background: kindStyle[selectedItem.kind].bg,
                   flex: 'none',
                 }}
               />
@@ -369,7 +349,7 @@ export function MonthCalendar() {
                     fontSize: 15,
                   }}
                 >
-                  {n.title}
+                  {selectedItem.title}
                 </strong>
                 <span
                   className="tiny"
@@ -377,8 +357,8 @@ export function MonthCalendar() {
                     display: 'block',
                   }}
                 >
-                  {t(kindStyle[n.kind].key)}
-                  {n.time ? ` · ${n.time}` : ''}
+                  {t(kindStyle[selectedItem.kind].key)}
+                  {selectedItem.time ? ` · ${selectedItem.time}` : ''}
                 </span>
               </span>
               <ChevronRight size={16} className="flip-rtl" aria-hidden />

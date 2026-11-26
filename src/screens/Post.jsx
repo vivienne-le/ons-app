@@ -143,20 +143,20 @@ export function PostWhat() {
           role="radiogroup"
           aria-label={t('type')}
         >
-          {postCategories.map((c) => (
+          {postCategories.map((postCategory) => (
             <button
-              key={c}
+              key={postCategory}
               type="button"
               role="radio"
-              aria-checked={draft.category === c}
-              className={`chip ${draft.category === c ? 'on' : ''}`}
+              aria-checked={draft.category === postCategory}
+              className={`chip ${draft.category === postCategory ? 'on' : ''}`}
               onClick={() =>
                 setDraft({
-                  category: c,
+                  category: postCategory,
                 })
               }
             >
-              {t(catKey[c])}
+              {t(catKey[postCategory])}
             </button>
           ))}
         </div>
@@ -439,8 +439,8 @@ export function PostWhen() {
               })
             }}
           >
-            {times.map((e) => (
-              <option key={e}>{e}</option>
+            {times.map((time) => (
+              <option key={time}>{time}</option>
             ))}
           </select>
           {!draft.noEnd && (
@@ -458,9 +458,9 @@ export function PostWhen() {
                 aria-invalid={!endOk}
               >
                 {times
-                  .filter((e) => e > draft.start)
-                  .map((e) => (
-                    <option key={e}>{e}</option>
+                  .filter((time) => time > draft.start)
+                  .map((time) => (
+                    <option key={time}>{time}</option>
                   ))}
               </select>
             </>
@@ -503,20 +503,20 @@ export function PostWhen() {
           role="radiogroup"
           aria-label={t('repeat')}
         >
-          {repeats.map((e) => (
+          {repeats.map((repeat) => (
             <button
-              key={e.id}
+              key={repeat.id}
               type="button"
               role="radio"
-              aria-checked={draft.repeat === e.id}
-              className={`chip ${draft.repeat === e.id ? 'on' : ''}`}
+              aria-checked={draft.repeat === repeat.id}
+              className={`chip ${draft.repeat === repeat.id ? 'on' : ''}`}
               onClick={() =>
                 setDraft({
-                  repeat: e.id,
+                  repeat: repeat.id,
                 })
               }
             >
-              {t(e.k)}
+              {t(repeat.k)}
             </button>
           ))}
         </div>
@@ -641,9 +641,9 @@ export function PostWhere() {
   const { t } = useI18n()
   const [query, setQuery] = useState('')
   const results = places.filter(
-    (d) =>
-      d.name.toLowerCase().includes(query.trim().toLowerCase()) ||
-      t(d.kind).toLowerCase().includes(query.trim().toLowerCase()),
+    (place) =>
+      place.name.toLowerCase().includes(query.trim().toLowerCase()) ||
+      t(place.kind).toLowerCase().includes(query.trim().toLowerCase()),
   )
   return (
     <StepLayout
@@ -711,17 +711,17 @@ export function PostWhere() {
           </p>
         )}
         <div role="radiogroup" aria-label={t('suggestedNear')}>
-          {results.map((d) => {
-            const e = draft.place === d.name
+          {results.map((result) => {
+            const e = draft.place === result.name
             return (
               <button
-                key={d.name}
+                key={result.name}
                 type="button"
                 role="radio"
                 aria-checked={e}
                 onClick={() =>
                   setDraft({
-                    place: d.name,
+                    place: result.name,
                   })
                 }
                 className="row"
@@ -743,7 +743,7 @@ export function PostWhere() {
                     background: e ? 'var(--white)' : undefined,
                   }}
                 >
-                  <Icon name={d.icon} size={18} />
+                  <Icon name={result.icon} size={18} />
                 </span>
                 <span
                   style={{
@@ -756,7 +756,7 @@ export function PostWhere() {
                       fontSize: 16,
                     }}
                   >
-                    {d.name}
+                    {result.name}
                   </strong>
                   <span
                     className="tiny"
@@ -764,9 +764,9 @@ export function PostWhere() {
                       color: 'var(--muted-2)',
                     }}
                   >
-                    {t(d.kind)}
+                    {t(result.kind)}
                     {' · '}
-                    {d.m}
+                    {result.m}
                     {' m'}
                   </span>
                 </span>
@@ -808,13 +808,13 @@ export function PostDetails() {
   const steps = draft.steps
   const updateStep = (k, l) =>
     setDraft({
-      steps: steps.map((m, n) =>
+      steps: steps.map((step, n) =>
         n === k
           ? {
-              ...m,
+              ...step,
               ...l,
             }
-          : m,
+          : step,
       ),
     })
   const toggleGood = (k) =>
@@ -837,7 +837,7 @@ export function PostDetails() {
     setWritingOwn(false)
   }
   const customGood = draft.good.filter((k) => !goodOpts.includes(k))
-  const canContinue = steps.some((k) => k.text.trim()) && (draft.cost === 'free' || !!draft.amount.trim())
+  const canContinue = steps.some((step) => step.text.trim()) && (draft.cost === 'free' || !!draft.amount.trim())
   return (
     <StepLayout
       step={4}
@@ -854,7 +854,7 @@ export function PostDetails() {
             gap: 8,
           }}
         >
-          {steps.map((k, l) => (
+          {steps.map((step, l) => (
             <div
               key={l}
               style={{
@@ -889,7 +889,7 @@ export function PostDetails() {
                 <input
                   aria-label={`${t('stepPh')} ${l + 1}`}
                   placeholder={t('stepPh')}
-                  value={k.text}
+                  value={step.text}
                   onChange={(m) =>
                     updateStep(l, {
                       text: m.target.value,
@@ -939,7 +939,7 @@ export function PostDetails() {
                 >
                   <input
                     type="checkbox"
-                    checked={k.optional}
+                    checked={step.optional}
                     onChange={(m) =>
                       updateStep(l, {
                         optional: m.target.checked,
@@ -1274,7 +1274,7 @@ export function PostCard({ d: draft }) {
         >
           {draft.repeat !== 'once' && (
             <>
-              {t(repeats.find((c) => c.id === draft.repeat).k)}
+              {t(repeats.find((repeat) => repeat.id === draft.repeat).k)}
               {' · '}
             </>
           )}
@@ -1299,8 +1299,8 @@ export function PostCard({ d: draft }) {
           }}
         >
           {draft.steps
-            .filter((c) => c.text.trim())
-            .map((c, e) => (
+            .filter((step) => step.text.trim())
+            .map((step, e) => (
               <div
                 key={e}
                 className="row"
@@ -1333,9 +1333,9 @@ export function PostCard({ d: draft }) {
                     fontSize: 16,
                   }}
                 >
-                  {c.text}
+                  {step.text}
                 </strong>
-                {c.optional && (
+                {step.optional && (
                   <span
                     className="tiny"
                     style={{
@@ -1538,9 +1538,9 @@ export function PostSent() {
             gap: 10,
           }}
         >
-          {nextSteps.map((c, d) => (
+          {nextSteps.map((nextStep, d) => (
             <li
-              key={c}
+              key={nextStep}
               className="row"
               style={{
                 gap: 10,
@@ -1567,7 +1567,7 @@ export function PostSent() {
                   fontSize: 16,
                 }}
               >
-                {t(c)}
+                {t(nextStep)}
               </span>
             </li>
           ))}
