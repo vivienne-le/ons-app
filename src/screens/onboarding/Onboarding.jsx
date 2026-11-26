@@ -80,17 +80,21 @@ export function Welcome() {
             height: 'clamp(380px, 56vh, 470px)',
           }}
         >
-          <Flower
-            color="#352E29"
-            size={190}
+          {/* Logo stays centred; the clover sits 4px higher so the logo looks centred in it */}
+          <div
             style={{
               position: 'absolute',
               left: 'calc(50% - 95px)',
               top: '37%',
+              width: 190,
+              height: 190,
             }}
           >
-            <OnsLogo width={118} />
-          </Flower>
+            <Flower color="#352E29" size={190} style={{ position: 'absolute', left: 0, top: -4 }} />
+            <span style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
+              <OnsLogo width={118} />
+            </span>
+          </div>
           <button
             onClick={() => setLangOpen(true)}
             className="row"
