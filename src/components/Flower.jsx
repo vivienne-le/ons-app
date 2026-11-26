@@ -27,9 +27,10 @@ export function Flower({ accent = 'lime', size = 40, color, gradient, children, 
         }}
         aria-hidden
       >
+        {/* one gradient across the whole clover (userSpaceOnUse), so the petals read as one shape */}
         {gradient && (
           <defs>
-            <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id={gradientId} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="55">
               <stop offset="0" stopColor={gradient[0]} />
               <stop offset="1" stopColor={gradient[1]} />
             </linearGradient>
