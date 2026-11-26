@@ -75,6 +75,8 @@ export const uk = {
     firstName: 'Ім’я',
     lastName: 'Прізвище',
     onlyFirstName: 'Інші бачитимуть лише твоє ім’я.',
+    interestsHint: "За ними ми добираємо події «Для вас».",
+    aboutMe: "Про мене",
     bioLabel: "Про себе",
     bioPh: "Кілька слів про вас, напр. що ви любите робити",
     addBio: "Додати опис",

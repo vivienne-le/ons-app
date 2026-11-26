@@ -75,6 +75,8 @@ export const nl = {
     firstName: 'Voornaam',
     lastName: 'Achternaam',
     onlyFirstName: 'Anderen zien alleen je voornaam.',
+    interestsHint: "Hiermee kiezen we activiteiten “Voor jou”.",
+    aboutMe: "Over mij",
     bioLabel: "Bio",
     bioPh: "Een paar woorden over jou, bijv. wat je graag doet",
     addBio: "Bio toevoegen",

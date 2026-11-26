@@ -75,6 +75,8 @@ export const pl = {
     firstName: 'Imię',
     lastName: 'Nazwisko',
     onlyFirstName: 'Inni zobaczą tylko twoje imię.',
+    interestsHint: "Na tej podstawie wybieramy wydarzenia „Dla ciebie”.",
+    aboutMe: "O mnie",
     bioLabel: "O mnie",
     bioPh: "Kilka słów o tobie, np. co lubisz robić",
     addBio: "Dodaj opis",

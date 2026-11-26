@@ -75,6 +75,8 @@ export const tr = {
     firstName: 'Ad',
     lastName: 'Soyad',
     onlyFirstName: 'Diğerleri sadece adını görür.',
+    interestsHint: "Bunları “Senin için” etkinlikleri seçmek için kullanırız.",
+    aboutMe: "Hakkımda",
     bioLabel: "Hakkında",
     bioPh: "Kendin hakkında birkaç kelime, örn. neler yapmayı seversin",
     addBio: "Hakkında ekle",

@@ -10,6 +10,7 @@ import { interestOptions, languages } from '../data/events'
 import { profiles } from '../data/people'
 import { useI18n } from '../i18n/index'
 import { BecomeHostCard } from './BecomeHost'
+import { InterestChip } from '../components/InterestChip'
 import { useApp } from '../state/AppState'
 export function Switch({ on, onChange, label }) {
   return (
@@ -207,23 +208,6 @@ export function Profile() {
               )}
             </div>
           </div>
-          {user.bio ? (
-            <p style={{ fontSize: 15, margin: '14px 0 0', position: 'relative' }}>{user.bio}</p>
-          ) : (
-            <button
-              onClick={() => setEditing(true)}
-              style={{
-                marginTop: 12,
-                fontSize: 14,
-                fontWeight: 600,
-                textDecoration: 'underline',
-                textUnderlineOffset: 3,
-                position: 'relative',
-              }}
-            >
-              + {t('addBio')}
-            </button>
-          )}
           <div
             style={{
               display: 'grid',
@@ -394,34 +378,36 @@ export function Profile() {
             <ChevronRight size={18} className="flip-rtl" />
           </button>
           <div className="section-head">
+            <h2 className="h2">{t('aboutMe')}</h2>
+            <button className="link" onClick={() => setEditing(true)}>
+              {t('edit')}
+            </button>
+          </div>
+          {user.bio ? (
+            <p className="card" style={{ padding: '12px 14px', fontSize: 15, margin: 0 }}>
+              {user.bio}
+            </p>
+          ) : (
+            <button
+              className="card"
+              onClick={() => setEditing(true)}
+              style={{ width: '100%', padding: '12px 14px', textAlign: 'start', fontSize: 15, color: 'var(--muted)' }}
+            >
+              + {t('addBio')}
+            </button>
+          )}
+          <div className="section-head">
             <h2 className="h2">{t('interests')}</h2>
             <button className="link" onClick={() => nav('/signup/interests?edit=1')}>
               {t('edit')}
             </button>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 8,
-            }}
-          >
-            {interests.map((f) => {
-              const S = interestOptions.find((N) => N.id === f)
-              return (
-                <span
-                  key={f}
-                  className="chip"
-                  style={{
-                    background: S ? `var(--${S.accent})` : 'var(--grey)',
-                    boxShadow: S ? 'none' : 'inset 0 0 0 1.5px var(--ink)',
-                  }}
-                >
-                  {interest(f)}
-                </span>
-              )
-            })}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {interests.map((id, i) => (
+              <InterestChip key={id} id={id} index={i} />
+            ))}
           </div>
+          <p style={{ fontSize: 15, color: 'var(--muted)', margin: '12px 0 0' }}>{t('interestsHint')}</p>
           <BadgeSection />
           <section ref={settingsRef}>
             <div className="section-head">

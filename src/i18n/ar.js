@@ -75,6 +75,8 @@ export const ar = {
     firstName: 'الاسم الأول',
     lastName: 'اسم العائلة',
     onlyFirstName: 'لن يرى الآخرون إلا اسمك الأول.',
+    interestsHint: "نستخدمها لاختيار أنشطة «لك».",
+    aboutMe: "عنّي",
     bioLabel: "نبذة",
     bioPh: "بضع كلمات عنك، مثلًا ما تحب أن تفعله",
     addBio: "أضف نبذة",

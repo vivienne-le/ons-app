@@ -74,6 +74,8 @@ export const en = {
   firstName: 'First name',
   lastName: 'Last name',
   onlyFirstName: 'Others will only see your first name.',
+  interestsHint: "We use these to pick events “For you”.",
+  aboutMe: "About me",
   bioLabel: "Bio",
   bioPh: "A few words about you, e.g. what you like to do",
   addBio: "Add a bio",

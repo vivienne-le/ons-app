@@ -1,50 +1,14 @@
 // "How others see you": a preview of your profile as neighbours in your groups see it (Figma: New ver › How others see you).
-import {
-  Bike,
-  Car,
-  CircleDot,
-  Coffee,
-  CookingPot,
-  Crown,
-  Dumbbell,
-  Eye,
-  Fish,
-  Footprints,
-  Music,
-  Spade,
-  Sprout,
-  Star,
-  Target,
-  Volleyball,
-  Wrench,
-} from 'lucide-react'
+import { Eye, Footprints } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { BadgeRow, useStats, badges } from '../components/Badges'
 import { Flower } from '../components/Flower'
+import { InterestChip } from '../components/InterestChip'
 import { Avatar } from '../components/Img'
 import { BackButton, NavBar, Screen } from '../components/UI'
-import { beenTo, byId, interestOptions } from '../data/events'
+import { beenTo, byId } from '../data/events'
 import { useI18n } from '../i18n/index'
 import { useApp } from '../state/AppState'
-
-const interestIcons = {
-  Football: Volleyball,
-  Cycling: Bike,
-  Fishing: Fish,
-  Cooking: CookingPot,
-  Darts: Target,
-  Pool: CircleDot,
-  Walking: Footprints,
-  Gardening: Sprout,
-  'DIY & repairs': Wrench,
-  'Card games': Spade,
-  Chess: Crown,
-  Fitness: Dumbbell,
-  Music: Music,
-  'Cars & motors': Car,
-  'Coffee & a chat': Coffee,
-}
-const fallbackAccents = ['lime', 'pink', 'turq', 'lav']
 
 export function HowOthersSee() {
   const nav = useNavigate()
@@ -124,28 +88,9 @@ export function HowOthersSee() {
           <div style={{ padding: '14px 12px 16px' }}>
             {user.bio && <p style={{ fontSize: 14, margin: '0 0 12px' }}>{user.bio}</p>}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-              {interests.map((id, i) => {
-                const opt = interestOptions.find((o) => o.id === id)
-                const Icon = interestIcons[id] ?? Star
-                return (
-                  <span
-                    key={id}
-                    className="row"
-                    style={{
-                      gap: 8,
-                      background: 'var(--white)',
-                      borderRadius: 30,
-                      padding: '4px 14px 4px 6px',
-                      fontSize: 14,
-                    }}
-                  >
-                    <Flower accent={opt?.accent ?? fallbackAccents[i % fallbackAccents.length]} size={34}>
-                      <Icon size={15} aria-hidden />
-                    </Flower>
-                    {interest(id)}
-                  </span>
-                )
-              })}
+              {interests.map((id, i) => (
+                <InterestChip key={id} id={id} index={i} background="var(--white)" />
+              ))}
             </div>
             {user.showBadges && earned.length > 0 && (
               <div style={{ marginTop: 14 }}>
