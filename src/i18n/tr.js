@@ -844,7 +844,7 @@ export const tr = {
       'retro-games': {
         title: 'Retro Oyun Gecesi',
         short: 'Eski oyun konsolları, büyük ekran, bol kahkaha.',
-        desc: 'Büyük ekranda eski oyun konsolları. Saat 21:00’de Mario Kart turnuvası.',
+        desc: 'Büyük ekranda eski oyun konsolları. Saat 18:00’de Mario Kart turnuvası.',
         steps: [['Birlikte oyna', 'Her turda takımlar değişir']],
         good: [['Deneyim gerekmez', 'Tuşlara rastgele basmak serbest']],
       },

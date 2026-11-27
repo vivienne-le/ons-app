@@ -845,7 +845,7 @@ export const nl = {
       'retro-games': {
         title: 'Retro Game Avond',
         short: 'Oude spelcomputers, groot scherm, veel lol.',
-        desc: 'Oude spelcomputers op een groot scherm. Mario Kart-toernooi om 21:00.',
+        desc: 'Oude spelcomputers op een groot scherm. Mario Kart-toernooi om 18:00.',
         steps: [['Samen spelen', 'Elke ronde nieuwe teams']],
         good: [['Geen ervaring nodig', 'Wild op knoppen drukken mag']],
       },

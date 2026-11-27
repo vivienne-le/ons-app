@@ -844,7 +844,7 @@ export const pl = {
       'retro-games': {
         title: 'Wieczór gier retro',
         short: 'Stare konsole, duży ekran, dużo śmiechu.',
-        desc: 'Stare konsole na dużym ekranie. Turniej Mario Kart o 21:00.',
+        desc: 'Stare konsole na dużym ekranie. Turniej Mario Kart o 18:00.',
         steps: [['Grajcie razem', 'Drużyny zmieniają się co rundę']],
         good: [['Doświadczenie niepotrzebne', 'Wolno klikać na oślep']],
       },

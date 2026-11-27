@@ -104,10 +104,10 @@ export const hostInfo = {
     hostingSince: 2023,
     timesHosted: 52,
     stickers: [
-      ['firstHost', 1],
-      ['hostFive', 5],
-      ['welcomer', 5],
-      ['verifiedHost', 1],
+      ['firstHost', 1, 'lime'],
+      ['hostFive', 5, 'turq'],
+      ['welcomer', 5, 'pink'],
+      ['verifiedHost', 1, 'lav'],
     ],
   },
 }
@@ -136,138 +136,109 @@ export function PersonScreen() {
   const info = { ...hostDefaults(person, hosts.length), ...hostInfo[person.id] }
   const key = `person:${person.id}`
   const isFollowing = following.includes(key)
+  const h2 = { flex: 1, margin: 0, font: '600 24px/30px Inter, sans-serif', letterSpacing: '-0.02em', color: 'var(--ink)' }
+  const mono = { font: "500 12px/16px 'Roboto Mono', monospace", letterSpacing: '0.05em', textTransform: 'uppercase' }
+  const chevron = <ChevronRight size={18} className="flip-rtl" color="var(--ink)" style={{ flex: 'none' }} />
   return (
     <Screen>
-      <div className="scroll" style={{ paddingBottom: 40 }}>
-        <div
-          style={{
-            background: 'var(--pink)',
-            padding: 'max(48px, env(safe-area-inset-top)) var(--pad) 20px',
-            borderRadius: '0 0 32px 32px',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <Flower color="#D98BDF" size={170} style={{ position: 'absolute', right: -40, top: 10 }} />
-          <div className="row" style={{ gap: 12, position: 'relative' }}>
+      <div className="scroll" style={{ background: 'var(--white)' }}>
+        <div style={{ background: 'var(--pink)', borderRadius: '0 0 40px 40px', height: 333, position: 'relative', overflow: 'hidden' }}>
+          <Flower color="#D98BDF" size={182} style={{ position: 'absolute', left: 254, top: 38, transform: 'rotate(14deg)' }} />
+          <span style={{ position: 'absolute', left: 20, top: 62 }}>
             <BackButton variant="white" />
-            <span className="eyebrow" style={{ color: 'var(--ink)' }}>
-              {t('host')}
-            </span>
+          </span>
+          <div style={{ ...mono, position: 'absolute', left: 76, top: 76, color: 'var(--ink)' }}>{t('host')}</div>
+          <span style={{ position: 'absolute', left: 20, top: 117 }}>
+            <Avatar name={person.name} img={person.avatar} size={90} />
+          </span>
+          <div style={{ position: 'absolute', left: 122, top: 126, right: 16, display: 'flex', flexDirection: 'column', gap: 4, color: 'var(--ink)' }}>
+            <p style={{ margin: 0, font: '500 44px/48px Inter, sans-serif', letterSpacing: '-0.03em' }}>{person.name}</p>
+            <p style={{ margin: 0, fontSize: 14, lineHeight: '21px' }}>
+              {person.area} · {t('neighbourSince', { year: person.since })}
+            </p>
           </div>
-          <div className="row" style={{ gap: 14, marginTop: 14, position: 'relative' }}>
-            <span style={{ borderRadius: '50%', boxShadow: '0 0 0 3px var(--white)', display: 'flex' }}>
-              <Avatar name={person.name} img={person.avatar} size={80} />
-            </span>
-            <span>
-              <h1 className="h-display" style={{ fontSize: 40, lineHeight: 1 }}>
-                {person.name}
-              </h1>
-              <span style={{ fontSize: 13 }}>
-                {person.area} · {t('neighbourSince', { year: person.since })}
-              </span>
-            </span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 18, position: 'relative' }}>
-            <div className="card" style={{ background: 'var(--ink)', color: 'var(--white)', padding: 14 }}>
-              <strong style={{ display: 'block', fontSize: 22, color: 'var(--lime)' }}>{hosts.length}</strong>
-              <span style={{ fontSize: 13 }}>{t('activitiesArrow')}</span>
+          <div style={{ position: 'absolute', left: 20, right: 20, top: 228, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+            <div style={{ height: 78, borderRadius: 20, background: 'var(--ink)', color: 'var(--white)', padding: '13px 16px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <strong style={{ font: '600 24px/28px Inter, sans-serif', letterSpacing: '-0.02em', color: 'var(--lime)' }}>{hosts.length}</strong>
+              <span style={{ fontSize: 14, lineHeight: '21px' }}>{t('activitiesArrow')}</span>
             </div>
             <button
-              className="card"
               aria-pressed={isFollowing}
               onClick={() => {
                 const on = toggleFollow(key)
                 showToast(t(on ? 'nowFollowing' : 'unfollowed', { name: person.name }))
               }}
-              style={{ background: isFollowing ? 'var(--lime)' : 'var(--white)', padding: 14, textAlign: 'start', display: 'grid', gap: 4 }}
+              style={{ position: 'relative', height: 78, borderRadius: 20, background: isFollowing ? 'var(--lime)' : 'var(--white)', textAlign: 'start', color: 'var(--ink)' }}
             >
-              {isFollowing ? <Check size={18} /> : <Plus size={18} />}
-              <strong style={{ fontSize: 15, fontWeight: 600 }}>{t(isFollowing ? 'followingBtn' : 'follow')}</strong>
+              <span style={{ position: 'absolute', left: 16, top: 14, display: 'flex' }}>{isFollowing ? <Check size={22} /> : <Plus size={22} />}</span>
+              <strong style={{ position: 'absolute', left: 16, top: 42, font: '600 16px/21px Inter, sans-serif' }}>{t(isFollowing ? 'followingBtn' : 'follow')}</strong>
             </button>
           </div>
         </div>
-        <div className="pad">
+        <div style={{ padding: '8px 20px 40px', display: 'flex', flexDirection: 'column' }}>
           {info.about && (
-            <div className="card" style={{ background: 'var(--lime)', padding: 16, marginTop: 12 }}>
-              <div className="eyebrow" style={{ color: 'var(--ink)' }}>
-                {t('aboutName', { name: person.name })}
-              </div>
-              <p style={{ fontSize: 15, marginTop: 8 }}>{info.about}</p>
+            <div style={{ background: 'var(--lime)', borderRadius: 20, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 10, color: 'var(--ink)' }}>
+              <div style={mono}>{t('aboutName', { name: person.name })}</div>
+              <p style={{ margin: 0, fontSize: 16, lineHeight: '24px' }}>{info.about}</p>
             </div>
           )}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 10 }}>
-            <div className="card" style={{ background: 'var(--turq)', padding: 14 }}>
-              <strong style={{ display: 'block', fontSize: 22 }}>{info.hostingSince}</strong>
-              <span className="tiny" style={{ color: 'var(--ink)' }}>
-                {t('hostingSince')}
-              </span>
-            </div>
-            <div className="card" style={{ background: 'var(--pink)', padding: 14 }}>
-              <strong style={{ display: 'block', fontSize: 22 }}>{info.timesHosted}</strong>
-              <span className="tiny" style={{ color: 'var(--ink)' }}>
-                {t('timesHosted')}
-              </span>
-            </div>
+          <div style={{ display: 'flex', gap: 8, marginTop: 10, color: 'var(--ink)' }}>
+            {[
+              [info.hostingSince, t('hostingSince'), 'var(--turq)'],
+              [info.timesHosted, t('timesHosted'), 'var(--pink)'],
+            ].map(([v, l, bg]) => (
+              <div key={l} style={{ flex: 1, background: bg, borderRadius: 20, padding: '14px 12px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <strong style={{ font: '600 22px/28px Inter, sans-serif', letterSpacing: '-0.02em' }}>{v}</strong>
+                <span style={{ fontSize: 12, lineHeight: '16px' }}>{l}</span>
+              </div>
+            ))}
           </div>
-          <div className="section-head">
-            <h2 className="h2">{t('badgesTitle')}</h2>
+          <div style={{ display: 'flex', alignItems: 'center', padding: '26px 0 12px' }}>
+            <h2 style={h2}>{t('badgesTitle')}</h2>
           </div>
-          <div className="card" style={{ padding: '14px 8px 6px', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', justifyItems: 'center' }}>
-            {info.stickers.map(([bid, n]) => {
-              const b = badges.find((x) => x.id === bid)
+          <div style={{ background: '#F1F0EC', borderRadius: 20, padding: '14px 10px', display: 'flex', justifyContent: 'space-between' }}>
+            {info.stickers.map(([bid, n, accent]) => {
+              const b = { ...badges.find((x) => x.id === bid), ...(accent ? { accent } : null) }
               return (
-                <span key={bid} style={{ position: 'relative', paddingBottom: 14 }} title={t(`badge_${bid}`)}>
-                  <BadgeIcon b={b} earned size={60} />
-                  <StickerTag b={{ ...b, goal: 1, stat: 'n' }} stats={{ n }} size={60} />
+                <span key={bid} style={{ position: 'relative', width: 64, height: 73 }} title={t(`badge_${bid}`)}>
+                  <BadgeIcon b={b} earned size={64} />
+                  <StickerTag b={{ ...b, goal: n, stat: 'n' }} stats={{ n }} size={64} />
                 </span>
               )
             })}
           </div>
-          <div className="section-head">
-            <h2 className="h2">{t('hostsLabel')}</h2>
-            <span className="eyebrow">{t('nActivities', { n: hosts.length })}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '26px 0 12px' }}>
+            <h2 style={h2}>{t('hostsLabel')}</h2>
+            <span style={{ ...mono, color: '#737373' }}>{t('nActivities', { n: hosts.length })}</span>
           </div>
           {orgs.map((org) => (
-            <button
-              key={org.id}
-              className="card row"
-              style={{ width: '100%', padding: '10px 12px', gap: 10, textAlign: 'start', marginBottom: 6 }}
-              onClick={() => {}}
-            >
-              <OrgLogo org={org} size={36} />
-              <span style={{ flex: 1 }}>
-                <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{org.name}</strong>
-                <span className="tiny">{t('verifiedBy', { org: org.name })}</span>
+            <div key={org.id} style={{ display: 'flex', alignItems: 'center', background: '#F1F0EC', borderRadius: 20, padding: '12px 14px', gap: 12 }}>
+              <OrgLogo org={org} size={44} />
+              <span style={{ flex: 1, minWidth: 0 }}>
+                <strong style={{ display: 'block', font: '600 17px/22px Inter, sans-serif', letterSpacing: '-0.01em', color: 'var(--ink)' }}>{org.name}</strong>
+                <span style={{ fontSize: 12, lineHeight: '18px', color: '#737373' }}>{t('verifiedBy', { org: org.name })}</span>
               </span>
-              <ChevronRight size={18} className="flip-rtl" />
-            </button>
+              {chevron}
+            </div>
           ))}
           {hosts.map((e) => (
-            <button
-              key={e.id}
-              className="row"
-              onClick={() => nav(`/event/${e.id}`)}
-              style={{ width: '100%', textAlign: 'start', padding: '8px 0', gap: 12 }}
-            >
-              <Img name={e.card} photo={e.photo} w={200} alt="" accent={e.accent} icon={e.icon} radius={12} style={{ width: 48, height: 48, flex: 'none' }} />
-              <span style={{ flex: 1, minWidth: 0 }}>
-                <span className="eyebrow" style={{ color: 'var(--ink)', fontSize: 10 }}>
+            <button key={e.id} onClick={() => nav(`/event/${e.id}`)} style={{ display: 'flex', alignItems: 'center', width: '100%', textAlign: 'start', padding: '10px 0', gap: 12 }}>
+              <Img name={e.card} photo={e.photo} w={200} alt="" accent={e.accent} icon={e.icon} radius={16} style={{ width: 64, height: 64, flex: 'none' }} />
+              <span style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <span style={{ ...mono, color: 'var(--ink)' }}>
                   {full(e.date)} · {e.start}
                 </span>
-                <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{e.title}</strong>
-                <span className="row" style={{ gap: 3, fontSize: 12, color: 'var(--muted)' }}>
-                  <MapPin size={11} aria-hidden /> {e.place}
+                <strong style={{ font: '600 17px/22px Inter, sans-serif', letterSpacing: '-0.01em', color: 'var(--ink)' }}>{e.title}</strong>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, lineHeight: '18px', color: '#737373' }}>
+                  <MapPin size={14} aria-hidden /> {e.place}
                 </span>
               </span>
-              <ChevronRight size={18} className="flip-rtl" />
+              {chevron}
             </button>
           ))}
-          <div className="row" style={{ background: 'var(--grey)', borderRadius: 16, padding: '12px 14px', gap: 10, marginTop: 16, alignItems: 'flex-start' }}>
-            <MessageCircle size={16} aria-hidden style={{ flex: 'none', marginTop: 2 }} />
-            <span className="small" style={{ fontSize: 13 }}>
-              {t('askHostInComments', { name: person.name })}
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', background: '#F1F0EC', borderRadius: 20, padding: '14px 16px', gap: 12, marginTop: 16 }}>
+            <MessageCircle size={20} aria-hidden style={{ flex: 'none' }} />
+            <span style={{ fontSize: 14, lineHeight: '21px', color: '#5C5C5C' }}>{t('askHostInComments', { name: person.name })}</span>
           </div>
         </div>
       </div>
