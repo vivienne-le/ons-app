@@ -1331,7 +1331,7 @@ export function PreviewStep() {
       </div>
       <div className="bottom-cta">
         <button
-          onClick={() => nav('/signup/photo')}
+          onClick={() => nav('/signup/interests')}
           style={{
             fontSize: 14,
             padding: 6,
@@ -1352,10 +1352,11 @@ export function DoneStep() {
   const { user, finishOnboarding, goingCount } = useApp()
   const { t, ev, wd } = useI18n()
   const suggestedIds = ['bowling-monday', 'pool-tournament', 'football-beer'].map((c) => ev(byId(c)))
-  const finish = (c) => {
+  const finish = (c, state) => {
     finishOnboarding()
     nav(c, {
       replace: true,
+      state,
     })
   }
   return (
@@ -1426,6 +1427,7 @@ export function DoneStep() {
                 style={{
                   background: `var(--${suggestedId.id === 'pool-tournament' ? 'turq' : suggestedId.id === 'football-beer' ? 'lav' : 'lime'})`,
                   padding: '14px 16px',
+                  color: suggestedId.id === 'football-beer' ? 'var(--white)' : 'var(--ink)',
                   textAlign: 'start',
                   display: 'flex',
                   alignItems: 'center',
@@ -1439,7 +1441,7 @@ export function DoneStep() {
                   <span
                     className="eyebrow"
                     style={{
-                      color: 'var(--ink)',
+                      color: 'inherit',
                     }}
                   >
                     {wd(suggestedId.date)}
@@ -1449,13 +1451,14 @@ export function DoneStep() {
                   <strong
                     style={{
                       display: 'block',
-                      fontSize: 22,
+                      fontSize: 18,
                       marginTop: 4,
                     }}
                   >
                     {suggestedId.title}
                   </strong>
                 </span>
+                {suggestedId.id !== 'football-beer' && (
                 <span
                   className="tag"
                   style={{
@@ -1470,15 +1473,16 @@ export function DoneStep() {
                         n: goingCount(suggestedId.id),
                       })}
                 </span>
+                )}
               </button>
             ))}
           </div>
         </div>
         <div className="bottom-cta">
-          <button className="btn btn-primary" onClick={() => finish('/search')}>
+          <button className="btn btn-primary" onClick={() => finish('/home')}>
             {t('exploreEvents')}
           </button>
-          <button className="btn btn-secondary" onClick={() => finish('/home')}>
+          <button className="btn btn-secondary" onClick={() => finish('/home', { invitePing: true })}>
             {t('goHome')}
           </button>
         </div>
