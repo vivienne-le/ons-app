@@ -387,7 +387,7 @@ export function MapTab() {
     <Screen>
       <CityMap you={MAP_YOU} onBackgroundClick={() => mode !== 'card' && setMode('card')}>
         <MapPin at={at(cvdPos)} z={2}>
-          <button className="row" style={{ gap: 6 }} onClick={(b) => (b.stopPropagation(), nav('/org/cvd'))} aria-label={cvd.name}>
+          <button className="row" style={{ gap: 6 }} onClick={(b) => b.stopPropagation()} aria-label={cvd.name}>
             <span style={{ background: 'var(--white)', borderRadius: 10, padding: 3, boxShadow: '0 0 0 2px var(--ink)' }}>
               <OrgLogo org={cvd} size={28} />
             </span>

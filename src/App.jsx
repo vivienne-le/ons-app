@@ -135,30 +135,9 @@ export function AppRoutes() {
               </NeedsAccount>
             }
           />
-          <Route
-            path="/become-host"
-            element={
-              <NeedsAccount>
-                <BecomeHostIntro />
-              </NeedsAccount>
-            }
-          />
-          <Route
-            path="/become-host/org"
-            element={
-              <NeedsAccount>
-                <BecomeHostOrg />
-              </NeedsAccount>
-            }
-          />
-          <Route
-            path="/become-host/sent"
-            element={
-              <NeedsAccount>
-                <BecomeHostSent />
-              </NeedsAccount>
-            }
-          />
+          <Route path="/become-host" element={<Navigate to="/profile" replace />} />
+          <Route path="/become-host/org" element={<Navigate to="/profile" replace />} />
+          <Route path="/become-host/sent" element={<Navigate to="/profile" replace />} />
           <Route
             path="/person/:id"
             element={
@@ -167,14 +146,7 @@ export function AppRoutes() {
               </NeedsAccount>
             }
           />
-          <Route
-            path="/org/:id"
-            element={
-              <NeedsAccount>
-                <OrgScreen />
-              </NeedsAccount>
-            }
-          />
+          <Route path="/org/:id" element={<Navigate to="/connections" replace />} />
           <Route
             path="/connections"
             element={

@@ -233,7 +233,7 @@ export function PersonScreen() {
               key={org.id}
               className="card row"
               style={{ width: '100%', padding: '10px 12px', gap: 10, textAlign: 'start', marginBottom: 6 }}
-              onClick={() => nav(`/org/${org.id}`)}
+              onClick={() => {}}
             >
               <OrgLogo org={org} size={36} />
               <span style={{ flex: 1 }}>
@@ -461,7 +461,7 @@ export function ConnectionsScreen() {
                       gap: 12,
                       textAlign: 'start',
                     }}
-                    onClick={() => nav(`/org/${g.id}`)}
+                    onClick={() => {}}
                   >
                     <OrgLogo org={g} size={44} />
                     <span>

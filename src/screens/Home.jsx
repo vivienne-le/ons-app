@@ -476,7 +476,7 @@ export function Home() {
             })()}
           <div className="section-head">
             <h2 className="h2">{t('forYou')}</h2>
-            <button className="link" onClick={() => nav('/search?list=foryou')}>
+            <button className="link" onClick={() => nav('/search')}>
               {t('seeAll')}
             </button>
           </div>
@@ -499,7 +499,7 @@ export function Home() {
         <div className="pad">
           <div className="section-head">
             <h2 className="h2">{t('popular')}</h2>
-            <button className="link" onClick={() => nav('/search?list=popular')}>
+            <button className="link" onClick={() => nav('/search')}>
               {t('seeAll')}
             </button>
           </div>

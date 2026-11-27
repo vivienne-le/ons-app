@@ -386,7 +386,7 @@ export function StickerSheet({ b, stats, onClose }) {
           style={{ marginTop: 20 }}
           onClick={() => {
             onClose()
-            nav(locked ? '/become-host' : '/home')
+            nav(locked ? '/post/start' : '/home')
           }}
         >
           {t(locked ? 'hostAnActivity' : 'findActivity')}

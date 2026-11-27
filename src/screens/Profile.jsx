@@ -30,7 +30,6 @@ import { BackButton, NavBar, Screen, Sheet, Switch } from '../components/UI'
 import { languages, organisations } from '../data/events'
 import { profiles } from '../data/people'
 import { useI18n } from '../i18n/index'
-import { BecomeHostCard } from './BecomeHost'
 import { InterestChip } from '../components/InterestChip'
 import { useApp } from '../state/AppState'
 function HostPromo() {
@@ -199,7 +198,6 @@ export function Profile() {
           <p style={{ fontSize: 14, color: 'var(--muted)', margin: '12px 0 0' }}>{t('interestsHint')}</p>
           <StickersPreview />
           {user.role !== 'host' && <HostPromo />}
-          {app.hostRequest && <BecomeHostCard placement="bottom" />}
         </div>
       </div>
       <NavBar />
