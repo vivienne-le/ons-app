@@ -119,7 +119,7 @@ export function EventScreen() {
         style={{
           alignItems: 'flex-start',
           gap: 10,
-          marginLeft: J ? 44 : 0,
+          marginLeft: J ? 36 : 0,
           marginTop: J ? 12 : 18,
         }}
       >
@@ -689,89 +689,32 @@ export function EventScreen() {
           )}
           {translatableCount > 0 &&
             (mode === 'original' ? (
-              <button
-                onClick={translate}
-                className="row"
-                style={{
-                  marginTop: 14,
-                  gap: 6,
-                  fontSize: 14,
-                  fontWeight: 600,
-                  textDecoration: 'underline',
-                  textUnderlineOffset: 3,
-                }}
-              >
-                <Globe size={15} />{' '}
-                {t('translateTo', {
-                  lang: myLangName,
-                })}
-              </button>
-            ) : mode === 'translating' ? (
-              <div
-                className="row"
-                role="status"
-                style={{
-                  marginTop: 12,
-                  gap: 8,
-                  background: 'var(--grey)',
-                  borderRadius: 999,
-                  padding: '7px 14px',
-                  width: 'fit-content',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: 'var(--muted-2)',
-                }}
-              >
-                <LoaderCircle size={15} className="spin" />{' '}
-                {t('translating', {
-                  n: translatableCount,
-                  lang: myLangName,
-                })}
-              </div>
-            ) : (
-              <div
-                className="row"
-                role="status"
-                style={{
-                  marginTop: 12,
-                  background: 'var(--turq)',
-                  borderRadius: 16,
-                  padding: '12px 14px',
-                  gap: 10,
-                }}
-              >
-                <Globe size={20} />
-                <span
-                  style={{
-                    flex: 1,
-                  }}
-                >
-                  <strong
-                    style={{
-                      display: 'block',
-                      fontSize: 15,
-                    }}
-                  >
-                    {t('translatedFrom', {
-                      lang: foreignLangs,
-                    })}
-                  </strong>
-                  <span
-                    style={{
-                      fontSize: 13,
-                      color: 'var(--muted-2)',
-                    }}
-                  >
-                    {t('translatedMeta', {
-                      n: translatableCount,
-                      total: totalComments,
-                    })}
-                  </span>
+              <div className="row" style={{ marginTop: 14, gap: 12, background: 'var(--grey)', borderRadius: 16, padding: '12px 14px' }}>
+                <Globe size={20} aria-hidden />
+                <span style={{ flex: 1 }}>
+                  <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{t('someInLang', { lang: foreignLangs })}</strong>
+                  <span style={{ fontSize: 13 }}>{t('nOfTotalComments', { n: translatableCount, total: totalComments })}</span>
                 </span>
-                <button className="link" onClick={() => setMode('original')}>
-                  {t('showOriginal')}
+                <button className="link" onClick={translate}>
+                  {t('translateBtn')}
                 </button>
               </div>
+            ) : mode === 'translating' ? (
+              <div className="row" role="status" style={{ marginTop: 14, gap: 12, background: 'var(--turq)', borderRadius: 16, padding: '12px 14px' }}>
+                <Globe size={20} className="spin" aria-hidden />
+                <span style={{ flex: 1 }}>
+                  <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{t('translatingTo', { lang: myLangName })}</strong>
+                  <span style={{ fontSize: 13 }}>{t('translatingMeta', { n: translatableCount, total: totalComments })}</span>
+                </span>
+              </div>
+            ) : (
+              <p role="status" className="small" style={{ marginTop: 14, fontSize: 14 }}>
+                <Globe size={14} aria-hidden style={{ verticalAlign: -2 }} /> {t('translatedTo', { lang: myLangName })}
+                {'  ·  '}
+                <button className="link" style={{ fontSize: 14 }} onClick={() => setMode('original')}>
+                  {t('showOriginal')}
+                </button>
+              </p>
             ))}
           {totalComments === 0 && (
             <p
