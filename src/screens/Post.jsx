@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Camera, Check, CircleHelp, Clock, Heart, ListChecks, Lock, MapPin as PinIcon, Minus, Pencil, Plus, Search as SearchIcon, Trash2, X } from 'lucide-react'
 import { Flower } from '../components/Flower'
 import { MonthCalendar, dayKey } from '../components/MonthCalendar'
+import { OrgLogo } from '../components/OrgLogo'
+import { organisations } from '../data/events'
 import { Icon } from '../components/Icon'
 import { Avatar } from '../components/Img'
 import { BackButton, Progress, Screen, WhenWhere } from '../components/UI'
@@ -1378,129 +1380,73 @@ export function PostSent() {
   const { posts } = useApp()
   const { t } = useI18n()
   const post = posts[0]
-  const nextSteps = ['sent1', 'sent2', 'sent3']
+  const cvd = organisations.find((o) => o.id === 'cvd')
+  const steps = [
+    { key: 'sentStepSent', sub: post ? `${post.title} · ${t('today')}` : t('today'), state: 'done' },
+    { key: 'sentStepCheck', sub: t('sentStepCheckSub'), state: 'now' },
+    { key: 'sentStepLive', sub: t('sentStepLiveSub'), state: 'later' },
+  ]
   return (
     <Screen lime>
-      <div
-        className="scroll pad safe-top"
-        style={{
-          display: 'grid',
-          alignContent: 'start',
-        }}
-      >
-        <div
-          style={{
-            display: 'grid',
-            placeItems: 'center',
-            marginTop: 30,
-          }}
-          className="pop"
+      <div className="scroll pad safe-top" style={{ display: 'grid', alignContent: 'start', position: 'relative' }}>
+        <button
+          className="icon-btn"
+          style={{ position: 'absolute', top: 'max(48px, env(safe-area-inset-top))', insetInlineEnd: 'var(--pad)', background: 'rgba(255,255,255,.6)' }}
+          aria-label={t('closeLabel')}
+          onClick={() => nav('/home', { replace: true })}
         >
-          <Flower color="var(--white)" size={150}>
-            <Check size={56} />
-          </Flower>
+          <X size={20} />
+        </button>
+        <div style={{ display: 'grid', placeItems: 'center', marginTop: 40 }} className="pop">
+          <OrgLogo org={cvd} size={140} />
         </div>
-        <h1
-          className="h1"
-          style={{
-            textAlign: 'center',
-            marginTop: 24,
-          }}
-        >
+        <h1 className="h-display" style={{ textAlign: 'center', marginTop: 20, fontSize: 36 }}>
           {t('sentTitle')}
         </h1>
-        <p
-          className="body"
-          style={{
-            textAlign: 'center',
-            marginTop: 10,
-          }}
-        >
-          {t('sentSub')}
+        <p className="body" style={{ textAlign: 'center', marginTop: 10 }}>
+          {t('sentSubNew')}
         </p>
-        {post && (
-          <div
-            className="card"
-            style={{
-              background: 'var(--white)',
-              padding: 14,
-              marginTop: 22,
-            }}
-          >
-            <span className="eyebrow">{t('inReview')}</span>
-            <strong
-              style={{
-                display: 'block',
-                fontSize: 18,
-                marginTop: 4,
-              }}
-            >
-              {post.title}
-            </strong>
-          </div>
-        )}
-        <div
-          className="eyebrow"
-          style={{
-            marginTop: 24,
-            color: 'var(--ink)',
-          }}
-        >
-          {t('sentNext')}
-        </div>
-        <ol
-          style={{
-            listStyle: 'none',
-            padding: 0,
-            margin: '10px 0 0',
-            display: 'grid',
-            gap: 10,
-          }}
-        >
-          {nextSteps.map((nextStep, d) => (
-            <li
-              key={nextStep}
-              className="row"
-              style={{
-                gap: 10,
-              }}
-            >
+        <ol style={{ listStyle: 'none', margin: '22px 0 0', padding: 16, background: 'var(--white)', borderRadius: 20, display: 'grid', gap: 0 }}>
+          {steps.map((step, i) => (
+            <li key={step.key} className="row" style={{ gap: 12, alignItems: 'flex-start', position: 'relative', paddingBottom: i < steps.length - 1 ? 14 : 0 }}>
+              {i < steps.length - 1 && (
+                <span
+                  aria-hidden
+                  style={{ position: 'absolute', left: 10, top: 24, bottom: 2, borderLeft: `2px ${step.state === 'done' ? 'solid' : 'dashed'} ${step.state === 'done' ? 'var(--ink)' : '#BDBBB6'}` }}
+                />
+              )}
               <span
                 aria-hidden
                 style={{
-                  width: 28,
-                  height: 28,
+                  width: 22,
+                  height: 22,
                   borderRadius: '50%',
-                  background: d === 0 ? 'var(--ink)' : 'var(--white)',
-                  color: d === 0 ? 'var(--white)' : 'var(--ink)',
+                  flex: 'none',
                   display: 'grid',
                   placeItems: 'center',
-                  fontWeight: 600,
-                  fontSize: 14,
+                  background: step.state === 'done' ? 'var(--ink)' : 'var(--white)',
+                  color: 'var(--white)',
+                  boxShadow: step.state === 'done' ? undefined : `inset 0 0 0 2px ${step.state === 'now' ? 'var(--ink)' : '#BDBBB6'}`,
                 }}
               >
-                {d + 1}
+                {step.state === 'done' && <Check size={13} />}
+                {step.state === 'now' && <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--ink)' }} />}
               </span>
-              <span
-                style={{
-                  fontSize: 16,
-                }}
-              >
-                {t(nextStep)}
+              <span style={{ color: step.state === 'later' ? 'var(--muted)' : 'var(--ink)' }}>
+                <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{t(step.key)}</strong>
+                <span className="tiny">{step.sub}</span>
               </span>
             </li>
           ))}
         </ol>
       </div>
       <div className="bottom-cta">
-        <button
-          className="btn btn-primary"
-          onClick={() =>
-            nav('/home', {
-              replace: true,
-            })
-          }
-        >
+        {post && (
+          <button className="btn btn-primary" onClick={() => nav(`/post/mine/${post.id}`, { replace: true })}>
+            {t('seeMyActivity')}
+          </button>
+        )}
+        <button className={`btn ${post ? 'btn-secondary' : 'btn-primary'}`} onClick={() => nav('/home', { replace: true })}>
           {t('backHome')}
         </button>
       </div>
