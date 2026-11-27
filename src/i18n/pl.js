@@ -27,7 +27,7 @@ export const pl = {
     getStarted: 'Zaczynamy',
     haveAccount: 'Mam już konto',
     chooseLanguage: 'Wybierz język',
-    bubbles: 'Cześć!|Kawa?|Masz ochotę?|Ja też!|Ale fajnie',
+    bubbles: 'Cześć!|Masz ochotę?|Ja też!|Ale fajnie',
     roleTitle: 'Jak będziesz korzystać z aplikacji?',
     roleSub: 'Na jedno logowanie możesz mieć tylko jeden typ konta.',
     guestText: 'Dołączaj do zajęć w okolicy. Zaloguj się własnym numerem telefonu lub e-mailem.',

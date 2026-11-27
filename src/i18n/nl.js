@@ -27,7 +27,7 @@ export const nl = {
     getStarted: 'Aan de slag',
     haveAccount: 'Ik heb al een account',
     chooseLanguage: 'Kies een taal',
-    bubbles: 'Hoi!|Koffie?|Zin in?|Ik ook!|Gezellig',
+    bubbles: 'Hoi!|Zin in?|Ik ook!|Gezellig',
     roleTitle: 'Hoe ga je de app gebruiken?',
     roleSub: 'Per login kun je één soort account hebben.',
     guestText: 'Doe mee met activiteiten in je buurt. Log in met je eigen telefoonnummer of e-mail.',
