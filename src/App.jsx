@@ -1,7 +1,6 @@
 import { HashRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { BadgeWatcher, StampDefs } from './components/Badges'
 import { ToastHost } from './components/UI'
-import { Album } from './screens/Album'
 import { BecomeHostIntro, BecomeHostOrg, BecomeHostSent } from './screens/BecomeHost'
 import { EventScreen } from './screens/Event'
 import { Home } from './screens/Home'
@@ -170,14 +169,6 @@ export function AppRoutes() {
             element={
               <NeedsAccount>
                 <OrgScreen />
-              </NeedsAccount>
-            }
-          />
-          <Route
-            path="/event/:id/album"
-            element={
-              <NeedsAccount>
-                <Album />
               </NeedsAccount>
             }
           />

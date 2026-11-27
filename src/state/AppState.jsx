@@ -60,7 +60,6 @@ export const defaults = {
     sara: 'friends',
   },
   following: ['org:cvd', 'person:noon'],
-  albumAdds: {},
 }
 export const STORAGE_KEY = 'cvd-app-v1'
 export function loadState() {
@@ -219,31 +218,6 @@ export function AppProvider({ children }) {
         }))
         return h
       },
-      addPhotos: (h, i) =>
-        setState((j) => {
-          const k = new Date()
-          const l = i.map((m, n) => ({
-            id: `me-${Date.now()}-${n}`,
-            src: m,
-            day: k.getDate(),
-            month: k.getMonth() + 1,
-          }))
-          return {
-            ...j,
-            albumAdds: {
-              ...j.albumAdds,
-              [h]: [...l, ...(j.albumAdds[h] ?? [])],
-            },
-          }
-        }),
-      removePhoto: (h, i) =>
-        setState((j) => ({
-          ...j,
-          albumAdds: {
-            ...j.albumAdds,
-            [h]: (j.albumAdds[h] ?? []).filter((k) => k.id !== i),
-          },
-        })),
       setHostRequest: (h) =>
         setState((i) => ({
           ...i,

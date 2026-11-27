@@ -1,5 +1,5 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Check, Images, MessageSquare, PartyPopper, MapPin as PinIcon } from 'lucide-react'
+import { Check, MessageSquare, PartyPopper, MapPin as PinIcon } from 'lucide-react'
 import { FlowerRow } from '../components/Cards'
 import { Flower } from '../components/Flower'
 import { Icon } from '../components/Icon'
@@ -379,20 +379,6 @@ export function Plans() {
                         n: i.times,
                       })}
                 </span>
-                <button
-                  className="icon-btn white"
-                  style={{
-                    width: 40,
-                    height: 40,
-                  }}
-                  aria-label={`${t('albumLink')}: ${b(i.title)}`}
-                  onClick={(d) => {
-                    d.stopPropagation()
-                    nav(`/event/${i.eventId}/album`)
-                  }}
-                >
-                  <Images size={18} />
-                </button>
               </div>
             ))}
           </>

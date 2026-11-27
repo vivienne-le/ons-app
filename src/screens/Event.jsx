@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { BadgeCheck, Check, Globe, Heart, ImagePlus, Images, LoaderCircle, Send, Share2, Users, X } from 'lucide-react'
+import { BadgeCheck, Check, Globe, Heart, LoaderCircle, Send, Share2, Users, X } from 'lucide-react'
 import { Flower } from '../components/Flower'
 import { Icon } from '../components/Icon'
 import { Avatar, AvatarStack, Img } from '../components/Img'
 import { ShareSheet } from '../components/ShareSheet'
 import { BackButton, Screen, Sheet, WhenWhere } from '../components/UI'
-import { byId, organisations } from '../data/events'
+import { beenTo, byId, organisations } from '../data/events'
 import { goingPeople, orgOfEvent, profileLink } from '../data/people'
 import { useI18n } from '../i18n/index'
-import { Lightbox, attended, useAddPhotos, useAlbum } from './Album'
 import { FriendButton } from './People'
 import { useApp } from '../state/AppState'
+const attended = (eventId) => beenTo.some((b) => b.eventId === eventId)
 export function EventScreen() {
   const { id = '' } = useParams()
   const raw = byId(id)
@@ -26,10 +26,7 @@ export function EventScreen() {
   const [confirmCancel, setConfirmCancel] = useState(false)
   const [signupsOpen, setSignupsOpen] = useState(false)
   const [whoGoingOpen, setWhoGoingOpen] = useState(false)
-  const [lightboxIndex, setLightboxIndex] = useState(null)
   const [sharing, setSharing] = useState(false)
-  const photos = useAlbum(id ?? '')
-  const adder = useAddPhotos(id ?? '')
   const commentInput = useRef(null)
   const scroller = useRef(null)
   const [params] = useSearchParams()
@@ -600,105 +597,6 @@ export function EventScreen() {
               </span>
             </div>
           ))}
-          {attended(e.id) && (
-            <section aria-labelledby="album-h">
-              <div
-                className="section-head"
-                style={{
-                  marginTop: 30,
-                }}
-              >
-                <h2
-                  className="h2"
-                  id="album-h"
-                  style={{
-                    margin: 0,
-                  }}
-                >
-                  <Images
-                    size={20}
-                    aria-hidden
-                    style={{
-                      verticalAlign: -3,
-                    }}
-                  />{' '}
-                  {t('albumTitle')}{' '}
-                  <span
-                    style={{
-                      color: 'var(--muted)',
-                    }}
-                  >
-                    {photos.length}
-                  </span>
-                </h2>
-                <button className="link" onClick={() => nav(`/event/${e.id}/album`)}>
-                  {t('seeAll2')}
-                </button>
-              </div>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(4, 1fr)',
-                  gap: 4,
-                }}
-              >
-                {photos.slice(0, 3).map((photo, J) => (
-                  <button
-                    key={photo.id}
-                    onClick={() => setLightboxIndex(J)}
-                    style={{
-                      aspectRatio: '1',
-                      borderRadius: 12,
-                      overflow: 'hidden',
-                    }}
-                    aria-label={t('photoOf', {
-                      n: J + 1,
-                      m: photos.length,
-                    })}
-                  >
-                    <img
-                      src={photo.src}
-                      alt=""
-                      loading="lazy"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        display: 'block',
-                      }}
-                    />
-                  </button>
-                ))}
-                {adder.el}
-                <button
-                  onClick={adder.open}
-                  disabled={adder.busy}
-                  style={{
-                    aspectRatio: '1',
-                    borderRadius: 12,
-                    border: '2px dashed var(--grey-2)',
-                    display: 'grid',
-                    placeItems: 'center',
-                    alignContent: 'center',
-                    gap: 2,
-                    fontSize: 12,
-                    fontWeight: 600,
-                  }}
-                >
-                  <ImagePlus size={20} aria-hidden />
-                  {adder.busy ? '…' : t('addPhotos')}
-                </button>
-              </div>
-              <p
-                className="tiny"
-                style={{
-                  marginTop: 8,
-                }}
-              >
-                {t('albumConsent')}
-              </p>
-            </section>
-          )}
           <h2
             className="h2"
             id="comments"
@@ -1151,15 +1049,6 @@ export function EventScreen() {
           {t('sendReminder')}
         </button>
       </Sheet>
-      {lightboxIndex !== null && photos[lightboxIndex] && (
-        <Lightbox
-          photos={photos}
-          index={lightboxIndex}
-          setIndex={setLightboxIndex}
-          eventId={e.id}
-          onProfile={(T) => nav(`/person/${T}`)}
-        />
-      )}
       <ShareSheet open={sharing} onClose={() => setSharing(false)} e={e} />
       <Sheet open={whoGoingOpen} onClose={() => setWhoGoingOpen(false)} title={t('whosGoing')}>
         <div
