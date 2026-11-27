@@ -40,8 +40,8 @@ export const bubblePlaces = [
   },
   {
     bg: 'var(--lav)',
-    x: 272,
-    y: 331,
+    x: 260,
+    y: 345,
     r: 8,
     light: true,
   },
