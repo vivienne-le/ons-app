@@ -6,8 +6,7 @@ import {
   Compass,
   Crown,
   Footprints,
-  HandHeart,
-  HeartHandshake,
+  Heart,
   House,
   Lock as LockIcon,
   MessageCircle,
@@ -75,7 +74,7 @@ export const badges = [
     group: 'guest',
     stat: 'hosts',
     goal: 3,
-    icon: HeartHandshake,
+    icon: Heart,
     accent: 'pink',
   },
   {
@@ -106,7 +105,7 @@ export const badges = [
     id: 'builder',
     group: 'host',
     stat: 'sessions',
-    goal: 25,
+    goal: 15,
     icon: Building2,
     accent: 'orange',
   },
@@ -114,8 +113,8 @@ export const badges = [
     id: 'welcomer',
     group: 'host',
     stat: 'welcomed',
-    goal: 20,
-    icon: HandHeart,
+    goal: 5,
+    icon: Heart,
     accent: 'pink',
   },
   {
@@ -156,8 +155,9 @@ export function useStats() {
       attended: b,
       types: c.size,
       hosts: new Set([...beenTo.map((g) => byId(g.eventId)?.host.id), ...joined.map((g) => byId(g)?.host.id)].filter(Boolean)).size,
-      comments: Object.values(myComments).reduce((g, h) => g + h.length, 0),
-      loyal: Math.max(0, ...beenTo.map((g) => g.times)),
+      // Demo: Ruben already left one comment before, and is two weeks into a streak
+      comments: 1 + Object.values(myComments).reduce((g, h) => g + h.length, 0),
+      loyal: 2,
       sessions: f,
       fullHouse: e.some((g) => {
         const h = byId(g)
@@ -289,13 +289,12 @@ export function StickerTag({ b, stats, size = 64 }) {
         color: earned ? 'var(--white)' : 'var(--muted)',
         boxShadow: earned ? undefined : 'inset 0 0 0 1px #BDBBB6',
         borderRadius: 999,
-        padding: '1px 7px',
-        fontSize: 11,
-        fontWeight: 600,
+        padding: '2px 7px',
+        font: "500 11px/14px 'Roboto Mono', monospace",
         whiteSpace: 'nowrap',
       }}
     >
-      {earned ? n : `${Math.min(n, b.goal)}/${b.goal}`}
+      {earned ? b.goal : `${Math.min(n, b.goal)}/${b.goal}`}
     </span>
   )
 }
@@ -306,10 +305,10 @@ export function Sticker({ b, stats, onClick, locked }) {
   return (
     <button
       onClick={onClick}
-      style={{ display: 'grid', justifyItems: 'center', gap: 4, textAlign: 'center' }}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, textAlign: 'center' }}
       aria-label={`${t(badgeName(b.id))}. ${earned ? t('earned') : t('progress', { n: Math.min(n, b.goal), m: b.goal })}`}
     >
-      <span style={{ position: 'relative', paddingBottom: 12 }}>
+      <span style={{ position: 'relative', width: 64, height: 73 }}>
         <BadgeIcon b={b} earned={earned} />
         {!locked && <StickerTag b={b} stats={stats} />}
         {locked && (
@@ -323,16 +322,16 @@ export function Sticker({ b, stats, onClick, locked }) {
               color: 'var(--muted)',
               boxShadow: 'inset 0 0 0 1px #BDBBB6',
               borderRadius: 999,
-              padding: '1px 7px',
-              fontSize: 11,
-              fontWeight: 600,
+              padding: '2px 7px',
+              font: "500 11px/14px 'Roboto Mono', monospace",
+              whiteSpace: 'nowrap',
             }}
           >
             0/{b.goal}
           </span>
         )}
       </span>
-      <span style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.2 }}>{t(badgeName(b.id))}</span>
+      <span style={{ font: '600 12px/16px Inter, sans-serif', color: 'var(--ink)' }}>{t(badgeName(b.id))}</span>
     </button>
   )
 }
@@ -348,42 +347,36 @@ export function StickerSheet({ b, stats, onClose }) {
   const next = earned ? badges.find((x) => x.stat === b.stat && x.goal > b.goal && n < x.goal) : b
   return (
     <Sheet open onClose={onClose}>
-      <div style={{ display: 'grid', justifyItems: 'center', textAlign: 'center', paddingBottom: 6 }}>
-        <BadgeIcon b={b} earned={earned} size={110} />
-        <h2 className="h2" style={{ marginTop: 14 }}>
-          {t(badgeName(b.id))}
-        </h2>
-        <p className="body" style={{ marginTop: 6 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+        <BadgeIcon b={b} earned={earned} size={112} />
+        <h2 style={{ margin: '14px 0 0', font: '600 28px/34px Inter, sans-serif', letterSpacing: '-0.02em', color: 'var(--ink)' }}>{t(badgeName(b.id))}</h2>
+        <p style={{ margin: '4px 0 0', fontSize: 15, lineHeight: '22px', color: '#5C5C5C' }}>
           {t(badgeDesc(b.id), { n: b.goal })}
           {earned ? ` ${t('nice')}` : ''}
         </p>
         {locked ? (
-          <p className="small" style={{ marginTop: 14 }}>
-            {t('unlockAsHost')}
-          </p>
+          <p style={{ margin: '14px 0 0', fontSize: 14, lineHeight: '21px', color: '#737373' }}>{t('unlockAsHost')}</p>
         ) : (
           next && (
-            <div style={{ width: '100%', marginTop: 16, background: 'var(--grey)', borderRadius: 16, padding: 14, textAlign: 'start' }}>
-              <div className="row" style={{ justifyContent: 'space-between' }}>
-                <strong style={{ fontSize: 14, fontWeight: 600 }}>
+            <div style={{ width: '100%', marginTop: 20, background: '#F1F0EC', borderRadius: 20, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 10, textAlign: 'start' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <strong style={{ flex: 1, font: '600 15px/20px Inter, sans-serif', color: 'var(--ink)' }}>
                   {next === b ? t(badgeName(b.id)) : t('nextSticker', { name: t(badgeName(next.id)) })}
                 </strong>
-                <span className="eyebrow" style={{ color: 'var(--ink)' }}>
+                <span style={{ font: "500 13px/18px 'Roboto Mono', monospace", color: '#5C5C5C', whiteSpace: 'nowrap' }}>
                   {Math.min(n, next.goal)} / {next.goal}
                 </span>
               </div>
-              <div style={{ height: 8, borderRadius: 4, background: 'var(--white)', overflow: 'hidden', marginTop: 10 }}>
-                <div style={{ height: '100%', width: `${(Math.min(n, next.goal) / next.goal) * 100}%`, background: 'var(--pink)', borderRadius: 4 }} />
+              <div style={{ height: 8, borderRadius: 99, background: '#E4E2DC', overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${(Math.min(n, next.goal) / next.goal) * 100}%`, background: '#F1A2F6', borderRadius: 99 }} />
               </div>
-              <p className="tiny" style={{ marginTop: 8 }}>
-                {t('moreToGo', { n: next.goal - Math.min(n, next.goal) })}
-              </p>
+              <p style={{ margin: 0, fontSize: 13, lineHeight: '18px', color: '#737373' }}>{t('moreToGo', { n: next.goal - Math.min(n, next.goal) })}</p>
             </div>
           )
         )}
         <button
           className="btn btn-primary"
-          style={{ marginTop: 20 }}
+          style={{ marginTop: 18, width: '100%' }}
           onClick={() => {
             onClose()
             nav(locked ? '/post/start' : '/home')
@@ -433,7 +426,7 @@ export function StickersScreen() {
   const earned = badges.filter((b) => stats[b.stat] >= b.goal).length
   const isHost = user.role === 'host'
   const grid = (group) => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px 4px' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', rowGap: 18 }}>
       {badges
         .filter((b) => b.group === group)
         .map((b) => (
@@ -441,39 +434,39 @@ export function StickersScreen() {
         ))}
     </div>
   )
+  const h2 = { margin: 0, font: '600 24px/30px Inter, sans-serif', letterSpacing: '-0.02em', color: 'var(--ink)' }
+  const sub = { margin: 0, fontSize: 14, lineHeight: '21px', color: '#737373' }
   return (
     <Screen>
-      <div className="scroll pad safe-top" style={{ paddingBottom: 40 }}>
-        <BackButton />
-        <div className="eyebrow" style={{ marginTop: 20 }}>
-          {t('profile')} · {t('nOfM', { n: earned, m: badges.length })}
+      <div className="scroll" style={{ background: 'var(--white)' }}>
+        <div style={{ padding: '62px 20px 0' }}>
+          <BackButton />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 12 }}>
+            <div style={{ font: "500 12px/16px 'Roboto Mono', monospace", letterSpacing: '0.05em', textTransform: 'uppercase', color: '#737373' }}>
+              {t('profile')} · {t('nOfM', { n: earned, m: badges.length })}
+            </div>
+            <h1 style={{ margin: 0, font: '600 34px/40px Inter, sans-serif', letterSpacing: '-0.02em', color: 'var(--ink)' }}>{t('badgesTitle')}</h1>
+            <p style={sub}>{t('stickersSub')}</p>
+          </div>
         </div>
-        <h1 className="h1" style={{ marginTop: 6 }}>
-          {t('badgesTitle')}
-        </h1>
-        <p className="small" style={{ marginTop: 6 }}>
-          {t('stickersSub')}
-        </p>
-        <div className="row" style={{ background: 'var(--grey)', borderRadius: 18, padding: '12px 14px', marginTop: 16, gap: 12 }}>
-          <span style={{ flex: 1 }}>
-            <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{t('showBadgesSetting')}</strong>
-            <span className="tiny">{t('showBadgesSub')}</span>
-          </span>
-          <Switch on={user.showBadges} onChange={(on) => setUser({ showBadges: on })} label={t('showBadgesSetting')} />
+        <div style={{ padding: '20px 20px 40px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', background: '#F1F0EC', borderRadius: 20, padding: '14px 16px', gap: 12 }}>
+            <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <strong style={{ fontSize: 14, lineHeight: '21px', fontWeight: 600, color: 'var(--ink)' }}>{t('showBadgesSetting')}</strong>
+              <span style={{ fontSize: 12, lineHeight: '18px', color: '#737373' }}>{t('showBadgesSub')}</span>
+            </span>
+            <Switch on={user.showBadges} onChange={(on) => setUser({ showBadges: on })} label={t('showBadgesSetting')} />
+          </div>
+          <div style={{ padding: '26px 0 14px' }}>
+            <h2 style={h2}>{t('guestBadgesTitle')}</h2>
+          </div>
+          {grid('guest')}
+          <div style={{ padding: '26px 0 14px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <h2 style={h2}>{t('hostBadgesTitle')}</h2>
+            {!isHost && <p style={sub}>{t('unlockAsHost')}</p>}
+          </div>
+          {grid('host')}
         </div>
-        <h2 className="h2" style={{ margin: '24px 0 14px' }}>
-          {t('guestBadgesTitle')}
-        </h2>
-        {grid('guest')}
-        <h2 className="h2" style={{ marginTop: 28 }}>
-          {t('hostBadgesTitle')}
-        </h2>
-        {!isHost && (
-          <p className="small" style={{ margin: '4px 0 14px' }}>
-            {t('unlockAsHost')}
-          </p>
-        )}
-        {grid('host')}
       </div>
       <StickerSheet b={open} stats={stats} onClose={() => setOpen(null)} />
     </Screen>

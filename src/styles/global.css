@@ -404,7 +404,7 @@ img {
   z-index: 41;
   background: var(--white);
   border-radius: 28px 28px 0 0;
-  padding: 10px var(--pad) max(28px, env(safe-area-inset-bottom));
+  padding: 12px var(--pad) max(34px, env(safe-area-inset-bottom));
   max-height: 88%;
   overflow-y: auto;
   animation: sheet-in 0.3s var(--ease);
@@ -413,8 +413,8 @@ img {
   width: 40px;
   height: 5px;
   border-radius: 3px;
-  background: var(--grey-2);
-  margin: 0 auto 16px;
+  background: #e4e2dc;
+  margin: 0 auto 18px;
 }
 @keyframes sheet-in {
   0% {
