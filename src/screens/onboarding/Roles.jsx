@@ -44,29 +44,11 @@ export function RoleStep() {
     <Screen>
       <div className="scroll pad safe-top">
         <BackButton />
-        <div
-          className="eyebrow"
-          style={{
-            marginTop: 24,
-          }}
-        >
+        <div className="eyebrow" style={{ marginTop: 12 }}>
           {t(isLogin ? 'logIn' : 'createAccount')}
         </div>
-        <h1
-          className="h1"
-          style={{
-            marginTop: 8,
-          }}
-        >
-          {t('roleTitle')}
-        </h1>
-        <p
-          className="small"
-          style={{
-            marginTop: 10,
-            fontSize: 15,
-          }}
-        >
+        <h1 style={{ marginTop: 8, marginBottom: 0, fontSize: 34, lineHeight: '40px', fontWeight: 600, letterSpacing: '-0.02em' }}>{t('roleTitle')}</h1>
+        <p style={{ margin: '8px 0 0', fontSize: 14, lineHeight: '21px', color: 'var(--muted)' }}>
           {t('roleSub')}
         </p>
         <div
@@ -75,6 +57,7 @@ export function RoleStep() {
           className="stack"
           style={{
             marginTop: 24,
+            gap: 12,
           }}
         >
           {options.map(({ id, title, text, Icon, accent: f }) => {
@@ -105,19 +88,14 @@ export function RoleStep() {
                     flex: 1,
                   }}
                 >
-                  <strong
-                    style={{
-                      display: 'block',
-                      fontSize: 20,
-                    }}
-                  >
+                  <strong style={{ display: 'block', fontSize: 20, lineHeight: '26px', fontWeight: 600, letterSpacing: '-0.01em', marginBottom: 4 }}>
                     {title}
                   </strong>
                   <span
                     style={{
                       fontSize: 14,
-                      color: 'var(--muted-2)',
-                      lineHeight: 1.45,
+                      color: '#5C5C5C',
+                      lineHeight: '20px',
                     }}
                   >
                     {text}
@@ -211,37 +189,18 @@ export function HostLoginStep() {
         }}
       >
         <BackButton />
-        <div
-          className="eyebrow"
-          style={{
-            marginTop: 24,
-          }}
-        >
-          {t('host')}
-          {' · '}
-          {t(isLogin ? 'logIn' : 'createAccount')}
+        <div className="eyebrow" style={{ marginTop: 12 }}>
+          {t('hostAccount')}
         </div>
-        <h1
-          className="h1"
-          style={{
-            marginTop: 8,
-          }}
-        >
-          {t('hostSignInTitle')}
-        </h1>
-        <p
-          className="small"
-          style={{
-            marginTop: 10,
-            fontSize: 15,
-          }}
-        >
+        <h1 style={{ marginTop: 8, marginBottom: 0, fontSize: 34, lineHeight: '40px', fontWeight: 600, letterSpacing: '-0.02em' }}>{t('hostSignInTitle')}</h1>
+        <p style={{ margin: '8px 0 0', fontSize: 14, lineHeight: '21px', color: 'var(--muted)' }}>
           {t('hostSignInSub')}
         </p>
         <div
           className="eyebrow label"
           style={{
-            marginTop: 26,
+            marginTop: 24,
+            color: 'var(--ink)',
           }}
           id="org-l"
         >
@@ -272,7 +231,7 @@ export function HostLoginStep() {
             >
               {org}
             </span>{' '}
-            <ChevronDown size={18} />
+            <Check size={20} />
           </button>
         ) : (
           <div
