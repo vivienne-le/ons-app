@@ -119,7 +119,7 @@ export const eventsOf = (personId) =>
   )
 export const orgInfo = {
   cvd: {
-    kind: 'community',
+    kind: 'care',
     followers: 214,
     area: 'Middelland',
   },

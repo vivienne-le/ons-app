@@ -406,88 +406,89 @@ export function OrgScreen() {
     </Screen>
   )
 }
+function FollowChip({ k, name }) {
+  const { following, toggleFollow, showToast } = useApp()
+  const { t } = useI18n()
+  const on = following.includes(k)
+  return (
+    <button
+      aria-pressed={on}
+      onClick={(x) => {
+        x.stopPropagation()
+        const now = toggleFollow(k)
+        showToast(t(now ? 'nowFollowing' : 'unfollowed', { name }))
+      }}
+      className="row"
+      style={{
+        gap: 6,
+        padding: '7px 12px',
+        borderRadius: 999,
+        background: on ? 'var(--lime)' : 'var(--ink)',
+        color: on ? 'var(--ink)' : 'var(--white)',
+        fontSize: 13,
+        lineHeight: '20px',
+        fontWeight: 600,
+        flex: 'none',
+      }}
+    >
+      {on ? <Check size={16} /> : <Plus size={16} />}
+      {t(on ? 'followingBtn' : 'follow')}
+    </button>
+  )
+}
 export function ConnectionsScreen() {
   const nav = useNavigate()
   const { following } = useApp()
   const { t } = useI18n()
+  const row = (key, avatar, name, sub, onClick) => (
+    <div
+      key={key}
+      className="row"
+      role={onClick ? 'link' : undefined}
+      onClick={onClick}
+      style={{ gap: 12, padding: '14px 0', borderBottom: '1px solid #E4E2DC', cursor: onClick ? 'pointer' : 'default' }}
+    >
+      {avatar}
+      <span style={{ flex: 1, minWidth: 0, display: 'grid', gap: 2 }}>
+        <strong style={{ fontSize: 17, lineHeight: '22px', fontWeight: 600, letterSpacing: '-0.01em' }}>{name}</strong>
+        <span style={{ fontSize: 12, lineHeight: '18px', color: 'var(--muted)' }}>{sub}</span>
+      </span>
+      <FollowChip k={key} name={name} />
+    </div>
+  )
   return (
     <Screen>
-      <div className="scroll pad safe-top with-nav">
-        <div className="row">
+      <div className="scroll" style={{ padding: 'max(62px, env(safe-area-inset-top)) 20px 0' }}>
+        <div className="row" style={{ gap: 12 }}>
           <BackButton to="/profile" />
-          <h1 className="h2" style={{ marginInlineStart: 4 }}>
-            {t('followingTab')}
-          </h1>
+          <h1 style={{ fontSize: 24, lineHeight: '30px', fontWeight: 600, letterSpacing: '-0.02em', margin: 0 }}>{t('followingTab')}</h1>
         </div>
-        <p
-          className="small"
-          style={{
-            marginTop: 10,
-          }}
-        >
-          {t('followingSub')}
-        </p>
-        <div
-          style={{
-            marginTop: 10,
-          }}
-        >
+        <p style={{ fontSize: 14, lineHeight: '21px', color: 'var(--muted)', margin: '16px 0 0' }}>{t('followingSub')}</p>
+        <div style={{ paddingTop: 20 }}>
           {following.length ? (
             following.map((d) => {
-              const [e, f] = d.split(':')
-              if (e === 'person' && profiles[f])
-                return (
-                  <PersonRow
-                    key={d}
-                    p={profiles[f]}
-                    sub={orgsOfHost(f)[0] ? t('hostsWith', { org: orgsOfHost(f)[0].name }) : profiles[f].area}
-                    right={<FollowButton compact k={d} name={profiles[f].name} />}
-                  />
+              const [kind, id] = d.split(':')
+              if (kind === 'person' && profiles[id]) {
+                const p = profiles[id]
+                const org = orgsOfHost(id)[0]
+                return row(
+                  d,
+                  <Avatar name={p.name} img={p.avatar} size={44} />,
+                  p.name,
+                  org ? t('hostsWith', { org: org.name }) : p.area,
+                  profileLink(id) ? () => nav(profileLink(id)) : undefined,
                 )
-              const g = organisations.find((organisation) => organisation.id === f)
-              return g ? (
-                <div
-                  key={d}
-                  className="row"
-                  style={{
-                    padding: '10px 0',
-                    borderBottom: '1px solid var(--grey-2)',
-                  }}
-                >
-                  <button
-                    className="row"
-                    style={{
-                      flex: 1,
-                      gap: 12,
-                      textAlign: 'start',
-                    }}
-                    onClick={() => {}}
-                  >
-                    <OrgLogo org={g} size={44} />
-                    <span>
-                      <strong
-                        style={{
-                          display: 'block',
-                          fontSize: 16,
-                        }}
-                      >
-                        {g.name}
-                      </strong>
-                      <span className="tiny">
-                        {t(orgKindKey[orgInfo[g.id].kind])} · {t('nActivitiesLower', { n: g.events.length })}
-                      </span>
-                    </span>
-                  </button>
-                  <FollowButton compact k={d} name={g.name} />
-                </div>
-              ) : null
+              }
+              const g = organisations.find((o) => o.id === id)
+              return g
+                ? row(d, <OrgLogo org={g} size={44} />, g.name, `${t(orgKindKey[orgInfo[g.id].kind])} · ${t('nActivitiesLower', { n: g.events.length })}`)
+                : null
             })
           ) : (
             <EmptyCard title={t('noFollowingYet')} sub={t('noFollowingSub')} />
           )}
         </div>
       </div>
-      <NavBar />
     </Screen>
   )
 }

@@ -3,6 +3,14 @@
 import { Flower } from './Flower'
 
 export function OrgLogo({ org, size = 44, background = 'var(--white)' }) {
+  if (org.id === 'cvd')
+    return (
+      <img
+        src={`${import.meta.env.BASE_URL}img/cvd.jpg`}
+        alt=""
+        style={{ width: size, height: size, objectFit: 'contain', display: 'block', flex: 'none', mixBlendMode: 'multiply' }}
+      />
+    )
   if (org.photo)
     return (
       <img
