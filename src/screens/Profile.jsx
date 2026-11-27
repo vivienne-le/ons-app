@@ -11,9 +11,7 @@ import {
   Eye,
   Flag,
   Globe,
-  Languages,
   Lock,
-  LogOut,
   Megaphone,
   MessageSquare,
   Pencil,
@@ -231,29 +229,32 @@ export function Profile() {
 }
 function SetGroup({ title, children }) {
   return (
-    <section style={{ marginTop: 18 }}>
-      <div className="eyebrow" style={{ color: 'var(--ink)', marginBottom: 8 }}>
+    <section style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ paddingInlineStart: 4, font: "500 12px/16px 'Roboto Mono', monospace", letterSpacing: '0.05em', textTransform: 'uppercase', color: '#737373' }}>
         {title}
       </div>
-      <div style={{ background: 'var(--grey)', borderRadius: 18, padding: '0 14px' }}>{children}</div>
+      <div style={{ background: '#F1F0EC', borderRadius: 22, padding: '2px 16px' }}>{children}</div>
     </section>
   )
 }
-function SetRow({ Icon, label, sub, value, onClick, right, last }) {
+function SetRow({ Icon, label, sub, value, onClick, right, last, big }) {
   const Tag = onClick ? 'button' : 'div'
   return (
     <Tag
-      className="row"
       onClick={onClick}
-      style={{ width: '100%', textAlign: 'start', padding: '13px 0', gap: 12, borderBottom: last ? 0 : '1px solid var(--grey-2)', alignItems: sub ? 'flex-start' : 'center' }}
+      style={{ display: 'flex', alignItems: 'center', width: '100%', minHeight: 52, textAlign: 'start', padding: '12px 0', gap: 12, borderBottom: last ? 0 : '1px solid #E2E0DA', color: 'var(--ink)' }}
     >
-      <Icon size={18} aria-hidden style={{ flex: 'none', marginTop: sub ? 2 : 0 }} />
-      <span style={{ flex: 1, minWidth: 0 }}>
-        <span style={{ display: 'block', fontSize: 15 }}>{label}</span>
-        {sub && <span className="tiny">{sub}</span>}
+      {typeof Icon === 'string' ? (
+        <span aria-hidden style={{ width: 20, flex: 'none', font: '500 16px/20px Inter, sans-serif', color: '#000' }}>{Icon}</span>
+      ) : (
+        <Icon size={18} aria-hidden style={{ flex: 'none', width: 20 }} />
+      )}
+      <span style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <span style={{ fontSize: 16, lineHeight: '24px' }}>{label}</span>
+        {sub && <span style={{ fontSize: 14, lineHeight: '20px', color: '#737373' }}>{sub}</span>}
       </span>
-      {value && <span className="tiny">{value}</span>}
-      {right ?? (onClick && <ChevronRight size={18} className="flip-rtl" color="var(--muted)" />)}
+      {value && <span style={{ fontSize: 14, lineHeight: '21px', color: '#737373', whiteSpace: 'nowrap' }}>{value}</span>}
+      {right ?? (onClick && <ChevronRight size={big ? 28 : 16} strokeWidth={big ? 1.5 : 2} className="flip-rtl" color="#737373" />)}
     </Tag>
   )
 }
@@ -276,17 +277,18 @@ export function SettingsScreen() {
     />
   )
   const langName = languages.find((l) => l.id === user.language)?.name ?? 'English'
-  const phone = user.phone ? `•••• ${user.phone.replace(/\D/g, '').slice(-4)}` : t('notAdded')
+  const phone = `•••• ${(user.phone || '4821').replace(/\D/g, '').slice(-4)}`
   return (
     <Screen>
-      <div className="scroll pad safe-top" style={{ paddingBottom: 40 }}>
-        <div className="row" style={{ gap: 12 }}>
+      <div className="scroll" style={{ padding: '62px 20px 40px', background: 'var(--white)' }}>
+        <div className="row" style={{ gap: 12, marginBottom: 11 }}>
           <BackButton />
-          <h1 className="h1">{t('settings')}</h1>
+          <h1 style={{ margin: 0, font: '600 28px/34px Inter, sans-serif', letterSpacing: '-0.02em', color: 'var(--ink)' }}>{t('settings')}</h1>
         </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
         <SetGroup title={t('setLanguage')}>
           <SetRow Icon={Globe} label={t('appLanguage')} value={langName} onClick={() => setLangOpen(true)} />
-          <SetRow Icon={Languages} label={t('translateComments')} right={pref('translate', t('translateComments'))} />
+          <SetRow Icon="Aa" label={t('translateComments')} right={pref('translate', t('translateComments'))} />
           <SetRow Icon={MessageSquare} label={t('iSpeak')} value={t('iSpeakValue')} onClick={() => setLangOpen(true)} last />
         </SetGroup>
         <SetGroup title={t('setPrivacy')}>
@@ -315,20 +317,23 @@ export function SettingsScreen() {
           <SetRow Icon={Megaphone} label={t('news')} sub={t('newsSub')} right={pref('news', t('news'))} last />
         </SetGroup>
         <SetGroup title={t('setHelp')}>
-          <SetRow Icon={CircleHelp} label={t('contactCvd')} onClick={() => app.showToast(t('contactCvdToast'))} />
-          <SetRow Icon={BookOpen} label={t('guidelines')} onClick={() => app.showToast(t('guidelinesToast'))} />
-          <SetRow Icon={Flag} label={t('reportProblem')} onClick={() => app.showToast(t('reportToast'))} last />
+          <SetRow Icon={CircleHelp} label={t('contactCvd')} onClick={() => app.showToast(t('contactCvdToast'))} big />
+          <SetRow Icon={BookOpen} label={t('guidelines')} onClick={() => app.showToast(t('guidelinesToast'))} big />
+          <SetRow Icon={Flag} label={t('reportProblem')} onClick={() => app.showToast(t('reportToast'))} last big />
         </SetGroup>
         <SetGroup title={t('setAccount')}>
           <SetRow Icon={Smartphone} label={user.role === 'host' ? t('workEmail') : t('phoneNumber')} value={user.role === 'host' ? user.workEmail : phone} last />
         </SetGroup>
-        <button className="row" style={{ padding: '22px 0 8px', color: 'var(--orange)', fontWeight: 600, gap: 8 }} onClick={() => setConfirm('logout')}>
-          <LogOut size={18} className="flip-rtl" /> {t('logOut')}
-        </button>
-        <button className="tiny" style={{ display: 'block', padding: '6px 0' }} onClick={() => app.showToast(t('deleteAccountToast'))}>
-          {t('deleteAccount')}
-        </button>
-        <button className="row tiny" style={{ gap: 6, padding: '6px 0', color: 'var(--muted)' }} onClick={() => setConfirm('reset')}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingInlineStart: 4 }}>
+          <button style={{ textAlign: 'start', padding: '8px 0', fontSize: 16, lineHeight: '24px', color: '#C2410C' }} onClick={() => setConfirm('logout')}>
+            {t('logOut')}
+          </button>
+          <button style={{ textAlign: 'start', padding: '4px 0', fontSize: 14, lineHeight: '21px', color: '#737373' }} onClick={() => app.showToast(t('deleteAccountToast'))}>
+            {t('deleteAccount')}
+          </button>
+        </div>
+        </div>
+        <button className="row tiny" style={{ gap: 6, padding: '24px 4px 0', color: 'var(--muted)' }} onClick={() => setConfirm('reset')}>
           <RotateCcw size={14} /> {t('resetDemo')}
         </button>
       </div>

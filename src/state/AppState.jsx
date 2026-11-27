@@ -27,7 +27,7 @@ export const defaults = {
   onboarded: false,
   user: {
     firstName: 'Ruben',
-    lastName: 'Meyer',
+    lastName: 'de Vries',
     phone: '',
     email: '',
     language: 'en',
@@ -40,7 +40,7 @@ export const defaults = {
     org: '',
     workEmail: '',
     jobTitle: '',
-    pronouns: '',
+    pronouns: 'he/him',
     verifiedBy: '',
     showBadges: true,
     hostCardMoved: false,
@@ -56,7 +56,7 @@ export const defaults = {
   hostRequest: null,
   following: ['org:cvd', 'org:zorgvrijstaat', 'person:noon', 'person:mo'],
 }
-export const STORAGE_KEY = 'cvd-app-v2'
+export const STORAGE_KEY = 'cvd-app-v3'
 export function loadState() {
   try {
     const a = localStorage.getItem(STORAGE_KEY)

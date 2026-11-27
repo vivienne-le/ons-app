@@ -211,8 +211,8 @@ export function Switch({ on, onChange, label }) {
       aria-label={label}
       onClick={() => onChange(!on)}
       style={{
-        width: 52,
-        height: 32,
+        width: 50,
+        height: 30,
         borderRadius: 999,
         background: on ? 'var(--ink)' : 'var(--grey-2)',
         position: 'relative',
@@ -225,8 +225,8 @@ export function Switch({ on, onChange, label }) {
           position: 'absolute',
           top: 3,
           left: on ? 23 : 3,
-          width: 26,
-          height: 26,
+          width: 24,
+          height: 24,
           borderRadius: '50%',
           background: 'var(--white)',
           transition: 'left .2s var(--ease)',
