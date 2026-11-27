@@ -68,7 +68,7 @@ export function Profile() {
   const { user } = app
   const pronounLabel = usePronounLabel()
   const stats = useStats()
-  const interests = user.interests.length ? user.interests : ['Football', 'Cycling', 'Darts']
+  const interests = user.interests.length ? user.interests : ['Cooking', 'Cycling', 'Football', 'Games', 'Running']
   return (
     <Screen>
       <div className="scroll with-nav">

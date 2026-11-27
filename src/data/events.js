@@ -1063,51 +1063,27 @@ export const languages = [
 ]
 export const interestOptions = [
   {
+    id: 'Fashion',
+    accent: 'pink',
+  },
+  {
+    id: 'Tennis',
+    accent: 'lime',
+  },
+  {
+    id: 'Languages',
+    accent: 'turq',
+  },
+  {
     id: 'Football',
     accent: 'turq',
   },
   {
-    id: 'Cycling',
-    accent: 'lime',
-  },
-  {
-    id: 'Fishing',
-    accent: 'lav',
-  },
-  {
-    id: 'Cooking',
+    id: 'Traveling',
     accent: 'orange',
   },
   {
-    id: 'Darts',
-    accent: 'pink',
-  },
-  {
-    id: 'Pool',
-    accent: 'turq',
-  },
-  {
-    id: 'Walking',
-    accent: 'lime',
-  },
-  {
-    id: 'Gardening',
-    accent: 'lav',
-  },
-  {
-    id: 'DIY & repairs',
-    accent: 'orange',
-  },
-  {
-    id: 'Card games',
-    accent: 'pink',
-  },
-  {
-    id: 'Chess',
-    accent: 'turq',
-  },
-  {
-    id: 'Fitness',
+    id: 'Volunteering',
     accent: 'lime',
   },
   {
@@ -1115,12 +1091,68 @@ export const interestOptions = [
     accent: 'pink',
   },
   {
-    id: 'Cars & motors',
+    id: 'Cooking',
+    accent: 'orange',
+  },
+  {
+    id: 'Arts',
     accent: 'lav',
   },
   {
-    id: 'Coffee & a chat',
+    id: 'Walking',
+    accent: 'lime',
+  },
+  {
+    id: 'Running',
+    accent: 'lime',
+  },
+  {
+    id: 'Games',
+    accent: 'pink',
+  },
+  {
+    id: 'Reading',
+    accent: 'turq',
+  },
+  {
+    id: 'Movies',
     accent: 'orange',
+  },
+  {
+    id: 'Museum',
+    accent: 'lav',
+  },
+  {
+    id: 'Gardening',
+    accent: 'lime',
+  },
+  {
+    id: 'Craft',
+    accent: 'pink',
+  },
+  {
+    id: 'Cycling',
+    accent: 'lav',
+  },
+  {
+    id: 'Concert',
+    accent: 'turq',
+  },
+  {
+    id: 'Dance',
+    accent: 'pink',
+  },
+  {
+    id: 'Painting',
+    accent: 'orange',
+  },
+  {
+    id: 'Coffee',
+    accent: 'lime',
+  },
+  {
+    id: 'Yoga',
+    accent: 'turq',
   },
 ]
 export const organisations = [

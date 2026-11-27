@@ -1096,94 +1096,70 @@ export function InterestsStep() {
           title={t('interestsTitle')}
           sub={t('interestsSub')}
         />
-        <form
-          className="row"
-          style={{
-            marginTop: 20,
-          }}
-          onSubmit={(j) => {
-            j.preventDefault()
-            addCustom()
-          }}
-        >
-          <label htmlFor="own" className="sr-only">
-            {t('addOwn')}
-          </label>
-          <input
-            id="own"
-            className="field"
-            style={{
-              fontSize: 16,
-            }}
-            placeholder={t('addOwnPlaceholder')}
-            maxLength={24}
-            value={custom}
-            onChange={(j) => setCustom(j.target.value)}
-            enterKeyHint="done"
-            autoComplete="off"
-          />
-          <button
-            type="submit"
-            className="btn btn-primary btn-sm"
-            style={{
-              height: 56,
-              flex: 'none',
-            }}
-            disabled={!custom.trim()}
-          >
-            {t('add')}
-          </button>
-        </form>
-        {/* Flowers in 3 rows that scroll sideways; every other column sits a bit lower */}
-        <div
-          role="group"
-          aria-label={t('interestsTitle')}
-          className="scroll-x"
-          style={{
-            display: 'grid',
-            gridAutoFlow: 'column',
-            gridTemplateRows: 'repeat(3, auto)',
-            gridAutoColumns: 104,
-            gap: '4px 8px',
-            overflowX: 'auto',
-            margin: '20px calc(-1 * var(--pad)) 0',
-            padding: '0 var(--pad) 34px',
-            scrollSnapType: 'x proximity',
-            scrollPaddingInline: 'var(--pad)',
-          }}
-        >
-          {chips.map((chip, k) => {
-            const l = user.interests.includes(chip.id)
-            return (
-              <button
-                key={chip.id}
-                aria-pressed={l}
-                onClick={() => toggle(chip.id)}
-                style={{
-                  position: 'relative',
-                  top: Math.floor(k / 3) % 2 === 1 ? 30 : 0,
-                  scrollSnapAlign: 'start',
-                }}
-                className={l ? 'pop' : ''}
-              >
-                <Flower accent={chip.accent} color={l ? undefined : 'var(--grey)'} size={104}>
-                  <span
-                    style={{
-                      fontWeight: 600,
-                      fontSize: 14,
-                      lineHeight: 1.15,
-                      maxWidth: 80,
-                      textAlign: 'center',
-                      overflowWrap: 'anywhere',
-                    }}
-                  >
-                    {interest(chip.id)}
-                  </span>
-                </Flower>
-              </button>
-            )
-          })}
-        </div>
+        {/* Clovers in a honeycomb that scrolls sideways: 3 in a column, then 2 a bit lower */}
+        {(() => {
+          const slots = []
+          let col = 0
+          let row = 0
+          for (let k = 0; k < chips.length; k++) {
+            const odd = col % 2 === 1
+            slots.push({ x: col * 80.5, y: (odd ? 66 : 7) + row * 118 })
+            row++
+            if (row === (odd ? 2 : 3)) {
+              row = 0
+              col++
+            }
+          }
+          const width = (slots.length ? slots[slots.length - 1].x : 0) + 105 + 20
+          return (
+            <div
+              role="group"
+              aria-label={t('interestsTitle')}
+              className="scroll-x"
+              style={{ overflowX: 'auto', overflowY: 'hidden', margin: '49px calc(-1 * var(--pad)) 0', height: 360 }}
+            >
+              <div style={{ position: 'relative', width, height: 360 }}>
+                {chips.map((chip, k) => {
+                  const on = user.interests.includes(chip.id)
+                  const label = interest(chip.id)
+                  return (
+                    <button
+                      key={chip.id}
+                      aria-pressed={on}
+                      onClick={() => toggle(chip.id)}
+                      style={{
+                        position: 'absolute',
+                        left: slots[k].x,
+                        top: slots[k].y,
+                        width: 105,
+                        height: 105,
+                        filter: on ? 'drop-shadow(0 4px 2px rgba(0,0,0,.25))' : undefined,
+                        zIndex: on ? 2 : 1,
+                      }}
+                      className={on ? 'pop' : ''}
+                    >
+                      <Flower accent={chip.accent} color={on ? undefined : 'var(--grey)'} size={105}>
+                        <span
+                          style={{
+                            fontWeight: 600,
+                            fontSize: label.length > 9 ? 15 : 17,
+                            lineHeight: label.length > 9 ? '20px' : '22px',
+                            letterSpacing: '-0.01em',
+                            maxWidth: 92,
+                            textAlign: 'center',
+                            color: on && chip.accent === 'lav' ? 'var(--white)' : 'var(--ink)',
+                          }}
+                        >
+                          {label}
+                        </span>
+                      </Flower>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })()}
         {customInterests.length > 0 && (
           <p
             className="tiny"
@@ -1211,7 +1187,7 @@ export function InterestsStep() {
           </button>
         ) : (
           <button
-            className={`btn ${count >= 3 ? 'btn-primary' : 'btn-soft'}`}
+            className="btn btn-primary"
             disabled={count < 3}
             onClick={() => nav('/signup/preview')}
           >
@@ -1233,7 +1209,7 @@ export function PreviewStep() {
   return (
     <Screen>
       <div className="scroll pad safe-top">
-        <StepHeader eyebrow={t('almostDone')} title={t('previewCardTitle')} sub={t('previewCardSub')} />
+        <StepHeader eyebrow={t('almostDone')} step={5} title={t('previewCardTitle')} sub={t('previewCardSub')} />
         <ProfileCard
           subline={t('newNeighbour', {
             area: user.area || 'Middelland',
@@ -1248,29 +1224,15 @@ export function PreviewStep() {
             alignItems: 'flex-start',
           }}
         >
-          <Lock size={20} aria-hidden />
-          <span>
-            <strong
-              style={{
-                display: 'block',
-                fontSize: 15,
-              }}
-            >
-              {t('neverShownTitle')}
-            </strong>
-            <span className="small">{t('neverShownSub')}</span>
+          <Lock size={20} aria-hidden style={{ flex: 'none' }} />
+          <span style={{ display: 'grid', gap: 2 }}>
+            <strong style={{ display: 'block', fontSize: 15, lineHeight: '20px', fontWeight: 600, letterSpacing: '-0.01em' }}>{t('neverShownTitle')}</strong>
+            <span style={{ fontSize: 12, lineHeight: '18px', color: 'var(--muted)' }}>{t('neverShownSub')}</span>
           </span>
         </div>
       </div>
       <div className="bottom-cta">
-        <button
-          onClick={() => nav('/signup/interests')}
-          style={{
-            fontSize: 14,
-            padding: 6,
-            textDecoration: 'underline',
-          }}
-        >
+        <button className="link" onClick={() => nav('/signup/interests')} style={{ justifySelf: 'center', marginBottom: 4 }}>
           {t('editMyCard')}
         </button>
         <button className="btn btn-primary" onClick={() => nav('/signup/done')}>
@@ -1306,30 +1268,24 @@ export function DoneStep() {
             position: 'relative',
           }}
         >
-          <Flower
-            accent="lime"
-            size={180}
-            style={{
-              position: 'absolute',
-              right: -40,
-              top: -30,
-            }}
-          />
+          <Flower accent="lime" size={215} style={{ position: 'absolute', left: 226, top: 30, transform: 'rotate(12deg)' }} />
           <div
             className="eyebrow"
             style={{
-              color: 'var(--ink)',
-              marginTop: 36,
+              color: '#3B223D',
+              marginTop: 56,
               position: 'relative',
             }}
           >
             {t('allSet')}
           </div>
           <h1
-            className="h-display"
             style={{
-              fontSize: 40,
-              marginTop: 8,
+              fontSize: 44,
+              lineHeight: '48px',
+              fontWeight: 500,
+              letterSpacing: '-0.03em',
+              margin: '8px 0 0',
               position: 'relative',
             }}
           >
@@ -1337,19 +1293,14 @@ export function DoneStep() {
               name: user.firstName || t('friend'),
             })}
           </h1>
-          <p
-            style={{
-              fontSize: 16,
-              marginTop: 12,
-            }}
-          >
+          <p style={{ fontSize: 16, lineHeight: '24px', margin: '16px 0 0', color: 'rgba(32,30,31,.8)', position: 'relative' }}>
             {t('onThisWeek')}
           </p>
           <div
             className="stack"
             style={{
               marginTop: 28,
-              gap: 10,
+              gap: 12,
             }}
           >
             {suggestedIds.map((suggestedId) => (
@@ -1371,12 +1322,7 @@ export function DoneStep() {
                     flex: 1,
                   }}
                 >
-                  <span
-                    className="eyebrow"
-                    style={{
-                      color: 'inherit',
-                    }}
-                  >
+                  <span className="eyebrow" style={{ color: suggestedId.id === 'football-beer' ? '#D5D9F5' : '#5C5D20' }}>
                     {wd(suggestedId.date)}
                     {' · '}
                     {suggestedId.start}
@@ -1384,8 +1330,11 @@ export function DoneStep() {
                   <strong
                     style={{
                       display: 'block',
-                      fontSize: 18,
-                      marginTop: 4,
+                      fontSize: 20,
+                      lineHeight: '24px',
+                      fontWeight: 600,
+                      letterSpacing: '-0.02em',
+                      marginTop: 2,
                     }}
                   >
                     {suggestedId.title}
@@ -1393,11 +1342,15 @@ export function DoneStep() {
                 </span>
                 {suggestedId.id !== 'football-beer' && (
                 <span
-                  className="tag"
                   style={{
-                    background: 'var(--ink)',
-                    color: 'var(--white)',
-                    padding: '6px 10px',
+                    background: '#000',
+                    color: suggestedId.id === 'bowling-monday' ? 'var(--lime)' : 'var(--turq)',
+                    height: 27,
+                    padding: '0 12px',
+                    borderRadius: 30,
+                    fontSize: 12,
+                    lineHeight: '27px',
+                    fontWeight: 600,
                   }}
                 >
                   {suggestedId.id === 'bowling-monday'
@@ -1415,7 +1368,7 @@ export function DoneStep() {
           <button className="btn btn-primary" onClick={() => finish('/home')}>
             {t('exploreEvents')}
           </button>
-          <button className="btn btn-secondary" onClick={() => finish('/home', { invitePing: true })}>
+          <button className="btn btn-secondary" style={{ border: '1.5px solid #000' }} onClick={() => finish('/home', { invitePing: true })}>
             {t('goHome')}
           </button>
         </div>

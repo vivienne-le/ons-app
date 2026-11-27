@@ -97,121 +97,42 @@ export function HowOthersSee() {
 export function ProfileCard({ subline, sharedEvent, earned }) {
   const { user } = useApp()
   const { t } = useI18n()
-  const name = [user.firstName, user.lastName].filter(Boolean).join(' ') || '?'
-  const interests = user.interests.length ? user.interests : ['Cooking', 'Cycling', 'Football']
+  const name = user.firstName || '?'
+  const interests = user.interests.length ? user.interests : ['Cooking', 'Music', 'Football', 'Games', 'Running']
   return (
     <section
       aria-label={t('previewProfile')}
       style={{
-        marginTop: 20,
-        background: 'var(--grey)',
+        marginTop: 28,
+        background: 'var(--white)',
+        border: '1px solid rgba(115,115,115,.12)',
+        boxShadow: '0 1px 2px rgba(0,0,0,.05)',
         borderRadius: 20,
         overflow: 'hidden',
       }}
     >
-      <div
-        className="row"
-        style={{
-          position: 'relative',
-          background: 'var(--lime)',
-          padding: '28px 14px 22px',
-          gap: 12,
-          overflow: 'hidden',
-        }}
-      >
-        <Flower
-          color="#E8F46A"
-          size={190}
-          style={{
-            position: 'absolute',
-            insetInlineEnd: -50,
-            top: -80,
-          }}
-        />
-        <span
-          style={{
-            position: 'relative',
-            borderRadius: '50%',
-            boxShadow: '0 0 0 3px var(--white)',
-          }}
-        >
+      <div style={{ position: 'relative', background: 'var(--lime)', height: 125, overflow: 'hidden' }}>
+        <Flower color="#E8F46A" size={180} style={{ position: 'absolute', left: 220, top: -64, transform: 'rotate(15deg)' }} />
+        <span style={{ position: 'absolute', left: 12, top: 30, borderRadius: '50%', display: 'flex' }}>
           {user.photo ? (
-            <img
-              src={user.photo}
-              alt=""
-              style={{
-                width: 70,
-                height: 70,
-                borderRadius: '50%',
-                objectFit: 'cover',
-                display: 'block',
-              }}
-            />
+            <img src={user.photo} alt="" style={{ width: 70, height: 70, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
           ) : (
-            <Avatar name={name} size={70} />
+            <Avatar name={name} img="ruben" size={70} />
           )}
         </span>
-        <span
-          style={{
-            position: 'relative',
-            minWidth: 0,
-          }}
-        >
-          <strong
-            style={{
-              display: 'block',
-              fontSize: 40,
-              fontWeight: 500,
-              lineHeight: 1.1,
-            }}
-          >
-            {user.firstName || '?'}
-            {user.pronouns && (
-              <span
-                style={{
-                  fontSize: 15,
-                  fontWeight: 400,
-                  marginInlineStart: 8,
-                }}
-              >
-                ({user.pronouns})
-              </span>
-            )}
+        <span style={{ position: 'absolute', left: 94, top: 28, right: 8, display: 'grid', gap: 4 }}>
+          <strong style={{ display: 'block', fontSize: 44, fontWeight: 500, lineHeight: '48px', letterSpacing: '-0.03em', whiteSpace: 'nowrap' }}>
+            {name}
+            {user.pronouns && <span style={{ fontSize: 15, fontWeight: 400, letterSpacing: 0, marginInlineStart: 8 }}>{user.pronouns}</span>}
           </strong>
-          <span
-            style={{
-              fontSize: 14,
-            }}
-          >
-            {subline}
-          </span>
+          <span style={{ fontSize: 14, lineHeight: '21px' }}>{subline}</span>
         </span>
       </div>
-
-      <div
-        style={{
-          padding: '14px 12px 16px',
-        }}
-      >
-        {user.bio && (
-          <p
-            style={{
-              fontSize: 14,
-              margin: '0 0 12px',
-            }}
-          >
-            {user.bio}
-          </p>
-        )}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 8,
-          }}
-        >
+      <div style={{ padding: '12px 11px 20px' }}>
+        {user.bio && <p style={{ fontSize: 14, lineHeight: '21px', margin: '0 0 12px', color: '#000' }}>{user.bio}</p>}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, max-content)', gap: '10px 9px' }}>
           {interests.map((interest, i) => (
-            <InterestChip key={interest} id={interest} index={i} background="var(--white)" />
+            <InterestChip key={interest} id={interest} index={i} />
           ))}
         </div>
         {user.showBadges && earned?.length > 0 && (
