@@ -234,6 +234,8 @@ export const uk = {
     spotSaved: 'Місце заброньовано',
     ago2h: '2 год тому',
     justNow: 'Щойно',
+    lastNameHidden: "Твоє прізвище ніколи не показується.",
+    pickOnMap: "Обери на мапі",
     someInLang: "Деякі коментарі мовою {lang}",
     nOfTotalComments: "{n} з {total} коментарів",
     translateBtn: "Перекласти",

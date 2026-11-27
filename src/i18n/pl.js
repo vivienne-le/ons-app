@@ -234,6 +234,8 @@ export const pl = {
     spotSaved: 'Miejsce zarezerwowane',
     ago2h: '2 godz. temu',
     justNow: 'Przed chwilą',
+    lastNameHidden: "Twoje nazwisko nigdy nie jest widoczne.",
+    pickOnMap: "Wybierz na mapie",
     someInLang: "Niektóre komentarze są po {lang}",
     nOfTotalComments: "{n} z {total} komentarzy",
     translateBtn: "Przetłumacz",

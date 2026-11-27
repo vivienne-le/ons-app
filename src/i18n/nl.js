@@ -234,6 +234,8 @@ export const nl = {
     spotSaved: 'Plek gereserveerd',
     ago2h: '2 uur geleden',
     justNow: 'Zojuist',
+    pickOnMap: "Kies op de kaart",
+    lastNameHidden: "Je achternaam is nooit zichtbaar.",
     someInLang: "Sommige reacties zijn in het {lang}",
     nOfTotalComments: "{n} van {total} reacties",
     translateBtn: "Vertaal",

@@ -234,6 +234,8 @@ export const ar = {
     spotSaved: 'تم حجز مكانك',
     ago2h: 'قبل ساعتين',
     justNow: 'الآن',
+    lastNameHidden: "لا يظهر اسم عائلتك أبدًا.",
+    pickOnMap: "اختر على الخريطة",
     someInLang: "بعض التعليقات باللغة {lang}",
     nOfTotalComments: "{n} من {total} تعليقات",
     translateBtn: "ترجمة",

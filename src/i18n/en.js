@@ -233,6 +233,8 @@ export const en = {
   spotSaved: 'Spot saved',
   ago2h: '2h ago',
   justNow: 'Just now',
+  lastNameHidden: "Your last name is never shown.",
+  pickOnMap: "Pick on the map",
   someInLang: "Some comments are in {lang}",
   nOfTotalComments: "{n} of {total} comments",
   translateBtn: "Translate",

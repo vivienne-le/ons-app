@@ -176,7 +176,7 @@ export function Progress({ step, total = 5 }) {
     <div
       style={{
         display: 'flex',
-        gap: 5,
+        gap: 4,
       }}
       aria-label={t('stepOf', {
         n: step,
@@ -194,7 +194,7 @@ export function Progress({ step, total = 5 }) {
               width: 22,
               height: 4,
               borderRadius: 2,
-              background: b < step ? 'var(--ink)' : 'var(--grey-2)',
+              background: b < step ? 'var(--ink)' : '#E8E6E0',
               transition: 'background .3s',
             }}
           />

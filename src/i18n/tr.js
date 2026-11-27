@@ -234,6 +234,8 @@ export const tr = {
     spotSaved: 'Yer ayrıldı',
     ago2h: '2 saat önce',
     justNow: 'Az önce',
+    lastNameHidden: "Soyadın asla gösterilmez.",
+    pickOnMap: "Haritadan seç",
     someInLang: "Bazı yorumlar {lang}",
     nOfTotalComments: "{total} yorumdan {n}",
     translateBtn: "Çevir",
