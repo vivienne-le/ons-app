@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Camera, Check, Minus, Plus, Search as SearchIcon, Trash2, X } from 'lucide-react'
+import { Camera, Check, CircleHelp, Clock, Heart, ListChecks, Lock, MapPin as PinIcon, Minus, Plus, Search as SearchIcon, Trash2, X } from 'lucide-react'
 import { Flower } from '../components/Flower'
 import { Icon } from '../components/Icon'
 import { Avatar } from '../components/Img'
@@ -1628,6 +1628,70 @@ export function MyPost() {
     <Screen>
       <div className="pad safe-top">
         <BackButton to="/home" />
+      </div>
+    </Screen>
+  )
+}
+// "Before you host": the house rules, shown before the host flow starts
+const hostRules = [
+  { key: 'rulePublic', Icon: PinIcon, accent: 'lime' },
+  { key: 'rulePlan', Icon: ListChecks, accent: 'turq' },
+  { key: 'ruleWelcome', Icon: Heart, accent: 'pink' },
+  { key: 'ruleOnTime', Icon: Clock, accent: 'orange' },
+  { key: 'rulePrivacy', Icon: Lock, accent: 'lav' },
+  { key: 'ruleHelp', Icon: CircleHelp, color: 'var(--grey)' },
+]
+export function PostStart() {
+  const nav = useNavigate()
+  const { t } = useI18n()
+  return (
+    <Screen>
+      <div className="scroll" style={{ paddingBottom: 24 }}>
+        <div
+          style={{
+            background: 'var(--ink)',
+            color: 'var(--white)',
+            borderRadius: '0 0 36px 36px',
+            padding: 'max(48px, env(safe-area-inset-top)) var(--pad) 26px',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <Flower accent="pink" size={150} style={{ position: 'absolute', right: -30, top: -30 }} />
+          <Flower accent="lime" size={70} style={{ position: 'absolute', right: 60, top: 100 }} />
+          <BackButton variant="white" />
+          <div className="eyebrow" style={{ color: 'var(--lime)', marginTop: 18, position: 'relative' }}>
+            {t('becomeHostEyebrow')}
+          </div>
+          <h1 className="h-display" style={{ fontSize: 40, color: 'var(--white)', marginTop: 6, position: 'relative', maxWidth: 220 }}>
+            {t('beforeYouHost')}
+          </h1>
+          <p style={{ fontSize: 15, marginTop: 8, opacity: 0.85, maxWidth: 260, position: 'relative' }}>{t('beforeYouHostSub')}</p>
+        </div>
+        <div className="pad" style={{ marginTop: 10 }}>
+          {hostRules.map(({ key, Icon: RIcon, accent, color }, i) => (
+            <div
+              key={key}
+              className="row"
+              style={{ gap: 14, padding: '14px 0', alignItems: 'flex-start', borderBottom: i < hostRules.length - 1 ? '1px solid var(--grey-2)' : 0 }}
+            >
+              <Flower accent={accent} color={color} size={40}>
+                <RIcon size={17} />
+              </Flower>
+              <span>
+                <strong style={{ display: 'block', fontSize: 16, fontWeight: 600 }}>{t(key)}</strong>
+                <span className="small" style={{ fontSize: 14 }}>
+                  {t(`${key}Sub`)}
+                </span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="bottom-cta">
+        <button className="btn btn-primary" onClick={() => nav('/post')}>
+          {t('gotItStart')}
+        </button>
       </div>
     </Screen>
   )
