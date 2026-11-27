@@ -18,7 +18,8 @@ import {
   DoneStep,
   InterestsStep,
   LanguageStep,
-  NameStep,
+  AreaStep,
+  PreviewStep,
   PhoneStep,
   PhotoStep,
   Welcome,
@@ -47,9 +48,11 @@ export function AppRoutes() {
           <Route path="/signup/code" element={<CodeStep />} />
           <Route path="/signup/language" element={<LanguageStep />} />
           <Route path="/signup/photo" element={<PhotoStep />} />
-          <Route path="/signup/name" element={<NameStep />} />
+          <Route path="/signup/name" element={<Navigate to="/signup/photo" replace />} />
+          <Route path="/signup/area" element={<AreaStep />} />
           <Route path="/signup/about" element={<AboutStep />} />
           <Route path="/signup/interests" element={<InterestsStep />} />
+          <Route path="/signup/preview" element={<PreviewStep />} />
           <Route path="/signup/done" element={<DoneStep />} />
           <Route
             path="/home"

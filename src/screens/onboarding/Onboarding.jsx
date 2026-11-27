@@ -6,16 +6,16 @@ import {
   ChevronDown,
   Clock,
   Globe,
-  Image as ImageIcon,
+  Lock,
   MessageSquare,
   Phone,
   MapPin as PinIcon,
   User,
 } from 'lucide-react'
 import { Flower } from '../../components/Flower'
-import { Avatar } from '../../components/Img'
 import { OnsLogo } from '../../components/OnsLogo'
 import { BackButton, Progress, Screen, Sheet } from '../../components/UI'
+import { ProfileCard } from '../HowOthersSee'
 import { byId, interestOptions, languages } from '../../data/events'
 import { useI18n } from '../../i18n/index'
 import { useApp } from '../../state/AppState'
@@ -766,8 +766,7 @@ export function PhotoStep() {
   const nav = useNavigate()
   const { user, setUser, showToast } = useApp()
   const { t } = useI18n()
-  const fileInput = useRef(null)
-  const cameraInput = useRef(null)
+  const photoInput = useRef(null)
   const pickPhoto = async (d) => {
     if (d)
       try {
@@ -779,29 +778,37 @@ export function PhotoStep() {
         showToast(t('photoFailed'))
       }
   }
+  // a photo is required: neighbours and hosts need to recognise each other
+  const ready = !!user.photo && !!user.firstName.trim()
   return (
     <Screen>
-      <div className="scroll pad safe-top">
+      <form
+        id="name-form"
+        className="scroll pad safe-top"
+        onSubmit={(a) => {
+          a.preventDefault()
+          ready && nav('/signup/area')
+        }}
+      >
         <StepHeader
           eyebrow={t('stepOf', {
             n: 2,
             total: 5,
           })}
           step={2}
-          title={t('photoTitle')}
-          sub={t('photoSub')}
+          title={t('nameTitle')}
+          sub={t('namePhotoSub')}
         />
         <div
           style={{
             display: 'grid',
             placeItems: 'center',
-            margin: '40px 0 32px',
+            margin: '32px 0 28px',
           }}
         >
           <button
-            onClick={() => {
-              return cameraInput.current?.click()
-            }}
+            type="button"
+            onClick={() => photoInput.current?.click()}
             aria-label={t('choosePhoto')}
             style={{
               position: 'relative',
@@ -812,226 +819,183 @@ export function PhotoStep() {
                 src={user.photo}
                 alt={t('yourPhoto')}
                 style={{
-                  width: 176,
-                  height: 176,
+                  width: 144,
+                  height: 144,
                   borderRadius: '50%',
                   objectFit: 'cover',
+                  display: 'block',
                 }}
               />
             ) : (
               <span
                 style={{
-                  width: 176,
-                  height: 176,
+                  width: 144,
+                  height: 144,
                   borderRadius: '50%',
                   background: 'var(--lime)',
                   display: 'grid',
                   placeItems: 'center',
                 }}
               >
-                <User size={56} strokeWidth={1.6} />
+                <User size={48} strokeWidth={1.6} />
               </span>
             )}
             <span
               className="icon-btn dark"
               style={{
                 position: 'absolute',
-                right: 4,
-                bottom: 8,
-                width: 48,
-                height: 48,
+                right: 0,
+                bottom: 4,
+                width: 44,
+                height: 44,
               }}
             >
-              <Camera size={20} />
+              <Camera size={19} />
             </span>
           </button>
         </div>
-        <div
+        <input
+          ref={photoInput}
+          type="file"
+          accept="image/*"
+          hidden
+          onChange={(d) => pickPhoto(d.target.files?.[0])}
+        />
+        <label className="eyebrow label" htmlFor="fn">
+          {t('firstName')}
+        </label>
+        <input
+          id="fn"
+          className="field"
+          autoComplete="given-name"
+          value={user.firstName}
+          onChange={(a) =>
+            setUser({
+              firstName: a.target.value,
+            })
+          }
+        />
+        <p
+          className="tiny"
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 10,
+            marginTop: 8,
           }}
         >
-          <button
-            className="btn btn-secondary btn-sm"
-            style={{
-              width: '100%',
-              height: 52,
-            }}
-            onClick={() => {
-              return fileInput.current?.click()
-            }}
-          >
-            <Camera size={18} /> {t('takePhoto')}
-          </button>
-          <button
-            className="btn btn-secondary btn-sm"
-            style={{
-              width: '100%',
-              height: 52,
-            }}
-            onClick={() => {
-              return cameraInput.current?.click()
-            }}
-          >
-            <ImageIcon size={18} /> {t('choosePhoto')}
-          </button>
-        </div>
-        <input
-          ref={fileInput}
-          type="file"
-          accept="image/*"
-          capture="user"
-          hidden
-          onChange={(d) => {
-            return pickPhoto(d.target.files?.[0])
-          }}
-        />
-        <input
-          ref={cameraInput}
-          type="file"
-          accept="image/*"
-          hidden
-          onChange={(d) => {
-            return pickPhoto(d.target.files?.[0])
-          }}
-        />
-      </div>
+          {t('onlyFirstName')}
+        </p>
+      </form>
       <div className="bottom-cta">
-        <button className={`btn ${user.photo ? 'btn-primary' : 'btn-soft'}`} onClick={() => nav('/signup/name')}>
-          {user.photo ? t('next') : t('skipForNow')}
+        <button
+          className={`btn ${ready ? 'btn-primary' : 'btn-soft'}`}
+          type="submit"
+          form="name-form"
+          disabled={!ready}
+        >
+          {user.photo ? t('next') : t('addPhotoFirst')}
         </button>
       </div>
     </Screen>
   )
 }
-export function NameStep() {
+export const areaCity = {
+  Middelland: 'Rotterdam West',
+  'Nieuwe Westen': 'Rotterdam West',
+  'Oude Westen': 'Rotterdam Centrum',
+  Delfshaven: 'Rotterdam West',
+  Cool: 'Rotterdam Centrum',
+  Spangen: 'Rotterdam West',
+}
+export function AreaStep() {
   const nav = useNavigate()
   const { user, setUser } = useApp()
-  const { t, ev } = useI18n()
+  const { t } = useI18n()
+  const options = [...Object.keys(areaCity), 'else']
   return (
     <Screen>
-      <form
-        id="name-form"
-        className="scroll pad safe-top"
-        onSubmit={(a) => {
-          a.preventDefault()
-          user.firstName.trim() && nav('/signup/about')
-        }}
-      >
+      <div className="scroll pad safe-top">
         <StepHeader
           eyebrow={t('stepOf', {
             n: 3,
             total: 5,
           })}
           step={3}
-          title={t('nameTitle')}
+          title={t('areaTitle')}
+          sub={t('areaSub')}
         />
         <div
+          role="radiogroup"
+          aria-label={t('neighbourhood')}
+          className="stack"
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 10,
-            marginTop: 28,
+            marginTop: 24,
+            gap: 8,
           }}
         >
-          <div>
-            <label className="eyebrow label" htmlFor="fn">
-              {t('firstName')}
-            </label>
-            <input
-              id="fn"
-              className="field"
-              autoComplete="given-name"
-              value={user.firstName}
-              onChange={(a) =>
-                setUser({
-                  firstName: a.target.value,
-                })
-              }
-            />
-          </div>
-          <div>
-            <label className="eyebrow label" htmlFor="ln">
-              {t('lastName')}
-            </label>
-            <input
-              id="ln"
-              className="field"
-              autoComplete="family-name"
-              value={user.lastName}
-              onChange={(a) =>
-                setUser({
-                  lastName: a.target.value,
-                })
-              }
-            />
-          </div>
+          {options.map((area) => {
+            const b = area === 'else' ? !areaCity[user.area] : user.area === area
+            return (
+              <button
+                key={area}
+                role="radio"
+                aria-checked={b}
+                onClick={() =>
+                  setUser({
+                    area: area === 'else' ? 'Rotterdam' : area,
+                  })
+                }
+                className="card"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '12px 18px',
+                  textAlign: 'start',
+                  background: b ? 'var(--lime)' : 'var(--grey)',
+                  transition: 'background .15s',
+                }}
+              >
+                <span
+                  style={{
+                    flex: 1,
+                  }}
+                >
+                  <strong
+                    style={{
+                      display: 'block',
+                      fontSize: 17,
+                    }}
+                  >
+                    {area === 'else' ? t('areaElse') : area}
+                  </strong>
+                  <span className="tiny">{area === 'else' ? 'Rotterdam' : areaCity[area]}</span>
+                </span>
+                <span
+                  style={{
+                    width: 26,
+                    height: 26,
+                    borderRadius: '50%',
+                    display: 'grid',
+                    placeItems: 'center',
+                    background: b ? 'var(--ink)' : 'transparent',
+                    boxShadow: b ? 'none' : 'inset 0 0 0 1.5px #BDBBB6',
+                  }}
+                >
+                  {b && <Check size={15} color="white" />}
+                </span>
+              </button>
+            )
+          })}
         </div>
         <p
           className="tiny"
           style={{
-            marginTop: 10,
+            marginTop: 12,
           }}
         >
-          {t('onlyFirstName')}
+          {t('areaPrivate')}
         </p>
-        <div
-          className="card"
-          style={{
-            background: 'var(--pink)',
-            padding: 16,
-            marginTop: 36,
-          }}
-        >
-          <div
-            className="eyebrow"
-            style={{
-              color: 'var(--ink)',
-              marginBottom: 12,
-            }}
-          >
-            {t('howOthersSee')}
-          </div>
-          <div className="row">
-            {user.photo ? (
-              <img
-                src={user.photo}
-                alt=""
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                }}
-              />
-            ) : (
-              <Avatar name={user.firstName || '?'} img="ruben" size={48} />
-            )}
-            <div>
-              <strong
-                style={{
-                  fontSize: 17,
-                }}
-              >
-                {user.firstName.trim() || t('yourName')}
-              </strong>
-              <div
-                style={{
-                  fontSize: 14,
-                }}
-              >
-                {t('goingToEvent', {
-                  event: ev(byId('bowling-monday')).title,
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
+      </div>
       <div className="bottom-cta">
-        <button className="btn btn-primary" type="submit" form="name-form" disabled={!user.firstName.trim()}>
+        <button className="btn btn-primary" onClick={() => nav('/signup/about')}>
           {t('next')}
         </button>
       </div>
@@ -1118,73 +1082,19 @@ export function AboutStep() {
             </button>
           ))}
         </div>
-        <label
-          className="eyebrow label"
-          style={{
-            marginTop: 24,
-          }}
-          htmlFor="area"
-        >
-          {t('neighbourhood')}
-        </label>
-        <div
-          style={{
-            position: 'relative',
-          }}
-        >
-          <PinIcon
-            size={20}
-            style={{
-              position: 'absolute',
-              left: 16,
-              top: 18,
-              pointerEvents: 'none',
-            }}
-          />
-          <select
-            id="area"
-            className="field"
-            value={user.area}
-            onChange={(b) =>
-              setUser({
-                area: b.target.value,
-              })
-            }
-            style={{
-              appearance: 'none',
-              paddingLeft: 46,
-              fontWeight: 600,
-              background: 'var(--white)',
-              borderColor: 'var(--ink)',
-            }}
-          >
-            {areas.map((area) => (
-              <option key={area}>{area}</option>
-            ))}
-          </select>
-          <ChevronDown
-            size={18}
-            style={{
-              position: 'absolute',
-              right: 16,
-              top: 19,
-              pointerEvents: 'none',
-            }}
-          />
-        </div>
-        <p
-          className="tiny"
-          style={{
-            marginTop: 8,
-            paddingLeft: 4,
-          }}
-        >
-          Rotterdam
-        </p>
       </div>
       <div className="bottom-cta">
         <button className="btn btn-primary" onClick={() => nav('/signup/interests')}>
           {t('next')}
+        </button>
+        <button
+          onClick={() => nav('/signup/interests')}
+          style={{
+            fontSize: 14,
+            padding: 6,
+          }}
+        >
+          {t('skipForNow')}
         </button>
       </div>
     </Screen>
@@ -1367,14 +1277,72 @@ export function InterestsStep() {
             })}
           </button>
         ) : (
-          <button className={`btn ${count ? 'btn-primary' : 'btn-soft'}`} onClick={() => nav('/signup/done')}>
-            {count
+          <button
+            className={`btn ${count >= 3 ? 'btn-primary' : 'btn-soft'}`}
+            disabled={count < 3}
+            onClick={() => nav('/signup/preview')}
+          >
+            {count >= 3
               ? t('nextPicked', {
                   n: count,
                 })
-              : t('skipForNow')}
+              : t('pickThree')}
           </button>
         )}
+      </div>
+    </Screen>
+  )
+}
+export function PreviewStep() {
+  const nav = useNavigate()
+  const { user } = useApp()
+  const { t } = useI18n()
+  return (
+    <Screen>
+      <div className="scroll pad safe-top">
+        <StepHeader eyebrow={t('almostDone')} title={t('previewCardTitle')} sub={t('previewCardSub')} />
+        <ProfileCard
+          subline={t('newNeighbour', {
+            area: user.area || 'Middelland',
+          })}
+        />
+        <div
+          className="card row"
+          style={{
+            marginTop: 12,
+            padding: 16,
+            gap: 12,
+            alignItems: 'flex-start',
+          }}
+        >
+          <Lock size={20} aria-hidden />
+          <span>
+            <strong
+              style={{
+                display: 'block',
+                fontSize: 15,
+              }}
+            >
+              {t('neverShownTitle')}
+            </strong>
+            <span className="small">{t('neverShownSub')}</span>
+          </span>
+        </div>
+      </div>
+      <div className="bottom-cta">
+        <button
+          onClick={() => nav('/signup/photo')}
+          style={{
+            fontSize: 14,
+            padding: 6,
+            textDecoration: 'underline',
+          }}
+        >
+          {t('editMyCard')}
+        </button>
+        <button className="btn btn-primary" onClick={() => nav('/signup/done')}>
+          {t('looksGood')}
+        </button>
       </div>
     </Screen>
   )
