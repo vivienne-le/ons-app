@@ -14,7 +14,7 @@ import {
   X,
 } from 'lucide-react'
 import { HeartButton } from '../components/Cards'
-import { CityMap, LAT0, LAT1, LNG0, LNG1, MAP_H, MAP_W, MapPin, toXY } from '../components/CityMap'
+import { CityMap, LAT0, LAT1, LNG0, LNG1, MAP_H, MAP_W, MapPin } from '../components/CityMap'
 import { Flower } from '../components/Flower'
 import { OrgLogo } from '../components/OrgLogo'
 import { Icon } from '../components/Icon'
@@ -272,10 +272,10 @@ const kindStyle = {
 }
 const listKey = { food: 'nFoodPlaces', toilet: 'nToilets', health: 'nHealthPlaces', sleep: 'nSleepPlaces', activities: 'nActivitiesNear' }
 // A map position from an offset (in map pixels) to where you are
-const at = ([dx, dy]) => {
-  const [x, y] = toXY(YOU)
-  return [LAT0 - ((y + dy) / MAP_H) * (LAT0 - LAT1), LNG0 + ((x + dx) / MAP_W) * (LNG1 - LNG0)]
-}
+// Where you are on the Near you map (same spot as in the Figma design)
+const ME = [210, 410]
+const at = ([dx, dy]) => [LAT0 - ((ME[1] + dy) / MAP_H) * (LAT0 - LAT1), LNG0 + ((ME[0] + dx) / MAP_W) * (LNG1 - LNG0)]
+const MAP_YOU = at([0, 0])
 function PlacePin({ p, label, selected, onClick }) {
   const k = kindStyle[p.kind]
   const KIcon = k.Icon
@@ -385,7 +385,7 @@ export function MapTab() {
   const cvd = organisations.find((o) => o.id === 'cvd')
   return (
     <Screen>
-      <CityMap you={YOU} onBackgroundClick={() => mode !== 'card' && setMode('card')}>
+      <CityMap you={MAP_YOU} onBackgroundClick={() => mode !== 'card' && setMode('card')}>
         <MapPin at={at(cvdPos)} z={2}>
           <button className="row" style={{ gap: 6 }} onClick={(b) => (b.stopPropagation(), nav('/org/cvd'))} aria-label={cvd.name}>
             <span style={{ background: 'var(--white)', borderRadius: 10, padding: 3, boxShadow: '0 0 0 2px var(--ink)' }}>
