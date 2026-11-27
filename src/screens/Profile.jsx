@@ -61,7 +61,7 @@ export function Profile() {
   const { user } = app
   const pronounLabel = usePronounLabel()
   const stats = useStats()
-  const interests = user.interests.length ? user.interests : ['Cooking', 'Cycling', 'Football', 'Games', 'Running']
+  const interests = [...(user.interests.length ? user.interests : ['Cooking', 'Cycling', 'Football', 'Games', 'Running'])].sort()
   const earned = badges.filter((b) => stats[b.stat] >= b.goal)
   const [openSticker, setOpenSticker] = useState(null)
   const section = (title, right) => (

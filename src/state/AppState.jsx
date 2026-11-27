@@ -35,7 +35,7 @@ export const defaults = {
     age: '34',
     gender: 'Man',
     area: 'Middelland',
-    interests: [],
+    interests: ['Football', 'Running', 'Games', 'Cooking', 'Cycling'],
     role: 'guest',
     org: '',
     workEmail: '',

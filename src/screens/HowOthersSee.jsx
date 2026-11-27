@@ -30,12 +30,7 @@ export function HowOthersSee() {
           }}
         >
           <BackButton to="/profile" />
-          <h1
-            className="h2"
-            style={{
-              fontSize: 28,
-            }}
-          >
+          <h1 style={{ margin: 0, fontSize: 28, lineHeight: '34px', fontWeight: 600, letterSpacing: '-0.02em' }}>
             {t('howOthersSee')}
           </h1>
         </div>
@@ -43,14 +38,15 @@ export function HowOthersSee() {
         <div
           className="row"
           style={{
-            marginTop: 14,
+            marginTop: 12,
             background: 'var(--turq)',
             borderRadius: 16,
-            padding: '14px 16px',
+            minHeight: 52,
+            padding: '0 16px',
             gap: 10,
           }}
         >
-          <Eye size={20} aria-hidden />
+          <Eye size={22} aria-hidden />
           <span
             style={{
               flex: 1,
@@ -62,6 +58,7 @@ export function HowOthersSee() {
           <button
             onClick={() => nav('/settings')}
             style={{
+              color: '#000',
               fontSize: 14,
               fontWeight: 600,
               textDecoration: 'underline',
@@ -77,16 +74,9 @@ export function HowOthersSee() {
             area: user.area || 'Middelland',
           })}
           sharedEvent={sharedEvent}
-          earned={earned}
         />
 
-        <p
-          style={{
-            fontSize: 14,
-            color: 'var(--muted)',
-            marginTop: 12,
-          }}
-        >
+        <p style={{ fontSize: 14, lineHeight: '21px', color: 'var(--muted)', marginTop: 12 }}>
           {t('neverShow')}
         </p>
       </div>
@@ -98,12 +88,12 @@ export function ProfileCard({ subline, sharedEvent, earned }) {
   const { user } = useApp()
   const { t } = useI18n()
   const name = user.firstName || '?'
-  const interests = user.interests.length ? user.interests : ['Cooking', 'Music', 'Football', 'Games', 'Running']
+  const interests = [...(user.interests.length ? user.interests : ['Cooking', 'Cycling', 'Football', 'Games', 'Running'])].sort()
   return (
     <section
       aria-label={t('previewProfile')}
       style={{
-        marginTop: 28,
+        marginTop: 23,
         background: 'var(--white)',
         border: '1px solid rgba(115,115,115,.12)',
         boxShadow: '0 1px 2px rgba(0,0,0,.05)',
@@ -160,8 +150,8 @@ export function ProfileCard({ subline, sharedEvent, earned }) {
                 alignItems: 'flex-start',
               }}
             >
-              <Flower accent="orange" size={36}>
-                <Footprints size={15} color="var(--white)" aria-hidden />
+              <Flower accent="turq" size={36}>
+                <Footprints size={15} aria-hidden />
               </Flower>
               <span>
                 <strong
