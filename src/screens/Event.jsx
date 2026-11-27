@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { BadgeCheck, Check, Globe, Heart, LoaderCircle, Send, Share2, Users, X } from 'lucide-react'
+import { BadgeCheck, Check, ChevronRight, Globe, Heart, LoaderCircle, Send, Share2, Users, X } from 'lucide-react'
 import { Flower } from '../components/Flower'
 import { Icon } from '../components/Icon'
 import { Avatar, AvatarStack, Img } from '../components/Img'
@@ -347,21 +347,6 @@ export function EventScreen() {
                 })}
               </span>
             </button>
-            {org && e.host.id !== 'cvd' ? (
-              <button
-                onClick={() => nav(`/org/${org.id}`)}
-                style={{
-                  fontSize: 15,
-                  fontWeight: 600,
-                  textDecoration: 'underline',
-                  textUnderlineOffset: 3,
-                }}
-              >
-                {t('withOrg', {
-                  org: org.name,
-                })}
-              </button>
-            ) : null}
           </div>
           <p
             className="body"
@@ -1049,49 +1034,44 @@ export function EventScreen() {
         </button>
       </Sheet>
       <ShareSheet open={sharing} onClose={() => setSharing(false)} e={e} />
-      <Sheet open={whoGoingOpen} onClose={() => setWhoGoingOpen(false)} title={t('whosGoing')}>
-        <div
-          className="stack"
-          style={{
-            gap: 0,
-          }}
-        >
-          {people.map((person) => (
-            <div
-              key={person.id}
-              className="row"
-              style={{
-                padding: '8px 0',
-                borderBottom: '1px solid var(--grey-2)',
-              }}
-            >
+      <Sheet open={whoGoingOpen} onClose={() => setWhoGoingOpen(false)}>
+        <div className="row" style={{ justifyContent: 'space-between', marginBottom: 8 }}>
+          <h2 className="h2">{t('whosGoing')}</h2>
+          <span className="eyebrow">{t('nGoing', { n: going })}</span>
+        </div>
+        <div className="stack" style={{ gap: 0 }}>
+          {[
+            { ...e.host, badge: 'host' },
+            ...people.filter((person) => person.id !== e.host.id),
+            ...(app.joined.includes(e.id) ? [{ id: 'me', name: app.user.firstName || t('friend'), avatar: 'ruben', badge: 'you' }] : []),
+          ].map((person) => {
+            const link = person.id !== 'me' && profileLink(person.id)
+            return (
               <button
+                key={person.id}
                 className="row"
-                style={{
-                  flex: 1,
-                  gap: 10,
-                  textAlign: 'start',
-                }}
-                disabled={!profileLink(person.id)}
-                onClick={() => profileLink(person.id) && nav(profileLink(person.id))}
-                aria-label={t('viewProfile', {
-                  name: person.name,
-                })}
+                style={{ padding: '10px 0', gap: 12, textAlign: 'start', borderBottom: '1px solid var(--grey-2)', width: '100%' }}
+                disabled={!link}
+                onClick={() => link && nav(link)}
+                aria-label={t('viewProfile', { name: person.name })}
               >
-                <Avatar name={person.name} img={person.avatar} size={40} />
-                <span>
-                  <strong
-                    style={{
-                      display: 'block',
-                    }}
-                  >
-                    {person.name}
-                  </strong>
-                  <span className="tiny">{person.area}</span>
-                </span>
+                <Avatar name={person.name} img={person.avatar} size={44} />
+                <strong style={{ fontSize: 16, fontWeight: 600 }}>{person.name}</strong>
+                {person.badge === 'host' && (
+                  <span className="tag" style={{ background: 'var(--green)', color: 'var(--white)', fontSize: 12, padding: '3px 8px' }}>
+                    {t('host')}
+                  </span>
+                )}
+                {person.badge === 'you' && (
+                  <span className="tag" style={{ fontSize: 12, padding: '3px 8px' }}>
+                    {t('you')}
+                  </span>
+                )}
+                <span style={{ flex: 1 }} />
+                {link && <ChevronRight size={18} className="flip-rtl" aria-hidden />}
               </button>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </Sheet>
       <Sheet open={confirmCancel} onClose={() => setConfirmCancel(false)} title={t('cancelTitle')}>
