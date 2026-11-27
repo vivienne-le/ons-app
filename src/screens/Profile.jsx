@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { BadgeCheck, ChevronRight, Globe, LogOut, Mail, Pencil, Repeat, RotateCcw, Sprout, Users } from 'lucide-react'
+import { BadgeCheck, ChevronRight, Globe, LogOut, Mail, Pencil, Repeat, RotateCcw } from 'lucide-react'
 import { BadgeSection, useStats } from '../components/Badges'
 import { EditProfile, usePronounLabel } from '../components/EditProfile'
 import { Flower } from '../components/Flower'
 import { Avatar } from '../components/Img'
+import { OrgLogo } from '../components/OrgLogo'
 import { NavBar, Screen, Sheet } from '../components/UI'
-import { languages } from '../data/events'
+import { languages, organisations } from '../data/events'
 import { profiles } from '../data/people'
 import { useI18n } from '../i18n/index'
 import { BecomeHostCard } from './BecomeHost'
@@ -62,16 +63,11 @@ export function Profile() {
   const pronounLabel = usePronounLabel()
   const [confirm, setConfirm] = useState(null)
   const settingsRef = useRef(null)
-  const gardenRef = useRef(null)
   useEffect(() => {
     const f = params.get('section')
     f === 'settings' &&
       settingsRef.current?.scrollIntoView({
         behavior: 'smooth',
-      })
-    f === 'garden' &&
-      gardenRef.current?.scrollIntoView({
-        block: 'center',
       })
   }, [params])
   const togglePref = (f, S) => (N) => {
@@ -265,118 +261,59 @@ export function Profile() {
           </div>
         </div>
         <div className="pad">
-          <BecomeHostCard placement="top" />
-          <button
-            ref={gardenRef}
-            className="card row"
-            onClick={() => nav('/network')}
-            style={{
-              width: '100%',
-              padding: 14,
-              marginTop: 24,
-              textAlign: 'start',
-              background: 'var(--green)',
-              color: 'var(--white)',
-            }}
-          >
-            <Flower color="var(--lime)" size={44}>
-              <Sprout size={20} color="var(--green)" />
-            </Flower>
-            <span
-              style={{
-                flex: 1,
-              }}
-            >
-              <strong
-                style={{
-                  display: 'block',
-                  fontSize: 16,
-                }}
-              >
-                {t('gardenCard')}
-              </strong>
-              <span
-                style={{
-                  fontSize: 13,
-                  opacity: 0.85,
-                }}
-              >
-                {t('gardenCardSub', {
-                  f: Object.values(app.friends).filter((f) => f === 'friends').length,
-                  s: Object.values(app.friends).filter((f) => f === 'sent').length,
-                })}
-              </span>
-            </span>
-            <ChevronRight size={18} className="flip-rtl" />
-          </button>
           <button
             className="card row"
             onClick={() => nav('/connections')}
             style={{
               width: '100%',
-              padding: 14,
-              marginTop: 10,
+              padding: '12px 14px 12px 18px',
+              marginTop: 24,
               textAlign: 'start',
+              minHeight: 52,
             }}
           >
+            <span
+              style={{
+                flex: 1,
+                fontSize: 16,
+              }}
+            >
+              {t('followingTab')}
+            </span>
+            <span className="tiny">
+              {t('nHosts', {
+                n: app.following.length,
+              })}
+            </span>
             <span
               style={{
                 display: 'flex',
               }}
             >
-              {Object.entries(app.friends)
-                .filter(([, f]) => f === 'friends')
-                .slice(0, 3)
-                .map(
-                  ([f], S) =>
-                    profiles[f] && (
-                      <span
-                        key={f}
-                        style={{
-                          marginInlineStart: S ? -10 : 0,
-                        }}
-                      >
-                        <Avatar name={profiles[f].name} img={profiles[f].avatar} size={34} ring />
-                      </span>
-                    ),
-                )}
-              {!Object.values(app.friends).includes('friends') && (
-                <span
-                  className="icon-btn white"
-                  style={{
-                    width: 34,
-                    height: 34,
-                  }}
-                >
-                  <Users size={17} />
-                </span>
-              )}
-            </span>
-            <span
-              style={{
-                flex: 1,
-              }}
-            >
-              <strong
-                style={{
-                  display: 'block',
-                  fontSize: 16,
-                }}
-              >
-                {t('friendsFollowing')}
-              </strong>
-              <span className="tiny">
-                {t('friendsCount', {
-                  n: Object.values(app.friends).filter((f) => f === 'friends').length,
-                })}
-                {' · '}
-                {t('followingCount', {
-                  n: app.following.length,
-                })}
-              </span>
+              {app.following.slice(0, 3).map((f, S) => {
+                const [kind, id] = f.split(':')
+                const p = kind === 'person' ? profiles[id] : organisations.find((o) => o.id === id)
+                return (
+                  p && (
+                    <span
+                      key={f}
+                      style={{
+                        marginInlineStart: S ? -8 : 0,
+                      }}
+                    >
+                      {kind === 'person' ? (
+                        <Avatar name={p.name} img={p.avatar} size={26} ring />
+                      ) : (
+                        <OrgLogo org={p} size={26} background="var(--turq)" />
+                      )}
+                    </span>
+                  )
+                )
+              })}
             </span>
             <ChevronRight size={18} className="flip-rtl" />
           </button>
+          <BecomeHostCard placement="top" />
           <div className="section-head">
             <h2 className="h2">{t('aboutMe')}</h2>
             <button className="link" onClick={() => setEditing(true)}>

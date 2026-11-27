@@ -1,13 +1,13 @@
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { Check, Clock, Globe, UserPlus, Users } from 'lucide-react'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Check, Globe, Users } from 'lucide-react'
 import { BadgeRow } from '../components/Badges'
 import { RowCard } from '../components/Cards'
 import { OrgLogo } from '../components/OrgLogo'
 import { Flower } from '../components/Flower'
 import { Avatar } from '../components/Img'
-import { BackButton, NavBar, Screen, SegTabs } from '../components/UI'
-import { byId, interestOptions, organisations } from '../data/events'
-import { eventsOf, hostedBy, orgInfo, orgsOfHost, profiles } from '../data/people'
+import { BackButton, NavBar, Screen } from '../components/UI'
+import { byId, organisations } from '../data/events'
+import { hostedBy, orgInfo, orgsOfHost, profileLink, profiles } from '../data/people'
 import { useI18n } from '../i18n/index'
 import { useApp } from '../state/AppState'
 export const orgKindKey = {
@@ -16,75 +16,21 @@ export const orgKindKey = {
   creative: 'orgCreative',
   sport: 'orgSport',
 }
-export function FriendButton({ p: person, compact }) {
-  const { friends, setFriend, showToast } = useApp()
-  const { t } = useI18n()
-  const status = friends[person.id]
-  const btnClass = `btn ${compact ? 'btn-sm' : ''}`
-  return status === 'friends' ? (
-    <button
-      className={`${btnClass} btn-secondary`}
-      aria-label={`${t('friendsLabel')} · ${t('removeFriend')}`}
-      onClick={() => {
-        setFriend(person.id, null)
-        showToast(
-          t('removedFriend', {
-            name: person.name,
-          }),
-          {
-            label: t('undo'),
-            run: () => setFriend(person.id, 'friends'),
-          },
-        )
-      }}
-    >
-      <Check size={17} aria-hidden /> {t('friendsLabel')}
-    </button>
-  ) : status === 'sent' ? (
-    <button
-      className={`${btnClass} btn-soft`}
-      aria-label={`${t('requestSent')} · ${t('cancelRequest')}`}
-      onClick={() => {
-        setFriend(person.id, null)
-        showToast(t('requestCancelled'))
-      }}
-    >
-      <Clock size={17} aria-hidden /> {t('requestSent')}
-    </button>
-  ) : (
-    <button
-      className={`${btnClass} btn-primary`}
-      onClick={() => {
-        setFriend(person.id, 'sent')
-        showToast(
-          t('requestSentToast', {
-            name: person.name,
-          }),
-          {
-            label: t('undo'),
-            run: () => setFriend(person.id, null),
-          },
-        )
-      }}
-    >
-      <UserPlus size={17} aria-hidden /> {t('addFriend')}
-    </button>
-  )
-}
 export function FollowButton({ k: followKey, name, compact }) {
   const { following, toggleFollow, showToast } = useApp()
   const { t } = useI18n()
   const isFollowing = following.includes(followKey)
   return (
     <button
-      className={`btn ${compact ? 'btn-sm' : ''} ${isFollowing ? 'btn-secondary' : 'btn-primary'}`}
+      className={`btn ${compact ? 'btn-sm' : ''} btn-primary`}
       aria-pressed={isFollowing}
       style={
         isFollowing
-          ? undefined
-          : {
-              background: 'var(--green)',
+          ? {
+              background: 'var(--lime)',
+              color: 'var(--ink)',
             }
+          : undefined
       }
       onClick={() => {
         const b = toggleFollow(followKey)
@@ -119,7 +65,8 @@ export function PersonRow({ p: person, right }) {
           textAlign: 'start',
           minWidth: 0,
         }}
-        onClick={() => nav(`/person/${person.id}`)}
+        disabled={!profileLink(person.id)}
+        onClick={() => profileLink(person.id) && nav(profileLink(person.id))}
         aria-label={t('viewProfile', {
           name: person.name,
         })}
@@ -157,23 +104,13 @@ export function personBadges(person, hostingCount) {
 export function PersonScreen() {
   const { id = '' } = useParams()
   const nav = useNavigate()
-  const { user } = useApp()
-  const { t, ev, interest } = useI18n()
+  const { t, ev } = useI18n()
   const person = profiles[id]
-  if (!person)
-    return (
-      <Screen>
-        <div className="pad safe-top">
-          <BackButton />
-        </div>
-      </Screen>
-    )
+  // only hosts have a public profile: neighbours stay private
+  if (!person || !hostedBy(person.id).length) return <Navigate to="/home" replace />
   const hosts = hostedBy(person.id)
   const orgs = orgsOfHost(person.id)
-  const goesTo = eventsOf(person.id).filter((h) => h.host.id !== person.id)
   const role = hosts[0] ? ev(hosts[0]).host.role : null
-  const myInterests = user.interests.length ? user.interests : ['Football', 'Cycling', 'Darts']
-  const inCommon = person.interests.filter((h) => myInterests.includes(h)).length
   return (
     <Screen>
       <div
@@ -184,7 +121,7 @@ export function PersonScreen() {
       >
         <div
           style={{
-            background: 'var(--lav)',
+            background: 'var(--pink)',
             padding: 'max(52px, env(safe-area-inset-top)) var(--pad) 22px',
             borderRadius: '0 0 32px 32px',
           }}
@@ -236,13 +173,10 @@ export function PersonScreen() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: hosts.length ? '1fr 1fr' : '1fr',
-              gap: 10,
               marginTop: 18,
             }}
           >
-            <FriendButton p={person} />
-            {hosts.length > 0 && <FollowButton k={`person:${person.id}`} name={person.name} />}
+            <FollowButton k={`person:${person.id}`} name={person.name} />
           </div>
         </div>
         <div className="pad">
@@ -256,40 +190,6 @@ export function PersonScreen() {
             }}
           >
             <BadgeRow ids={personBadges(person, hosts.length)} />
-          </div>
-          <div className="section-head">
-            <h2 className="h2">{t('interests')}</h2>
-            {inCommon > 0 && (
-              <span className="eyebrow">
-                {t('inCommon', {
-                  n: inCommon,
-                })}
-              </span>
-            )}
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 8,
-            }}
-          >
-            {person.interests.map((h) => {
-              const i = interestOptions.find((interestOption) => interestOption.id === h)
-              const j = myInterests.includes(h)
-              return (
-                <span
-                  key={h}
-                  className="chip"
-                  style={{
-                    background: i ? `var(--${i.accent})` : 'var(--grey)',
-                  }}
-                >
-                  {j && <Check size={14} aria-hidden />}
-                  {interest(h)}
-                </span>
-              )
-            })}
           </div>
           {hosts.length > 0 && (
             <>
@@ -328,18 +228,6 @@ export function PersonScreen() {
               <div className="stack">
                 {hosts.map((host) => (
                   <RowCard key={host.id} e={host} />
-                ))}
-              </div>
-            </>
-          )}
-          {goesTo.length > 0 && (
-            <>
-              <div className="section-head">
-                <h2 className="h2">{t('goesTo')}</h2>
-              </div>
-              <div className="stack">
-                {goesTo.map((h) => (
-                  <RowCard key={h.id} e={h} />
                 ))}
               </div>
             </>
@@ -482,156 +370,73 @@ export function OrgScreen() {
   )
 }
 export function ConnectionsScreen() {
-  const [params, setParams] = useSearchParams()
   const nav = useNavigate()
-  const { friends, following } = useApp()
+  const { following } = useApp()
   const { t } = useI18n()
-  const tab = params.get('tab') || 'friends'
-  const friendList = Object.entries(friends)
-    .filter(([, d]) => d === 'friends')
-    .map(([d]) => profiles[d])
-    .filter(Boolean)
-  const sentList = Object.entries(friends)
-    .filter(([, d]) => d === 'sent')
-    .map(([d]) => profiles[d])
-    .filter(Boolean)
   return (
     <Screen>
       <div className="scroll pad safe-top with-nav">
         <div className="row">
           <BackButton to="/profile" />
-          <h1 className="h2">{t('friendsFollowing')}</h1>
+          <h1 className="h2">{t('followingTab')}</h1>
         </div>
-        <div
+        <p
+          className="small"
           style={{
-            marginTop: 18,
+            marginTop: 10,
           }}
         >
-          <SegTabs
-            value={tab}
-            onChange={(d) => {
-              setParams(
-                {
-                  tab: d,
-                },
-                {
-                  replace: true,
-                },
-              )
-            }}
-            options={[
-              {
-                id: 'friends',
-                label: (
-                  <>
-                    {t('friendsLabel')}{' '}
-                    <span
-                      style={{
-                        opacity: 0.6,
-                      }}
-                    >
-                      {friendList.length}
-                    </span>
-                  </>
-                ),
-              },
-              {
-                id: 'following',
-                label: (
-                  <>
-                    {t('followingTab')}{' '}
-                    <span
-                      style={{
-                        opacity: 0.6,
-                      }}
-                    >
-                      {following.length}
-                    </span>
-                  </>
-                ),
-              },
-              {
-                id: 'sent',
-                label: (
-                  <>
-                    {t('requestsTab')}{' '}
-                    <span
-                      style={{
-                        opacity: 0.6,
-                      }}
-                    >
-                      {sentList.length}
-                    </span>
-                  </>
-                ),
-              },
-            ]}
-          />
-        </div>
+          {t('followingSub')}
+        </p>
         <div
           style={{
             marginTop: 10,
           }}
         >
-          {tab === 'friends' &&
-            (friendList.length ? (
-              friendList.map((d) => <PersonRow key={d.id} p={d} right={<FriendButton compact p={d} />} />)
-            ) : (
-              <EmptyCard title={t('noFriendsYet')} sub={t('noFriendsSub')} />
-            ))}
-          {tab === 'sent' &&
-            (sentList.length ? (
-              sentList.map((d) => <PersonRow key={d.id} p={d} right={<FriendButton compact p={d} />} />)
-            ) : (
-              <EmptyCard title={t('noRequests')} sub={t('noFriendsSub')} />
-            ))}
-          {tab === 'following' &&
-            (following.length ? (
-              following.map((d) => {
-                const [e, f] = d.split(':')
-                if (e === 'person' && profiles[f])
-                  return (
-                    <PersonRow key={d} p={profiles[f]} right={<FollowButton compact k={d} name={profiles[f].name} />} />
-                  )
-                const g = organisations.find((organisation) => organisation.id === f)
-                return g ? (
-                  <div
-                    key={d}
+          {following.length ? (
+            following.map((d) => {
+              const [e, f] = d.split(':')
+              if (e === 'person' && profiles[f])
+                return <PersonRow key={d} p={profiles[f]} right={<FollowButton compact k={d} name={profiles[f].name} />} />
+              const g = organisations.find((organisation) => organisation.id === f)
+              return g ? (
+                <div
+                  key={d}
+                  className="row"
+                  style={{
+                    padding: '10px 0',
+                    borderBottom: '1px solid var(--grey-2)',
+                  }}
+                >
+                  <button
                     className="row"
                     style={{
-                      padding: '10px 0',
-                      borderBottom: '1px solid var(--grey-2)',
+                      flex: 1,
+                      gap: 12,
+                      textAlign: 'start',
                     }}
+                    onClick={() => nav(`/org/${g.id}`)}
                   >
-                    <button
-                      className="row"
-                      style={{
-                        flex: 1,
-                        gap: 12,
-                        textAlign: 'start',
-                      }}
-                      onClick={() => nav(`/org/${g.id}`)}
-                    >
-                      <OrgLogo org={g} size={44} background="var(--turq)" />
-                      <span>
-                        <strong
-                          style={{
-                            display: 'block',
-                            fontSize: 16,
-                          }}
-                        >
-                          {g.name}
-                        </strong>
-                        <span className="tiny">{t(orgKindKey[orgInfo[g.id].kind])}</span>
-                      </span>
-                    </button>
-                    <FollowButton compact k={d} name={g.name} />
-                  </div>
-                ) : null
-              })
-            ) : (
-              <EmptyCard title={t('noFollowingYet')} sub={t('noFollowingSub')} />
-            ))}
+                    <OrgLogo org={g} size={44} background="var(--turq)" />
+                    <span>
+                      <strong
+                        style={{
+                          display: 'block',
+                          fontSize: 16,
+                        }}
+                      >
+                        {g.name}
+                      </strong>
+                      <span className="tiny">{t(orgKindKey[orgInfo[g.id].kind])}</span>
+                    </span>
+                  </button>
+                  <FollowButton compact k={d} name={g.name} />
+                </div>
+              ) : null
+            })
+          ) : (
+            <EmptyCard title={t('noFollowingYet')} sub={t('noFollowingSub')} />
+          )}
         </div>
       </div>
       <NavBar />

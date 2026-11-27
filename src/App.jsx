@@ -6,7 +6,6 @@ import { EventScreen } from './screens/Event'
 import { Home } from './screens/Home'
 import { Joined } from './screens/Joined'
 import { EventMap, MapTab } from './screens/Maps'
-import { Network } from './screens/Network'
 import { ConnectionsScreen, OrgScreen, PersonScreen } from './screens/People'
 import { Plans } from './screens/Plans'
 import { MyPost, PostDetails, PostPreview, PostSent, PostWhat, PostWhen, PostWhere } from './screens/Post'
@@ -169,14 +168,6 @@ export function AppRoutes() {
             element={
               <NeedsAccount>
                 <OrgScreen />
-              </NeedsAccount>
-            }
-          />
-          <Route
-            path="/network"
-            element={
-              <NeedsAccount>
-                <Network />
               </NeedsAccount>
             }
           />

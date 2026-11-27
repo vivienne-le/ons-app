@@ -6,13 +6,8 @@ import { profiles } from '../data/people'
 import { useI18n } from '../i18n/index'
 import { useApp } from '../state/AppState'
 export function ShareSheet({ open, onClose, e: event }) {
-  const { friends, showToast } = useApp()
+  const { showToast } = useApp()
   const { t, full } = useI18n()
-  const [sentTo, setSentTo] = useState([])
-  const friendList = Object.entries(friends)
-    .filter(([, j]) => j === 'friends')
-    .map(([j]) => profiles[j])
-    .filter(Boolean)
   const message = t('shareMsg', {
     title: event.title,
     date: full(event.date),
@@ -122,87 +117,6 @@ export function ShareSheet({ open, onClose, e: event }) {
           </span>
         </span>
       </div>
-      {friendList.length > 0 && (
-        <>
-          <div
-            className="eyebrow"
-            style={{
-              margin: '18px 0 10px',
-            }}
-          >
-            {t('sendToFriend')}
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              gap: 14,
-              overflowX: 'auto',
-              paddingBottom: 4,
-            }}
-          >
-            {friendList.map((j) => {
-              const k = sentTo.includes(j.id)
-              return (
-                <button
-                  key={j.id}
-                  aria-pressed={k}
-                  onClick={() => {
-                    k ||
-                      (setSentTo([...sentTo, j.id]),
-                      showToast(
-                        t('sentTo', {
-                          name: j.name,
-                        }),
-                      ))
-                  }}
-                  style={{
-                    display: 'grid',
-                    justifyItems: 'center',
-                    gap: 4,
-                    flex: 'none',
-                    width: 60,
-                  }}
-                >
-                  <span
-                    style={{
-                      position: 'relative',
-                    }}
-                  >
-                    <Avatar name={j.name} img={j.avatar} size={52} />
-                    {k && (
-                      <span
-                        style={{
-                          position: 'absolute',
-                          insetInlineEnd: -2,
-                          bottom: -2,
-                          width: 22,
-                          height: 22,
-                          borderRadius: '50%',
-                          background: 'var(--green)',
-                          color: 'var(--white)',
-                          display: 'grid',
-                          placeItems: 'center',
-                          boxShadow: '0 0 0 2px var(--white)',
-                        }}
-                      >
-                        <Check size={13} />
-                      </span>
-                    )}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 12,
-                      fontWeight: 600,
-                    }}
-                  >
-                    {j.name}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-        </>
-      )}
       <div
         className="eyebrow"
         style={{

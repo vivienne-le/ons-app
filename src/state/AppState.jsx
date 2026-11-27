@@ -54,12 +54,7 @@ export const defaults = {
   draft: emptyDraft(),
   posts: [],
   hostRequest: null,
-  friends: {
-    mo: 'friends',
-    g5: 'friends',
-    sara: 'friends',
-  },
-  following: ['org:cvd', 'person:noon'],
+  following: ['org:cvd', 'org:zorgvrijstaat', 'person:noon', 'person:mo'],
 }
 export const STORAGE_KEY = 'cvd-app-v1'
 export function loadState() {
@@ -223,17 +218,6 @@ export function AppProvider({ children }) {
           ...i,
           hostRequest: h,
         })),
-      setFriend: (h, i) =>
-        setState((j) => {
-          const k = {
-            ...j.friends,
-          }
-          i ? (k[h] = i) : delete k[h]
-          return {
-            ...j,
-            friends: k,
-          }
-        }),
       toggleFollow: (h) => {
         const i = !state.following.includes(h)
         setState((j) => ({

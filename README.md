@@ -18,7 +18,7 @@ npm run build    # production build in dist/
 - **Home, Explore and Map**: activities for you, filters, and a map of Middelland with essential services first (toilets, a place to sleep, free meals…).
 - **Activity page**: join, save, share, comments with translation, who's going.
 - **Plans**: monthly calendar, upcoming, saved and been-to.
-- **Profile**: edit profile and pronouns, "How others see you", badges (rubber stamps), friends and following, your network garden, settings.
+- **Profile**: edit profile and pronouns, "How others see you", badges (rubber stamps), the hosts you follow, settings.
 - **Hosts**: post an activity in 4 steps; guests can ask an organisation to verify them as a host.
 
 ## Where to change things

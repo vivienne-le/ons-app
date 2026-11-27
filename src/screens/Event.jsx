@@ -9,7 +9,6 @@ import { BackButton, Screen, Sheet, WhenWhere } from '../components/UI'
 import { beenTo, byId, organisations } from '../data/events'
 import { goingPeople, orgOfEvent, profileLink } from '../data/people'
 import { useI18n } from '../i18n/index'
-import { FriendButton } from './People'
 import { useApp } from '../state/AppState'
 const attended = (eventId) => beenTo.some((b) => b.eventId === eventId)
 export function EventScreen() {
@@ -1073,7 +1072,8 @@ export function EventScreen() {
                   gap: 10,
                   textAlign: 'start',
                 }}
-                onClick={() => nav(`/person/${person.id}`)}
+                disabled={!profileLink(person.id)}
+                onClick={() => profileLink(person.id) && nav(profileLink(person.id))}
                 aria-label={t('viewProfile', {
                   name: person.name,
                 })}
@@ -1090,7 +1090,6 @@ export function EventScreen() {
                   <span className="tiny">{person.area}</span>
                 </span>
               </button>
-              <FriendButton compact p={person} />
             </div>
           ))}
         </div>

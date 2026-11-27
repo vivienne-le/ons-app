@@ -72,7 +72,7 @@ export const badges = [
   {
     id: 'goodNeighbour',
     group: 'guest',
-    stat: 'friends',
+    stat: 'hosts',
     goal: 3,
     icon: HeartHandshake,
     accent: 'pink',
@@ -135,7 +135,7 @@ export const badges = [
   },
 ]
 export function useStats() {
-  const { user, joined, friends, myComments, goingCount } = useApp()
+  const { user, joined, myComments, goingCount } = useApp()
   return useMemo(() => {
     const b = beenTo.reduce((g, h) => g + h.times, 0)
     const c = new Set(
@@ -154,7 +154,7 @@ export function useStats() {
     return {
       attended: b,
       types: c.size,
-      friends: Object.values(friends).filter((g) => g === 'friends').length,
+      hosts: new Set([...beenTo.map((g) => byId(g.eventId)?.host.id), ...joined.map((g) => byId(g)?.host.id)].filter(Boolean)).size,
       comments: Object.values(myComments).reduce((g, h) => g + h.length, 0),
       loyal: Math.max(0, ...beenTo.map((g) => g.times)),
       sessions: f,
@@ -167,7 +167,7 @@ export function useStats() {
       welcomed: f * 2,
       verified: d ? 1 : 0,
     }
-  }, [user, joined, friends, myComments, goingCount])
+  }, [user, joined, myComments, goingCount])
 }
 export const badgeName = (id) => `badge_${id}`
 export const badgeDesc = (id) => `badgeD_${id}`
