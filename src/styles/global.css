@@ -653,3 +653,10 @@ img {
     animation: none !important;
   }
 }
+
+.no-bar {
+  scrollbar-width: none;
+}
+.no-bar::-webkit-scrollbar {
+  display: none;
+}

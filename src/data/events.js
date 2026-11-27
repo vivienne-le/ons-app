@@ -949,20 +949,20 @@ export const popular = ['warm-hats', 'bike-repair', 'football-beer']
 export const joinToday = ['walk-talk', 'open-kitchen', 'board-games']
 export const invites = [
   {
-    id: 'inv-sam',
-    from: people.sam,
-    when: '2h ago',
-    eventId: 'pool-tournament',
-    note: 'You were great last time, come play again!',
-    accent: 'turq',
-  },
-  {
     id: 'inv-noon',
     from: people.noon,
-    when: 'Yesterday',
+    when: 'Just now',
     eventId: 'kerststol-kitchen',
     note: 'We’re baking Christmas bread, you’d love it.',
     accent: 'pink',
+  },
+  {
+    id: 'inv-sam',
+    from: people.sam,
+    when: 'Yesterday',
+    eventId: 'pool-tournament',
+    note: 'You were great last time, come play again!',
+    accent: 'turq',
   },
 ]
 export const suggestions = [

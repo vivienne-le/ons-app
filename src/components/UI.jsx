@@ -203,3 +203,36 @@ export function Progress({ step, total = 5 }) {
     </div>
   )
 }
+export function Switch({ on, onChange, label }) {
+  return (
+    <button
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      onClick={() => onChange(!on)}
+      style={{
+        width: 52,
+        height: 32,
+        borderRadius: 999,
+        background: on ? 'var(--ink)' : 'var(--grey-2)',
+        position: 'relative',
+        transition: 'background .2s',
+        flex: 'none',
+      }}
+    >
+      <span
+        style={{
+          position: 'absolute',
+          top: 3,
+          left: on ? 23 : 3,
+          width: 26,
+          height: 26,
+          borderRadius: '50%',
+          background: 'var(--white)',
+          transition: 'left .2s var(--ease)',
+          boxShadow: '0 1px 3px rgba(0,0,0,.2)',
+        }}
+      />
+    </button>
+  )
+}

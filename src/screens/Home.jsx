@@ -1,6 +1,8 @@
-import { useNavigate } from 'react-router-dom'
-import { ArrowRight, BadgeCheck, Bell, MapPin as PinIcon, Search as SearchIcon, SlidersHorizontal } from 'lucide-react'
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { ArrowRight, BadgeCheck, Bell, Mail, X, MapPin as PinIcon, Search as SearchIcon, SlidersHorizontal } from 'lucide-react'
 import { RowCard, TileCard } from '../components/Cards'
+import { FilterSheet, filtersToParams } from '../components/Filters'
 import { Flower } from '../components/Flower'
 import { Icon } from '../components/Icon'
 import { NavBar, Screen } from '../components/UI'
@@ -21,12 +23,64 @@ export function upcomingOnly(ids) {
 export function Home() {
   const nav = useNavigate()
   const { user, joined, invites: inviteState, updatesRead, goingCount, posts } = useApp()
-  const { t, ev, wd } = useI18n()
+  const { t, ev, wd, full } = useI18n()
+  const location = useLocation()
+  const [ping, setPing] = useState(!!location.state?.invitePing)
+  const [filterOpen, setFilterOpen] = useState(false)
+  const pingInvite = invites[0]
+  const pingEvent = ev(byId(pingInvite.eventId))
   const upcoming = upcomingOnly(joined)
   const hasNews = !updatesRead || invites.some((invite) => !inviteState[invite.id])
   const dayLabel = (e) => (e === TODAY + 1 ? t('tomorrow') : e === TODAY ? t('today') : `${wd(e)} ${e}`)
   return (
     <Screen>
+      {ping && (
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => nav('/updates')}
+          onKeyDown={(k) => k.key === 'Enter' && nav('/updates')}
+          className="row"
+          style={{
+            position: 'absolute',
+            top: 16,
+            left: 'var(--pad)',
+            right: 'var(--pad)',
+            zIndex: 30,
+            background: 'var(--white)',
+            borderRadius: 24,
+            boxShadow: '0 8px 24px rgba(0,0,0,.14)',
+            padding: '14px 40px 14px 14px',
+            gap: 14,
+            cursor: 'pointer',
+            textAlign: 'start',
+          }}
+        >
+          <Flower accent="pink" size={44}>
+            <Mail size={18} />
+          </Flower>
+          <span style={{ flex: 1 }}>
+            <strong style={{ display: 'block', fontSize: 15 }}>
+              {t('invitePingTitle', { name: pingInvite.from.name })}
+            </strong>
+            <span style={{ fontSize: 14 }}>
+              {t('invitePingBody', { event: '\u0001', date: full(pingEvent.date), time: pingEvent.start })
+                .split('\u0001')
+                .flatMap((part, i) => (i ? [<em key={i}>{pingEvent.title}</em>, part] : [part]))}
+            </span>
+          </span>
+          <button
+            aria-label={t('closeLabel')}
+            onClick={(x) => {
+              x.stopPropagation()
+              setPing(false)
+            }}
+            style={{ position: 'absolute', top: 10, right: 10, padding: 4 }}
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
       <div className="scroll with-nav">
         <div
           style={{
@@ -172,7 +226,7 @@ export function Home() {
                 height: 56,
               }}
               aria-label={t('filter')}
-              onClick={() => nav('/search?filter=1')}
+              onClick={() => setFilterOpen(true)}
             >
               <SlidersHorizontal size={20} />
             </button>
@@ -461,9 +515,6 @@ export function Home() {
           </div>
           <div className="section-head">
             <h2 className="h2">{t('joinToday')}</h2>
-            <button className="link" onClick={() => nav('/search?list=today')}>
-              {t('seeAll')}
-            </button>
           </div>
           <div
             style={{
@@ -663,6 +714,11 @@ export function Home() {
         </div>
       </div>
       <NavBar />
+      <FilterSheet
+        open={filterOpen}
+        onClose={() => setFilterOpen(false)}
+        onSearch={(f) => nav(`/search?${new URLSearchParams(filtersToParams(f))}`)}
+      />
     </Screen>
   )
 }
