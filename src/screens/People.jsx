@@ -1,10 +1,10 @@
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
-import { Check, Globe, Users } from 'lucide-react'
-import { BadgeRow } from '../components/Badges'
+import { Check, ChevronRight, Globe, MapPin, MessageCircle, Plus, Users } from 'lucide-react'
+import { BadgeIcon, BadgeRow, StickerTag, badges } from '../components/Badges'
 import { RowCard } from '../components/Cards'
 import { OrgLogo } from '../components/OrgLogo'
 import { Flower } from '../components/Flower'
-import { Avatar } from '../components/Img'
+import { Avatar, Img } from '../components/Img'
 import { BackButton, NavBar, Screen } from '../components/UI'
 import { byId, organisations } from '../data/events'
 import { hostedBy, orgInfo, orgsOfHost, profileLink, profiles } from '../data/people'
@@ -24,14 +24,10 @@ export function FollowButton({ k: followKey, name, compact }) {
     <button
       className={`btn ${compact ? 'btn-sm' : ''} btn-primary`}
       aria-pressed={isFollowing}
-      style={
-        isFollowing
-          ? {
-              background: 'var(--lime)',
-              color: 'var(--ink)',
-            }
-          : undefined
-      }
+      style={{
+        ...(isFollowing ? { background: 'var(--lime)', color: 'var(--ink)' } : {}),
+        ...(compact ? { height: 30, padding: '0 12px', fontSize: 13, gap: 4 } : {}),
+      }}
       onClick={() => {
         const b = toggleFollow(followKey)
         showToast(
@@ -41,12 +37,12 @@ export function FollowButton({ k: followKey, name, compact }) {
         )
       }}
     >
-      {isFollowing ? <Check size={17} aria-hidden /> : null}
+      {isFollowing ? <Check size={compact ? 14 : 17} aria-hidden /> : null}
       {t(isFollowing ? 'followingBtn' : 'follow')}
     </button>
   )
 }
-export function PersonRow({ p: person, right }) {
+export function PersonRow({ p: person, right, sub }) {
   const nav = useNavigate()
   const { t } = useI18n()
   return (
@@ -85,7 +81,7 @@ export function PersonRow({ p: person, right }) {
           >
             {person.name}
           </strong>
-          <span className="tiny">{person.area}</span>
+          <span className="tiny">{sub ?? person.area}</span>
         </span>
       </button>
       {right}
@@ -101,137 +97,178 @@ export function personBadges(person, hostingCount) {
   person.interests.length >= 3 && result.push('explorer')
   return result
 }
+// Host details shown on a host's profile (demo data, Noon as in the Figma design)
+export const hostInfo = {
+  noon: {
+    about: 'Hoi! I run the community kitchen at Zorgvrijstaat. Come cook and bake with me. No experience needed, just bring your appetite.',
+    hostingSince: 2023,
+    timesHosted: 52,
+    stickers: [
+      ['firstHost', 1],
+      ['hostFive', 5],
+      ['welcomer', 5],
+      ['verifiedHost', 1],
+    ],
+  },
+}
+const hostDefaults = (person, n) => ({
+  about: '',
+  hostingSince: Math.max(person.since, 2022),
+  timesHosted: n * 6,
+  stickers: [
+    ['firstHost', 1],
+    ['hostFive', n],
+    ['verifiedHost', 1],
+  ],
+})
 export function PersonScreen() {
   const { id = '' } = useParams()
   const nav = useNavigate()
-  const { t, ev } = useI18n()
+  const { following, toggleFollow, showToast } = useApp()
+  const { t, ev, full } = useI18n()
   const person = profiles[id]
   // only hosts have a public profile: neighbours stay private
   if (!person || !hostedBy(person.id).length) return <Navigate to="/home" replace />
   const hosts = hostedBy(person.id)
+    .map((e) => ev(e))
+    .sort((x, y) => x.date - y.date)
   const orgs = orgsOfHost(person.id)
-  const role = hosts[0] ? ev(hosts[0]).host.role : null
+  const info = { ...hostDefaults(person, hosts.length), ...hostInfo[person.id] }
+  const key = `person:${person.id}`
+  const isFollowing = following.includes(key)
   return (
     <Screen>
-      <div
-        className="scroll"
-        style={{
-          paddingBottom: 40,
-        }}
-      >
+      <div className="scroll" style={{ paddingBottom: 40 }}>
         <div
           style={{
             background: 'var(--pink)',
-            padding: 'max(52px, env(safe-area-inset-top)) var(--pad) 22px',
+            padding: 'max(48px, env(safe-area-inset-top)) var(--pad) 20px',
             borderRadius: '0 0 32px 32px',
+            position: 'relative',
+            overflow: 'hidden',
           }}
         >
-          <BackButton />
-          <div
-            style={{
-              display: 'grid',
-              justifyItems: 'center',
-              textAlign: 'center',
-              marginTop: 4,
-            }}
-          >
-            <Avatar name={person.name} img={person.avatar} size={96} ring />
-            <h1
-              className="h1"
-              style={{
-                marginTop: 12,
-              }}
-            >
-              {person.name}
-            </h1>
-            {role && (
-              <span
-                className="tag host"
-                style={{
-                  marginTop: 6,
-                }}
-              >
-                {role}
-              </span>
-            )}
-            <p
-              className="small"
-              style={{
-                marginTop: 8,
-                color: 'var(--ink)',
-              }}
-            >
-              {t('livesIn', {
-                area: person.area,
-              })}
-              {' · '}
-              {t('neighbourSince', {
-                year: person.since,
-              })}
-            </p>
+          <Flower color="#D98BDF" size={170} style={{ position: 'absolute', right: -40, top: 10 }} />
+          <div className="row" style={{ gap: 12, position: 'relative' }}>
+            <BackButton variant="white" />
+            <span className="eyebrow" style={{ color: 'var(--ink)' }}>
+              {t('host')}
+            </span>
           </div>
-          <div
-            style={{
-              display: 'grid',
-              marginTop: 18,
-            }}
-          >
-            <FollowButton k={`person:${person.id}`} name={person.name} />
+          <div className="row" style={{ gap: 14, marginTop: 14, position: 'relative' }}>
+            <span style={{ borderRadius: '50%', boxShadow: '0 0 0 3px var(--white)', display: 'flex' }}>
+              <Avatar name={person.name} img={person.avatar} size={80} />
+            </span>
+            <span>
+              <h1 className="h-display" style={{ fontSize: 40, lineHeight: 1 }}>
+                {person.name}
+              </h1>
+              <span style={{ fontSize: 13 }}>
+                {person.area} · {t('neighbourSince', { year: person.since })}
+              </span>
+            </span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 18, position: 'relative' }}>
+            <div className="card" style={{ background: 'var(--ink)', color: 'var(--white)', padding: 14 }}>
+              <strong style={{ display: 'block', fontSize: 22, color: 'var(--lime)' }}>{hosts.length}</strong>
+              <span style={{ fontSize: 13 }}>{t('activitiesArrow')}</span>
+            </div>
+            <button
+              className="card"
+              aria-pressed={isFollowing}
+              onClick={() => {
+                const on = toggleFollow(key)
+                showToast(t(on ? 'nowFollowing' : 'unfollowed', { name: person.name }))
+              }}
+              style={{ background: isFollowing ? 'var(--lime)' : 'var(--white)', padding: 14, textAlign: 'start', display: 'grid', gap: 4 }}
+            >
+              {isFollowing ? <Check size={18} /> : <Plus size={18} />}
+              <strong style={{ fontSize: 15, fontWeight: 600 }}>{t(isFollowing ? 'followingBtn' : 'follow')}</strong>
+            </button>
           </div>
         </div>
         <div className="pad">
+          {info.about && (
+            <div className="card" style={{ background: 'var(--lime)', padding: 16, marginTop: 12 }}>
+              <div className="eyebrow" style={{ color: 'var(--ink)' }}>
+                {t('aboutName', { name: person.name })}
+              </div>
+              <p style={{ fontSize: 15, marginTop: 8 }}>{info.about}</p>
+            </div>
+          )}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 10 }}>
+            <div className="card" style={{ background: 'var(--turq)', padding: 14 }}>
+              <strong style={{ display: 'block', fontSize: 22 }}>{info.hostingSince}</strong>
+              <span className="tiny" style={{ color: 'var(--ink)' }}>
+                {t('hostingSince')}
+              </span>
+            </div>
+            <div className="card" style={{ background: 'var(--pink)', padding: 14 }}>
+              <strong style={{ display: 'block', fontSize: 22 }}>{info.timesHosted}</strong>
+              <span className="tiny" style={{ color: 'var(--ink)' }}>
+                {t('timesHosted')}
+              </span>
+            </div>
+          </div>
           <div className="section-head">
             <h2 className="h2">{t('badgesTitle')}</h2>
           </div>
-          <div
-            className="card"
-            style={{
-              padding: 10,
-            }}
-          >
-            <BadgeRow ids={personBadges(person, hosts.length)} />
-          </div>
-          {hosts.length > 0 && (
-            <>
-              <div className="section-head">
-                <h2 className="h2">{t('hostsLabel')}</h2>
-                <span className="eyebrow">
-                  {t('nActivities', {
-                    n: hosts.length,
-                  })}
+          <div className="card" style={{ padding: '14px 8px 6px', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', justifyItems: 'center' }}>
+            {info.stickers.map(([bid, n]) => {
+              const b = badges.find((x) => x.id === bid)
+              return (
+                <span key={bid} style={{ position: 'relative', paddingBottom: 14 }} title={t(`badge_${bid}`)}>
+                  <BadgeIcon b={b} earned size={60} />
+                  <StickerTag b={{ ...b, goal: 1, stat: 'n' }} stats={{ n }} size={60} />
                 </span>
-              </div>
-              {orgs.map((org) => (
-                <button
-                  key={org.id}
-                  className="row"
-                  style={{
-                    marginBottom: 12,
-                    gap: 8,
-                  }}
-                  onClick={() => nav(`/org/${org.id}`)}
-                >
-                  <Users size={16} aria-hidden />
-                  <span
-                    style={{
-                      textDecoration: 'underline',
-                      textUnderlineOffset: 3,
-                      fontSize: 15,
-                    }}
-                  >
-                    {t('hostsWith', {
-                      org: org.name,
-                    })}
-                  </span>
-                </button>
-              ))}
-              <div className="stack">
-                {hosts.map((host) => (
-                  <RowCard key={host.id} e={host} />
-                ))}
-              </div>
-            </>
-          )}
+              )
+            })}
+          </div>
+          <div className="section-head">
+            <h2 className="h2">{t('hostsLabel')}</h2>
+            <span className="eyebrow">{t('nActivities', { n: hosts.length })}</span>
+          </div>
+          {orgs.map((org) => (
+            <button
+              key={org.id}
+              className="card row"
+              style={{ width: '100%', padding: '10px 12px', gap: 10, textAlign: 'start', marginBottom: 6 }}
+              onClick={() => nav(`/org/${org.id}`)}
+            >
+              <OrgLogo org={org} size={36} />
+              <span style={{ flex: 1 }}>
+                <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{org.name}</strong>
+                <span className="tiny">{t('verifiedBy', { org: org.name })}</span>
+              </span>
+              <ChevronRight size={18} className="flip-rtl" />
+            </button>
+          ))}
+          {hosts.map((e) => (
+            <button
+              key={e.id}
+              className="row"
+              onClick={() => nav(`/event/${e.id}`)}
+              style={{ width: '100%', textAlign: 'start', padding: '8px 0', gap: 12 }}
+            >
+              <Img name={e.card} photo={e.photo} w={200} alt="" accent={e.accent} icon={e.icon} radius={12} style={{ width: 48, height: 48, flex: 'none' }} />
+              <span style={{ flex: 1, minWidth: 0 }}>
+                <span className="eyebrow" style={{ color: 'var(--ink)', fontSize: 10 }}>
+                  {full(e.date)} · {e.start}
+                </span>
+                <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{e.title}</strong>
+                <span className="row" style={{ gap: 3, fontSize: 12, color: 'var(--muted)' }}>
+                  <MapPin size={11} aria-hidden /> {e.place}
+                </span>
+              </span>
+              <ChevronRight size={18} className="flip-rtl" />
+            </button>
+          ))}
+          <div className="row" style={{ background: 'var(--grey)', borderRadius: 16, padding: '12px 14px', gap: 10, marginTop: 16, alignItems: 'flex-start' }}>
+            <MessageCircle size={16} aria-hidden style={{ flex: 'none', marginTop: 2 }} />
+            <span className="small" style={{ fontSize: 13 }}>
+              {t('askHostInComments', { name: person.name })}
+            </span>
+          </div>
         </div>
       </div>
     </Screen>
@@ -378,7 +415,9 @@ export function ConnectionsScreen() {
       <div className="scroll pad safe-top with-nav">
         <div className="row">
           <BackButton to="/profile" />
-          <h1 className="h2">{t('followingTab')}</h1>
+          <h1 className="h2" style={{ marginInlineStart: 4 }}>
+            {t('followingTab')}
+          </h1>
         </div>
         <p
           className="small"
@@ -397,7 +436,14 @@ export function ConnectionsScreen() {
             following.map((d) => {
               const [e, f] = d.split(':')
               if (e === 'person' && profiles[f])
-                return <PersonRow key={d} p={profiles[f]} right={<FollowButton compact k={d} name={profiles[f].name} />} />
+                return (
+                  <PersonRow
+                    key={d}
+                    p={profiles[f]}
+                    sub={orgsOfHost(f)[0] ? t('hostsWith', { org: orgsOfHost(f)[0].name }) : profiles[f].area}
+                    right={<FollowButton compact k={d} name={profiles[f].name} />}
+                  />
+                )
               const g = organisations.find((organisation) => organisation.id === f)
               return g ? (
                 <div
@@ -417,7 +463,7 @@ export function ConnectionsScreen() {
                     }}
                     onClick={() => nav(`/org/${g.id}`)}
                   >
-                    <OrgLogo org={g} size={44} background="var(--turq)" />
+                    <OrgLogo org={g} size={44} />
                     <span>
                       <strong
                         style={{
@@ -427,7 +473,9 @@ export function ConnectionsScreen() {
                       >
                         {g.name}
                       </strong>
-                      <span className="tiny">{t(orgKindKey[orgInfo[g.id].kind])}</span>
+                      <span className="tiny">
+                        {t(orgKindKey[orgInfo[g.id].kind])} · {t('nActivitiesLower', { n: g.events.length })}
+                      </span>
                     </span>
                   </button>
                   <FollowButton compact k={d} name={g.name} />
