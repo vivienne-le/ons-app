@@ -597,6 +597,7 @@ export const events = [
     going: 13,
     capacity: 22,
     card: 'ev-football',
+    thumb: 'th-footballbeer',
     goingAvatars: tuple('g7', 'g8', 'g9'),
     comments: [],
   },
@@ -812,6 +813,7 @@ export const events = [
   },
   {
     id: 'retro-games',
+    card: 'ev-pool',
     photo: '1550745165-9bc0b252726f',
     title: 'Retro Game Night',
     short: 'Old consoles, big screen, lots of laughs.',
@@ -857,6 +859,7 @@ export const events = [
   },
   {
     id: 'oliebollen',
+    card: 'th-warmhats',
     photo: '1607690670342-ef9efe87f798',
     title: 'Oliebollen Bake-off',
     short: 'Bake oliebollen for New Year’s Eve together.',
@@ -1132,6 +1135,7 @@ export const organisations = [
     id: 'zorgvrijstaat',
     name: 'Zorgvrijstaat',
     domain: 'zorgvrijstaat.nl',
+    photo: 'place-zorgvrijstaat',
     events: ['kerststol-kitchen', 'retro-games', 'oliebollen'],
   },
   {

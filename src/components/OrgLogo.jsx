@@ -3,6 +3,14 @@
 import { Flower } from './Flower'
 
 export function OrgLogo({ org, size = 44, background = 'var(--white)' }) {
+  if (org.photo)
+    return (
+      <img
+        src={`${import.meta.env.BASE_URL}img/${org.photo}.jpg`}
+        alt=""
+        style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', display: 'block', flex: 'none' }}
+      />
+    )
   const letter = org.name.replace(/^(Het|De) /, '').slice(0, 1)
   return (
     <Flower color={background} size={size}>

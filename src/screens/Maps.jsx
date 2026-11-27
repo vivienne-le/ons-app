@@ -560,6 +560,13 @@ export function MapTab() {
             <X size={15} />
           </button>
           <div className="row" style={{ gap: 12, alignItems: 'flex-start' }}>
+            {selected.photo ? (
+              <img
+                src={`${import.meta.env.BASE_URL}img/${selected.photo}.jpg`}
+                alt=""
+                style={{ width: 84, height: 84, borderRadius: 16, objectFit: 'cover', flex: 'none' }}
+              />
+            ) : (
             <span
               style={{
                 width: 84,
@@ -577,6 +584,7 @@ export function MapTab() {
                 return <KIcon size={30} aria-hidden />
               })()}
             </span>
+            )}
             <span style={{ flex: 1, minWidth: 0, paddingInlineEnd: 24 }}>
               <span className="eyebrow row" style={{ fontSize: 10, color: 'var(--ink)', gap: 6 }}>
                 <span aria-hidden style={{ width: 7, height: 7, borderRadius: '50%', background: kindStyle[selected.kind].color }} />

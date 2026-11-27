@@ -165,7 +165,7 @@ export function RowCard({ e: event, sub }) {
         }}
       >
         <Img
-          name={e.card}
+          name={e.thumb ?? e.card}
           photo={e.photo}
           w={200}
           alt=""
