@@ -21,7 +21,7 @@ import {
   Settings,
   Smartphone,
 } from 'lucide-react'
-import { StickersPreview, useStats } from '../components/Badges'
+import { BadgeIcon, StickerSheet, badges, useStats } from '../components/Badges'
 import { usePronounLabel } from '../components/EditProfile'
 import { Flower } from '../components/Flower'
 import { Avatar } from '../components/Img'
@@ -36,26 +36,19 @@ function HostPromo() {
   const nav = useNavigate()
   const { t } = useI18n()
   return (
-    <section
-      style={{
-        position: 'relative',
-        overflow: 'hidden',
-        background: 'var(--ink)',
-        color: 'var(--white)',
-        borderRadius: 28,
-        padding: '22px 20px',
-        marginTop: 28,
-      }}
-    >
-      <Flower accent="pink" size={150} style={{ position: 'absolute', right: -40, top: -40 }} />
-      <div className="eyebrow" style={{ color: 'var(--lime)', position: 'relative' }}>
-        {t('becomeHostEyebrow')}
+    <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--ink)', borderRadius: 20, height: 232 }}>
+      <Flower accent="pink" size={120} style={{ position: 'absolute', left: 262, top: -36, transform: 'rotate(36deg)' }} />
+      <div style={{ position: 'absolute', left: 20, top: 22, width: 196, display: 'grid', gap: 12 }}>
+        <div className="eyebrow" style={{ color: 'var(--lime)' }}>
+          {t('becomeHostEyebrow')}
+        </div>
+        <h2 style={{ color: 'var(--white)', margin: 0, fontSize: 24, lineHeight: '28px', fontWeight: 600, letterSpacing: '-0.02em' }}>{t('somethingToShare')}</h2>
+        <p style={{ fontSize: 14, lineHeight: '21px', margin: 0, color: 'var(--grey)', width: 230 }}>{t('somethingToShareSub')}</p>
       </div>
-      <h2 className="h2" style={{ color: 'var(--white)', marginTop: 10, position: 'relative', maxWidth: 220 }}>
-        {t('somethingToShare')}
-      </h2>
-      <p style={{ fontSize: 15, marginTop: 8, opacity: 0.85, maxWidth: 230 }}>{t('somethingToShareSub')}</p>
-      <button className="btn btn-sm" style={{ background: 'var(--lime)', color: 'var(--ink)', marginTop: 16 }} onClick={() => nav('/post/start')}>
+      <button
+        onClick={() => nav('/post/start')}
+        style={{ position: 'absolute', left: 20, top: 164, width: 152, height: 40, borderRadius: 30, background: 'var(--lime)', color: '#000', fontSize: 14, lineHeight: '21px', fontWeight: 600 }}
+      >
         {t('hostAnActivity')}
       </button>
     </section>
@@ -69,98 +62,94 @@ export function Profile() {
   const pronounLabel = usePronounLabel()
   const stats = useStats()
   const interests = user.interests.length ? user.interests : ['Cooking', 'Cycling', 'Football', 'Games', 'Running']
+  const earned = badges.filter((b) => stats[b.stat] >= b.goal)
+  const [openSticker, setOpenSticker] = useState(null)
+  const section = (title, right) => (
+    <div className="row" style={{ gap: 8, justifyContent: 'space-between' }}>
+      <h2 style={{ flex: 1, margin: 0, fontSize: 24, lineHeight: '28px', fontWeight: 600, letterSpacing: '-0.02em', color: '#000' }}>{title}</h2>
+      {right}
+    </div>
+  )
   return (
     <Screen>
       <div className="scroll with-nav">
-        <div
-          style={{
-            background: 'var(--lime)',
-            borderRadius: '0 0 40px 40px',
-            padding: '56px var(--pad) 24px',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <Flower color="#E7F269" size={200} style={{ position: 'absolute', right: -50, top: -40 }} />
-          <div className="row" style={{ justifyContent: 'space-between', position: 'relative' }}>
-            <div className="eyebrow" style={{ color: 'var(--ink)' }}>
-              {t('profile')}
-            </div>
-            <span className="row" style={{ gap: 8 }}>
-              <button className="icon-btn white" style={{ width: 40, height: 40, boxShadow: 'none' }} aria-label={t('editProfile')} onClick={() => nav('/profile/edit')}>
-                <Pencil size={17} />
-              </button>
-              <button className="icon-btn white" style={{ width: 40, height: 40, boxShadow: 'none' }} aria-label={t('settings')} onClick={() => nav('/settings')}>
-                <Settings size={18} />
-              </button>
-            </span>
+        <div style={{ background: 'var(--lime)', borderRadius: '0 0 40px 40px', height: 333, position: 'relative', overflow: 'hidden' }}>
+          <Flower color="#E7F269" size={182} style={{ position: 'absolute', left: 254, top: 38, transform: 'rotate(14deg)' }} />
+          <div className="eyebrow" style={{ color: 'var(--ink)', position: 'absolute', left: 20, top: 71 }}>
+            {t('profile')}
           </div>
-          <div className="row" style={{ marginTop: 16, position: 'relative', gap: 16 }}>
+          <button
+            aria-label={t('editProfile')}
+            onClick={() => nav('/profile/edit')}
+            style={{ position: 'absolute', right: 73, top: 62, width: 44, height: 44, borderRadius: 22, background: 'var(--white)', display: 'grid', placeItems: 'center' }}
+          >
+            <Pencil size={20} />
+          </button>
+          <button
+            aria-label={t('settings')}
+            onClick={() => nav('/settings')}
+            style={{ position: 'absolute', right: 21, top: 62, width: 44, height: 44, borderRadius: 22, background: 'var(--white)', display: 'grid', placeItems: 'center' }}
+          >
+            <Settings size={20} />
+          </button>
+          <span style={{ position: 'absolute', left: 20, top: 117 }}>
             {user.photo ? (
-              <img src={user.photo} alt="" style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover' }} />
+              <img src={user.photo} alt="" style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
             ) : (
               <Avatar name={user.firstName || 'R'} img="ruben" size={90} />
             )}
-            <div>
-              <h1 className="h1">
-                {user.firstName || t('you2')}
-                {user.pronouns && (
-                  <span style={{ fontSize: 15, fontWeight: 400, marginInlineStart: 6 }}>{pronounLabel(user.pronouns)}</span>
-                )}
-              </h1>
-              {user.role === 'host' ? (
-                <span className="row" style={{ gap: 6, marginTop: 4 }}>
-                  <span className="tag host">
-                    <BadgeCheck size={12} /> {t('hostBadge')}
-                  </span>
-                  <span style={{ fontSize: 14 }}>
-                    {user.verifiedBy ? t('verifiedBy', { org: user.org }) : `${user.org}${user.jobTitle ? ` · ${user.jobTitle}` : ''}`}
-                  </span>
-                </span>
-              ) : (
-                <span style={{ fontSize: 14 }}>{t('memberLineProfile', { area: user.area || 'Middelland' })}</span>
+          </span>
+          <div style={{ position: 'absolute', left: 122, top: 126, right: 16, display: 'grid', gap: 4 }}>
+            <p style={{ margin: 0, fontSize: 44, lineHeight: '48px', fontWeight: 500, letterSpacing: '-0.03em', color: '#000', whiteSpace: 'nowrap' }}>
+              {user.firstName || t('you2')}
+              {user.pronouns && (
+                <span style={{ fontSize: 16, fontWeight: 400, letterSpacing: 0, color: 'rgba(32,30,31,.6)' }}> {pronounLabel(user.pronouns)}</span>
               )}
-            </div>
+            </p>
+            {user.role === 'host' ? (
+              <span className="row" style={{ gap: 6 }}>
+                <span className="tag host">
+                  <BadgeCheck size={12} /> {t('hostBadge')}
+                </span>
+                <span style={{ fontSize: 14 }}>{user.verifiedBy ? t('verifiedBy', { org: user.org }) : user.org}</span>
+              </span>
+            ) : (
+              <span style={{ fontSize: 14, lineHeight: '21px' }}>{t('memberLineProfile', { area: user.area || 'Middelland' })}</span>
+            )}
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 20, position: 'relative' }}>
+          <div style={{ position: 'absolute', left: 20, right: 20, top: 228, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
             <button
-              className="card"
               onClick={() => nav('/plans?tab=been')}
-              style={{ background: 'var(--ink)', color: 'var(--white)', padding: 14, textAlign: 'start' }}
+              style={{ height: 78, borderRadius: 20, background: 'var(--ink)', color: 'var(--white)', padding: '13px 16px', textAlign: 'start', display: 'grid', alignContent: 'start', gap: 4 }}
             >
-              <strong style={{ fontSize: 26, display: 'block', color: 'var(--lime)' }}>{stats.attended}</strong>
-              <span style={{ fontSize: 13 }}>{t('activitiesJoined')}</span>
+              <strong style={{ fontSize: 24, lineHeight: '28px', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--lime)' }}>{stats.attended}</strong>
+              <span style={{ fontSize: 14, lineHeight: '21px' }}>{t('activitiesJoined')}</span>
             </button>
             <button
-              className="card"
               onClick={() => nav('/profile/preview')}
-              style={{ background: 'var(--white)', padding: 14, textAlign: 'start', display: 'grid', alignContent: 'center', gap: 6 }}
+              style={{ height: 78, borderRadius: 20, background: 'var(--white)', padding: '15px 16px', textAlign: 'start', display: 'grid', alignContent: 'start', gap: 6 }}
             >
-              <Eye size={20} aria-hidden />
-              <span style={{ fontSize: 13 }}>{t('howOthersSee')}</span>
+              <Eye size={22} aria-hidden />
+              <span style={{ fontSize: 14, lineHeight: '21px', color: '#000' }}>{t('howOthersSee')}</span>
             </button>
           </div>
         </div>
-        <div className="pad">
+        <div style={{ padding: '24px 20px 0', display: 'grid', gap: 24 }}>
           <button
-            className="card row"
+            className="row"
             onClick={() => nav('/connections')}
-            style={{ width: '100%', padding: '10px 12px 10px 18px', marginTop: 24, textAlign: 'start', minHeight: 48 }}
+            style={{ width: '100%', minHeight: 52, padding: '10px 12px 10px 16px', borderRadius: 20, background: 'var(--grey)', textAlign: 'start', gap: 12 }}
           >
-            <strong style={{ flex: 1, fontSize: 15, fontWeight: 600 }}>{t('followingTab')}</strong>
-            <span className="tiny">{t('nHosts', { n: app.following.length })}</span>
+            <strong style={{ flex: 1, fontSize: 16, lineHeight: '24px', fontWeight: 600, letterSpacing: '-0.01em' }}>{t('followingTab')}</strong>
+            <span style={{ fontSize: 14, lineHeight: '21px', color: 'var(--muted)' }}>{t('nHosts', { n: app.following.length })}</span>
             <span style={{ display: 'flex' }}>
               {app.following.slice(0, 3).map((f, i) => {
                 const [kind, id] = f.split(':')
                 const p = kind === 'person' ? profiles[id] : organisations.find((o) => o.id === id)
                 return (
                   p && (
-                    <span key={f} style={{ marginInlineStart: i ? -8 : 0 }}>
-                      {kind === 'person' ? (
-                        <Avatar name={p.name} img={p.avatar} size={26} ring />
-                      ) : (
-                        <OrgLogo org={p} size={26} background="var(--turq)" />
-                      )}
+                    <span key={f} style={{ marginInlineStart: i ? -10 : 0, borderRadius: '50%', boxShadow: '0 0 0 2px var(--grey)', display: 'flex', background: 'var(--white)' }}>
+                      {kind === 'person' ? <Avatar name={p.name} img={p.avatar} size={24} /> : <OrgLogo org={p} size={24} />}
                     </span>
                   )
                 )
@@ -168,38 +157,74 @@ export function Profile() {
             </span>
             <ChevronRight size={18} className="flip-rtl" />
           </button>
-          <div className="section-head">
-            <h2 className="h2">{t('aboutMe')}</h2>
+          <div style={{ display: 'grid', gap: 8 }}>
+            {section(t('aboutMe'))}
+            {user.bio ? (
+              <p style={{ margin: 0, background: 'var(--grey)', borderRadius: 20, padding: '15px', minHeight: 72, fontSize: 14, lineHeight: '21px', color: '#000' }}>{user.bio}</p>
+            ) : (
+              <button
+                onClick={() => nav('/profile/edit')}
+                style={{ background: 'var(--grey)', borderRadius: 20, padding: 15, minHeight: 72, textAlign: 'start', fontSize: 14, color: 'var(--muted)' }}
+              >
+                + {t('addBio')}
+              </button>
+            )}
           </div>
-          {user.bio ? (
-            <p className="card" style={{ padding: '12px 14px', fontSize: 15, margin: 0 }}>
-              {user.bio}
-            </p>
-          ) : (
-            <button
-              className="card"
-              onClick={() => nav('/profile/edit')}
-              style={{ width: '100%', padding: '12px 14px', textAlign: 'start', fontSize: 15, color: 'var(--muted)' }}
-            >
-              + {t('addBio')}
-            </button>
-          )}
-          <div className="section-head">
-            <h2 className="h2">{t('interests')}</h2>
-            <button className="link" onClick={() => nav('/signup/interests?edit=1')}>
-              {t('edit')}
-            </button>
+          <div style={{ display: 'grid', gap: 13 }}>
+            {section(
+              t('interests'),
+              <button className="link" onClick={() => nav('/signup/interests?edit=1')} style={{ color: '#000' }}>
+                {t('edit')}
+              </button>,
+            )}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, max-content)', gap: '10px 9px' }}>
+              {interests.map((interest, i) => (
+                <InterestChip key={interest} id={interest} index={i} />
+              ))}
+            </div>
+            <p style={{ fontSize: 14, lineHeight: '21px', color: 'var(--muted)', margin: '-4px 0 0' }}>{t('interestsHint')}</p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, justifyItems: 'start' }}>
-            {interests.map((interest, i) => (
-              <InterestChip key={interest} id={interest} index={i} />
-            ))}
+          <div style={{ display: 'grid', gap: 12 }}>
+            {section(
+              t('badgesTitle'),
+              <>
+                <span className="eyebrow">{t('nOfM', { n: earned.length, m: badges.length })}</span>
+                <button className="link" style={{ fontSize: 14, color: 'var(--ink)' }} onClick={() => nav('/stickers')}>
+                  {t('seeAll')}
+                </button>
+              </>,
+            )}
+            <div className="row" style={{ justifyContent: 'space-between', background: 'var(--grey)', borderRadius: 20, padding: '14px 12px' }}>
+              {earned.slice(0, 4).map((b) => (
+                <button key={b.id} onClick={() => setOpenSticker(b)} style={{ position: 'relative', width: 60, height: 70 }} aria-label={t(`badge_${b.id}`)}>
+                  <BadgeIcon b={b} earned size={60} />
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: 52,
+                      left: 27,
+                      transform: 'translateX(-50%)',
+                      background: 'var(--ink)',
+                      color: 'var(--white)',
+                      borderRadius: 999,
+                      padding: '2px 7px',
+                      fontFamily: 'var(--mono)',
+                      fontSize: 11,
+                      lineHeight: '14px',
+                      fontWeight: 500,
+                    }}
+                  >
+                    {stats[b.stat]}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p style={{ fontSize: 14, lineHeight: '21px', color: 'var(--muted)', margin: 0 }}>{t('stickersSub')}</p>
           </div>
-          <p style={{ fontSize: 14, color: 'var(--muted)', margin: '12px 0 0' }}>{t('interestsHint')}</p>
-          <StickersPreview />
           {user.role !== 'host' && <HostPromo />}
         </div>
       </div>
+      <StickerSheet b={openSticker} stats={stats} onClose={() => setOpenSticker(null)} />
       <NavBar />
     </Screen>
   )

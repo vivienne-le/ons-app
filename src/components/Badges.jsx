@@ -266,7 +266,7 @@ export function BadgeIcon({ b, earned, size = 64 }) {
           height: c,
           display: 'grid',
           placeItems: 'center',
-          color: earned ? 'var(--ink)' : '#9A9893',
+          color: earned ? (['orange', 'lav'].includes(b.accent) ? 'var(--white)' : 'var(--ink)') : '#9A9893',
         }}
       >
         <BIcon size={size * 0.27} strokeWidth={1.8} />
