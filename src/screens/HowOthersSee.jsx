@@ -60,7 +60,7 @@ export function HowOthersSee() {
             {t('onlyGroupsSee')}
           </span>
           <button
-            onClick={() => nav('/profile?section=settings')}
+            onClick={() => nav('/settings')}
             style={{
               fontSize: 14,
               fontWeight: 600,

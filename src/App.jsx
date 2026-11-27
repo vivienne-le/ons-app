@@ -1,5 +1,6 @@
 import { HashRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import { BadgeWatcher, StampDefs } from './components/Badges'
+import { BadgeWatcher, StampDefs, StickersScreen } from './components/Badges'
+import { EditProfileScreen } from './components/EditProfile'
 import { ToastHost } from './components/UI'
 import { BecomeHostIntro, BecomeHostOrg, BecomeHostSent } from './screens/BecomeHost'
 import { EventScreen } from './screens/Event'
@@ -8,8 +9,8 @@ import { Joined } from './screens/Joined'
 import { EventMap, MapTab } from './screens/Maps'
 import { ConnectionsScreen, OrgScreen, PersonScreen } from './screens/People'
 import { Plans } from './screens/Plans'
-import { MyPost, PostDetails, PostPreview, PostSent, PostWhat, PostWhen, PostWhere } from './screens/Post'
-import { Profile } from './screens/Profile'
+import { MyPost, PostDetails, PostPreview, PostSent, PostStart, PostWhat, PostWhen, PostWhere } from './screens/Post'
+import { Profile, SettingsScreen } from './screens/Profile'
 import { Search } from './screens/Search'
 import { Updates } from './screens/Updates'
 import {
@@ -179,6 +180,38 @@ export function AppRoutes() {
             element={
               <NeedsAccount>
                 <ConnectionsScreen />
+              </NeedsAccount>
+            }
+          />
+          <Route
+            path="/post/start"
+            element={
+              <NeedsAccount>
+                <PostStart />
+              </NeedsAccount>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <NeedsAccount>
+                <SettingsScreen />
+              </NeedsAccount>
+            }
+          />
+          <Route
+            path="/profile/edit"
+            element={
+              <NeedsAccount>
+                <EditProfileScreen />
+              </NeedsAccount>
+            }
+          />
+          <Route
+            path="/stickers"
+            element={
+              <NeedsAccount>
+                <StickersScreen />
               </NeedsAccount>
             }
           />

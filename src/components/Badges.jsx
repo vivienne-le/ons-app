@@ -16,7 +16,8 @@ import {
   Smile,
   Sparkles,
 } from 'lucide-react'
-import { Sheet } from './UI'
+import { useNavigate } from 'react-router-dom'
+import { BackButton, Screen, Sheet, Switch } from './UI'
 import { beenTo, byId, organisations } from '../data/events'
 import { useI18n } from '../i18n/index'
 import { useApp } from '../state/AppState'
@@ -232,601 +233,250 @@ export const HEART =
   'M60 104 C 30 84 10 66 10 44 C 10 26 24 14 39 14 C 49 14 56 20 60 28 C 64 20 71 14 81 14 C 96 14 110 26 110 44 C 110 66 90 84 60 104 Z'
 export const TICKET = 'M14 26 H106 V50 A10 10 0 0 0 106 70 V94 H14 V70 A10 10 0 0 0 14 50 Z'
 export function StampDefs() {
-  return (
-    <svg
-      width="0"
-      height="0"
-      aria-hidden
-      style={{
-        position: 'absolute',
-      }}
-    >
-      <filter id="stamp-ink" x="-5%" y="-5%" width="110%" height="110%">
-        <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="grain" />
-        <feColorMatrix
-          in="grain"
-          type="matrix"
-          values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -3.2 2.45"
-          result="mask"
-        />
-        <feComposite in="SourceGraphic" in2="mask" operator="in" result="speckled" />
-        <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="3" result="wobble" />
-        <feDisplacementMap in="speckled" in2="wobble" scale="2.2" xChannelSelector="R" yChannelSelector="G" />
-      </filter>
-    </svg>
-  )
+  return null
 }
+const CLOVER =
+  'M20.47 20.47 A23.76 23.76 0 1 1 67.53 20.47 A23.76 23.76 0 1 1 67.53 67.53 A23.76 23.76 0 1 1 20.47 67.53 A23.76 23.76 0 1 1 20.47 20.47 Z'
+// A sticker: a clover in the sticker's colour with a small inner clover and its icon.
+// Earned stickers get an ink outline and a drop shadow; locked ones are grey and dashed.
 export function BadgeIcon({ b, earned, size = 64 }) {
-  const { t } = useI18n()
-  const CompR = b.icon
-  const index = badges.indexOf(b)
-  const shape = shapeOf[b.id] ?? 'ring'
-  const ink = earned ? inkOf[b.accent] : '#BDBBB6'
-  const isSolid = earned && solidShapes.includes(shape)
-  const detailed = size >= 48
-  const tilt = earned ? ((index * 37) % 11) - 5 : 0
-  const label = t(badgeName(b.id)).toUpperCase()
-  const ringPathId = `ring-${b.id}-${size}`
-  const strokeW = earned ? 4 : 2.5
-  const dash = earned ? undefined : '6 5'
-  const outline = {
-    fill: isSolid ? ink : 'none',
-    stroke: ink,
-    strokeWidth: strokeW,
-    strokeDasharray: dash,
-    strokeLinejoin: 'round',
-  }
-  const labelText = (s, S = ink) =>
-    detailed && (
-      <text
-        x="60"
-        y={s}
-        textAnchor="middle"
-        fontFamily="Roboto Mono, monospace"
-        fontWeight="700"
-        fill={S}
-        fontSize={Math.min(10, 120 / Math.max(label.length, 6))}
-        letterSpacing=".5"
-      >
-        {label}
-      </text>
-    )
-  let o
-  let iconY = 0.5
-  let iconScale = 0.36
-  switch (shape) {
-    case 'postmark':
-    case 'ring':
-      ;((o = (
-        <>
-          <circle cx="60" cy="60" r="54" {...outline} />
-          <circle
-            cx="60"
-            cy="60"
-            r="38"
-            fill="none"
-            stroke={ink}
-            strokeWidth={shape === 'ring' ? 3 : 1.6}
-            strokeDasharray={dash}
-          />
-          {detailed && (
-            <>
-              <path id={ringPathId} d="M 60 60 m -46 0 a 46 46 0 1 1 92 0 a 46 46 0 1 1 -92 0" fill="none" />
-              <text fontFamily="Roboto Mono, monospace" fontWeight="700" fontSize="9.5" fill={ink} letterSpacing="1">
-                <textPath
-                  href={`#${ringPathId}`}
-                  startOffset="0"
-                  textLength="284"
-                  lengthAdjust="spacing"
-                >{`${label} ★ CVD · ${b.goal} ★`}</textPath>
-              </text>
-            </>
-          )}
-          {shape === 'postmark' &&
-            earned &&
-            detailed &&
-            [-8, 0, 8].map((s) => (
-              <path
-                key={s}
-                d={`M 98 ${88 + s} q 5 -4 10 0 t 10 0`}
-                fill="none"
-                stroke={ink}
-                strokeWidth="2.2"
-                strokeLinecap="round"
-              />
-            ))}
-        </>
-      )),
-        (iconScale = 0.3))
-      break
-    case 'scallopRect':
-      ;((o = (
-        <>
-          <path d={scallopRect(14, 10, 92, 100, 4)} {...outline} />
-          <rect
-            x="22"
-            y="18"
-            width="76"
-            height="84"
-            rx="2"
-            fill="none"
-            stroke={ink}
-            strokeWidth="1.6"
-            strokeDasharray={dash}
-          />
-          {detailed && (
-            <text
-              x="88"
-              y="38"
-              textAnchor="end"
-              fontFamily="Roboto Mono, monospace"
-              fontWeight="700"
-              fontSize="16"
-              fill={ink}
-            >
-              {b.goal}
-            </text>
-          )}
-          {labelText(94)}
-        </>
-      )),
-        (iconY = 0.5))
-      break
-    case 'oval':
-      ;((o = (
-        <>
-          <ellipse cx="60" cy="60" rx="56" ry="42" {...outline} />
-          <ellipse cx="60" cy="60" rx="46" ry="32" fill="none" stroke={ink} strokeWidth="1.6" strokeDasharray={dash} />
-          {labelText(86)}
-          {detailed && (
-            <text
-              x="60"
-              y="41"
-              textAnchor="middle"
-              fontFamily="Roboto Mono, monospace"
-              fontWeight="700"
-              fontSize="8"
-              fill={ink}
-              letterSpacing="2"
-            >
-              {'CVD · '}
-              {b.goal}
-            </text>
-          )}
-        </>
-      )),
-        (iconScale = 0.3))
-      break
-    case 'burst':
-      ;((o = (
-        <>
-          <polygon points={burst(18, 57, 48)} {...outline} />
-          <circle cx="60" cy="60" r="38" fill="none" stroke={ink} strokeWidth="1.6" strokeDasharray={dash} />
-          {labelText(84)}
-        </>
-      )),
-        (iconY = 0.45),
-        (iconScale = 0.3))
-      break
-    case 'ticket':
-      ;((o = (
-        <>
-          <path d={TICKET} {...outline} />
-          <rect x="24" y="34" width="72" height="52" fill="none" stroke={ink} strokeWidth="1.4" strokeDasharray="3 3" />
-          {detailed && (
-            <text
-              x="60"
-              y="22"
-              textAnchor="middle"
-              fontFamily="Roboto Mono, monospace"
-              fontWeight="700"
-              fontSize="8"
-              fill={ink}
-              letterSpacing="2"
-            >
-              {'TICKET · '}
-              {b.goal}
-            </text>
-          )}
-          {labelText(106)}
-        </>
-      )),
-        (iconScale = 0.3))
-      break
-    case 'heart':
-      ;((o = (
-        <>
-          <path d={HEART} {...outline} />
-          {earned && (
-            <path
-              d={HEART}
-              transform="translate(60 58) scale(.82) translate(-60 -58)"
-              fill="none"
-              stroke="#fff"
-              strokeWidth="2"
-            />
-          )}
-        </>
-      )),
-        (iconY = 0.45))
-      break
-    case 'cloud':
-      ;((o = (
-        <>
-          <path d={scallopCircle(48, 14, 8)} {...outline} />
-          {detailed && (
-            <circle
-              cx="60"
-              cy="60"
-              r="36"
-              fill="none"
-              stroke={ink}
-              strokeWidth="1.4"
-              strokeDasharray="2 4"
-              strokeLinecap="round"
-            />
-          )}
-          {labelText(86)}
-        </>
-      )),
-        (iconScale = 0.3))
-      break
-    case 'flower':
-      o = (
-        <g {...outline}>
-          {isSolid ? (
-            <>
-              <circle cx="60" cy="32" r="28" stroke="none" />
-              <circle cx="88" cy="60" r="28" stroke="none" />
-              <circle cx="60" cy="88" r="28" stroke="none" />
-              <circle cx="32" cy="60" r="28" stroke="none" />
-              <rect x="32" y="32" width="56" height="56" stroke="none" />
-            </>
-          ) : (
-            <path
-              d="M 32 60 A 28 28 0 0 1 60 32 A 28 28 0 0 1 88 60 A 28 28 0 0 1 60 88 A 28 28 0 0 1 32 60 Z M 60 4 A 28 28 0 0 1 116 60 A 28 28 0 0 1 60 116 A 28 28 0 0 1 4 60 A 28 28 0 0 1 60 4 Z"
-              fill="none"
-            />
-          )}
-        </g>
-      )
-      break
-    case 'seal':
-      ;((o = (
-        <>
-          <path d={scallopCircle(52, 16, 7)} {...outline} />
-          {earned && <circle cx="60" cy="60" r="40" fill="none" stroke="#fff" strokeWidth="2" />}
-          {detailed && earned && (
-            <text
-              x="60"
-              y="88"
-              textAnchor="middle"
-              fontFamily="Roboto Mono, monospace"
-              fontWeight="700"
-              fontSize="9"
-              fill="#fff"
-              letterSpacing="1"
-            >
-              {b.goal}
-              {' ×'}
-            </text>
-          )}
-        </>
-      )),
-        (iconY = 0.46))
-      break
-  }
-  const iconColor = isSolid ? '#fff' : ink
+  const BIcon = b.icon
+  const c = size * (58 / 64)
   return (
-    <span
-      style={{
-        position: 'relative',
-        display: 'inline-grid',
-        width: size,
-        height: size,
-        transform: `rotate(${tilt}deg)`,
-        flex: 'none',
-      }}
-    >
-      <svg
-        viewBox="0 0 120 120"
-        width={size}
-        height={size}
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          overflow: 'visible',
-          mixBlendMode: 'multiply',
-        }}
-      >
-        <g filter={earned ? 'url(#stamp-ink)' : undefined}>{o}</g>
+    <span aria-hidden style={{ position: 'relative', width: size, height: size, display: 'block', flex: 'none' }}>
+      <svg width={size} height={size} viewBox="0 0 64 64" style={{ position: 'absolute', inset: 0, overflow: 'visible' }}>
+        <g transform="scale(0.659)">
+          {earned && <path d={CLOVER} transform="translate(4.5 4.5)" fill="var(--ink)" />}
+          <path
+            d={CLOVER}
+            fill={earned ? `var(--${b.accent})` : '#E4E2DC'}
+            stroke={earned ? 'var(--ink)' : '#BDBBB6'}
+            strokeWidth={earned ? 2.65 : 2.3}
+            strokeDasharray={earned ? undefined : '6 4.5'}
+          />
+          <path d={CLOVER} transform="translate(19.7 19.7) scale(0.552)" fill="#fff" fillOpacity={earned ? 0.55 : 0.6} />
+        </g>
       </svg>
       <span
         style={{
           position: 'absolute',
-          left: '50%',
-          top: `${iconY * 100}%`,
-          transform: 'translate(-50%, -50%)',
-          color: iconColor,
+          left: 0,
+          top: 0,
+          width: c,
+          height: c,
           display: 'grid',
-          opacity: earned ? 0.95 : 0.6,
+          placeItems: 'center',
+          color: earned ? 'var(--ink)' : '#9A9893',
         }}
       >
-        <CompR size={size * (detailed ? iconScale : 0.42)} strokeWidth={2.4} aria-hidden />
+        <BIcon size={size * 0.27} strokeWidth={1.8} />
       </span>
-      {!earned && (
-        <span
-          aria-hidden
-          style={{
-            position: 'absolute',
-            insetInlineEnd: -4,
-            bottom: -4,
-            width: 22,
-            height: 22,
-            borderRadius: '50%',
-            background: 'var(--white)',
-            display: 'grid',
-            placeItems: 'center',
-            boxShadow: '0 1px 4px rgba(0,0,0,.15)',
-          }}
-        >
-          <LockIcon size={12} />
-        </span>
-      )}
     </span>
   )
 }
-export function BadgeSection() {
+// Black count for earned stickers, a grey n/m pill while you're on the way
+export function StickerTag({ b, stats, size = 64 }) {
+  const n = stats[b.stat]
+  const earned = n >= b.goal
+  return (
+    <span
+      style={{
+        position: 'absolute',
+        top: size * 0.86,
+        left: size * (29 / 64),
+        transform: 'translateX(-50%)',
+        background: earned ? 'var(--ink)' : 'var(--grey)',
+        color: earned ? 'var(--white)' : 'var(--muted)',
+        boxShadow: earned ? undefined : 'inset 0 0 0 1px #BDBBB6',
+        borderRadius: 999,
+        padding: '1px 7px',
+        fontSize: 11,
+        fontWeight: 600,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {earned ? n : `${Math.min(n, b.goal)}/${b.goal}`}
+    </span>
+  )
+}
+export function Sticker({ b, stats, onClick, locked }) {
+  const { t } = useI18n()
+  const n = stats[b.stat]
+  const earned = n >= b.goal
+  return (
+    <button
+      onClick={onClick}
+      style={{ display: 'grid', justifyItems: 'center', gap: 4, textAlign: 'center' }}
+      aria-label={`${t(badgeName(b.id))}. ${earned ? t('earned') : t('progress', { n: Math.min(n, b.goal), m: b.goal })}`}
+    >
+      <span style={{ position: 'relative', paddingBottom: 12 }}>
+        <BadgeIcon b={b} earned={earned} />
+        {!locked && <StickerTag b={b} stats={stats} />}
+        {locked && (
+          <span
+            style={{
+              position: 'absolute',
+              top: 55,
+              left: 29,
+              transform: 'translateX(-50%)',
+              background: 'var(--grey)',
+              color: 'var(--muted)',
+              boxShadow: 'inset 0 0 0 1px #BDBBB6',
+              borderRadius: 999,
+              padding: '1px 7px',
+              fontSize: 11,
+              fontWeight: 600,
+            }}
+          >
+            0/{b.goal}
+          </span>
+        )}
+      </span>
+      <span style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.2 }}>{t(badgeName(b.id))}</span>
+    </button>
+  )
+}
+export function StickerSheet({ b, stats, onClose }) {
+  const nav = useNavigate()
   const { user } = useApp()
   const { t } = useI18n()
+  if (!b) return <Sheet open={false} onClose={onClose} />
+  const n = stats[b.stat]
+  const earned = n >= b.goal
+  const locked = b.group === 'host' && user.role !== 'host'
+  // What to work towards: the next sticker on the same count, or this one
+  const next = earned ? badges.find((x) => x.stat === b.stat && x.goal > b.goal && n < x.goal) : b
+  return (
+    <Sheet open onClose={onClose}>
+      <div style={{ display: 'grid', justifyItems: 'center', textAlign: 'center', paddingBottom: 6 }}>
+        <BadgeIcon b={b} earned={earned} size={110} />
+        <h2 className="h2" style={{ marginTop: 14 }}>
+          {t(badgeName(b.id))}
+        </h2>
+        <p className="body" style={{ marginTop: 6 }}>
+          {t(badgeDesc(b.id), { n: b.goal })}
+          {earned ? ` ${t('nice')}` : ''}
+        </p>
+        {locked ? (
+          <p className="small" style={{ marginTop: 14 }}>
+            {t('unlockAsHost')}
+          </p>
+        ) : (
+          next && (
+            <div style={{ width: '100%', marginTop: 16, background: 'var(--grey)', borderRadius: 16, padding: 14, textAlign: 'start' }}>
+              <div className="row" style={{ justifyContent: 'space-between' }}>
+                <strong style={{ fontSize: 14, fontWeight: 600 }}>
+                  {next === b ? t(badgeName(b.id)) : t('nextSticker', { name: t(badgeName(next.id)) })}
+                </strong>
+                <span className="eyebrow" style={{ color: 'var(--ink)' }}>
+                  {Math.min(n, next.goal)} / {next.goal}
+                </span>
+              </div>
+              <div style={{ height: 8, borderRadius: 4, background: 'var(--white)', overflow: 'hidden', marginTop: 10 }}>
+                <div style={{ height: '100%', width: `${(Math.min(n, next.goal) / next.goal) * 100}%`, background: 'var(--pink)', borderRadius: 4 }} />
+              </div>
+              <p className="tiny" style={{ marginTop: 8 }}>
+                {t('moreToGo', { n: next.goal - Math.min(n, next.goal) })}
+              </p>
+            </div>
+          )
+        )}
+        <button
+          className="btn btn-primary"
+          style={{ marginTop: 20 }}
+          onClick={() => {
+            onClose()
+            nav(locked ? '/become-host' : '/home')
+          }}
+        >
+          {t(locked ? 'hostAnActivity' : 'findActivity')}
+        </button>
+      </div>
+    </Sheet>
+  )
+}
+// Profile: the stickers you have, with a count and a link to all of them
+export function StickersPreview() {
+  const nav = useNavigate()
+  const { t } = useI18n()
   const stats = useStats()
-  const [openBadge, setOpenBadge] = useState(null)
-  const isHost = user.role === 'host'
-  const groups = isHost ? ['host', 'guest'] : ['guest', 'host']
-  const earnedCount = badges.filter((badge) => stats[badge.stat] >= badge.goal).length
+  const [open, setOpen] = useState(null)
+  const earned = badges.filter((b) => stats[b.stat] >= b.goal)
   return (
     <section>
       <div className="section-head">
         <h2 className="h2">{t('badgesTitle')}</h2>
-        <span className="eyebrow">
-          {t('nOfM', {
-            n: earnedCount,
-            m: badges.length,
-          })}
+        <span className="row" style={{ gap: 10 }}>
+          <span className="eyebrow">{t('nOfM', { n: earned.length, m: badges.length })}</span>
+          <button className="link" onClick={() => nav('/stickers')}>
+            {t('seeAll')}
+          </button>
         </span>
       </div>
-      {!user.showBadges && (
-        <p
-          className="small"
-          style={{
-            marginTop: -6,
-            marginBottom: 12,
-          }}
-        >
-          <LockIcon
-            size={12}
-            aria-hidden
-            style={{
-              verticalAlign: -1,
-            }}
-          />{' '}
-          {t('badgesHidden')}
-        </p>
-      )}
-      {groups.map((group) => {
-        const h = badges.filter((badge) => badge.group === group)
-        const i = group === 'host' && !isHost
-        return (
-          <div
-            key={group}
-            style={{
-              marginBottom: 18,
-            }}
-          >
-            <div
-              className="eyebrow"
-              style={{
-                marginBottom: 10,
-              }}
-            >
-              {t(group === 'host' ? 'hostBadgesTitle' : 'guestBadgesTitle')}
-            </div>
-            {i && (
-              <p
-                className="small"
-                style={{
-                  marginTop: -4,
-                  marginBottom: 10,
-                }}
-              >
-                {t('unlockAsHost')}
-              </p>
-            )}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '14px 6px',
-              }}
-            >
-              {h.map((j) => {
-                const k = stats[j.stat]
-                const l = k >= j.goal
-                return (
-                  <button
-                    key={j.id}
-                    onClick={() => setOpenBadge(j)}
-                    style={{
-                      display: 'grid',
-                      justifyItems: 'center',
-                      gap: 6,
-                      textAlign: 'center',
-                    }}
-                    aria-label={`${t(badgeName(j.id))}. ${
-                      l
-                        ? t('earned')
-                        : t('progress', {
-                            n: Math.min(k, j.goal),
-                            m: j.goal,
-                          })
-                    }`}
-                  >
-                    <BadgeIcon b={j} earned={l} />
-                    <span
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 600,
-                        lineHeight: 1.2,
-                        color: l ? 'var(--ink)' : 'var(--muted)',
-                      }}
-                    >
-                      {t(badgeName(j.id))}
-                    </span>
-                    {!l && j.goal > 1 && !i && (
-                      <span
-                        aria-hidden
-                        style={{
-                          width: 44,
-                          height: 4,
-                          borderRadius: 2,
-                          background: 'var(--grey-2)',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <span
-                          style={{
-                            display: 'block',
-                            height: '100%',
-                            width: `${(k / j.goal) * 100}%`,
-                            background: 'var(--ink)',
-                          }}
-                        />
-                      </span>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )
-      })}
-      <Sheet open={!!openBadge} onClose={() => setOpenBadge(null)}>
-        {openBadge &&
-          (() => {
-            const g = stats[openBadge.stat]
-            const h = g >= openBadge.goal
-            return (
-              <div
-                style={{
-                  display: 'grid',
-                  justifyItems: 'center',
-                  textAlign: 'center',
-                  paddingBottom: 6,
-                }}
-              >
-                <BadgeIcon b={openBadge} earned={h} size={110} />
-                <span
-                  className="eyebrow"
-                  style={{
-                    marginTop: 14,
-                  }}
-                >
-                  {t(openBadge.group === 'host' ? 'hostBadgesTitle' : 'guestBadgesTitle')}
-                </span>
-                <h2
-                  className="h2"
-                  style={{
-                    marginTop: 6,
-                  }}
-                >
-                  {t(badgeName(openBadge.id))}
-                </h2>
-                <p
-                  className="body"
-                  style={{
-                    marginTop: 8,
-                  }}
-                >
-                  {t(badgeDesc(openBadge.id), {
-                    n: openBadge.goal,
-                  })}
-                </p>
-                {h ? (
-                  <span
-                    className="tag host"
-                    style={{
-                      marginTop: 14,
-                      fontSize: 14,
-                      padding: '4px 12px',
-                    }}
-                  >
-                    <BadgeCheck size={14} /> {t('earned')}
-                  </span>
-                ) : openBadge.group === 'host' && user.role !== 'host' ? (
-                  <p
-                    className="small"
-                    style={{
-                      marginTop: 14,
-                    }}
-                  >
-                    {t('unlockAsHost')}
-                  </p>
-                ) : (
-                  <div
-                    style={{
-                      width: '100%',
-                      marginTop: 16,
-                    }}
-                  >
-                    <div
-                      style={{
-                        height: 10,
-                        borderRadius: 5,
-                        background: 'var(--grey)',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      <div
-                        style={{
-                          height: '100%',
-                          width: `${(g / openBadge.goal) * 100}%`,
-                          background: 'var(--ink)',
-                          borderRadius: 5,
-                        }}
-                      />
-                    </div>
-                    <p
-                      className="small"
-                      style={{
-                        marginTop: 8,
-                      }}
-                    >
-                      {t('progress', {
-                        n: g,
-                        m: openBadge.goal,
-                      })}
-                      {' · '}
-                      {t('moreToGo', {
-                        n: openBadge.goal - g,
-                      })}
-                    </p>
-                  </div>
-                )}
-                <button
-                  className="btn btn-primary"
-                  style={{
-                    marginTop: 20,
-                  }}
-                  onClick={() => setOpenBadge(null)}
-                >
-                  {t('gotIt')}
-                </button>
-              </div>
-            )
-          })()}
-      </Sheet>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+        {earned.slice(0, 4).map((b) => (
+          <Sticker key={b.id} b={b} stats={stats} onClick={() => setOpen(b)} />
+        ))}
+      </div>
+      <p className="small" style={{ marginTop: 10 }}>
+        {t('stickersSub')}
+      </p>
+      <StickerSheet b={open} stats={stats} onClose={() => setOpen(null)} />
     </section>
+  )
+}
+export function StickersScreen() {
+  const { user, setUser } = useApp()
+  const { t } = useI18n()
+  const stats = useStats()
+  const [open, setOpen] = useState(null)
+  const earned = badges.filter((b) => stats[b.stat] >= b.goal).length
+  const isHost = user.role === 'host'
+  const grid = (group) => (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px 4px' }}>
+      {badges
+        .filter((b) => b.group === group)
+        .map((b) => (
+          <Sticker key={b.id} b={b} stats={stats} locked={group === 'host' && !isHost} onClick={() => setOpen(b)} />
+        ))}
+    </div>
+  )
+  return (
+    <Screen>
+      <div className="scroll pad safe-top" style={{ paddingBottom: 40 }}>
+        <BackButton />
+        <div className="eyebrow" style={{ marginTop: 20 }}>
+          {t('profile')} · {t('nOfM', { n: earned, m: badges.length })}
+        </div>
+        <h1 className="h1" style={{ marginTop: 6 }}>
+          {t('badgesTitle')}
+        </h1>
+        <p className="small" style={{ marginTop: 6 }}>
+          {t('stickersSub')}
+        </p>
+        <div className="row" style={{ background: 'var(--grey)', borderRadius: 18, padding: '12px 14px', marginTop: 16, gap: 12 }}>
+          <span style={{ flex: 1 }}>
+            <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{t('showBadgesSetting')}</strong>
+            <span className="tiny">{t('showBadgesSub')}</span>
+          </span>
+          <Switch on={user.showBadges} onChange={(on) => setUser({ showBadges: on })} label={t('showBadgesSetting')} />
+        </div>
+        <h2 className="h2" style={{ margin: '24px 0 14px' }}>
+          {t('guestBadgesTitle')}
+        </h2>
+        {grid('guest')}
+        <h2 className="h2" style={{ marginTop: 28 }}>
+          {t('hostBadgesTitle')}
+        </h2>
+        {!isHost && (
+          <p className="small" style={{ margin: '4px 0 14px' }}>
+            {t('unlockAsHost')}
+          </p>
+        )}
+        {grid('host')}
+      </div>
+      <StickerSheet b={open} stats={stats} onClose={() => setOpen(null)} />
+    </Screen>
   )
 }
 export function BadgeRow({ ids }) {

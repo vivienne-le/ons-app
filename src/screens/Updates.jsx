@@ -272,7 +272,7 @@ export function Updates() {
                   fontSize: 13,
                   color: 'var(--ink)',
                 }}
-                onClick={() => nav('/profile?section=settings')}
+                onClick={() => nav('/settings')}
               >
                 {t('changeInSettings')}
               </button>

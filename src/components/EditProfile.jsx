@@ -1,5 +1,7 @@
+import { useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
-import { Camera, Trash2, X } from 'lucide-react'
+import { Camera, X } from 'lucide-react'
+import { Screen } from './UI'
 import { Avatar } from './Img'
 import { useI18n } from '../i18n/index'
 import { useApp } from '../state/AppState'
@@ -18,6 +20,10 @@ export function resizeAvatar(file) {
   })
 }
 export const pronounOptions = ['he/him', 'she/her', 'they/them']
+export function EditProfileScreen() {
+  const nav = useNavigate()
+  return <EditProfile open onClose={() => nav('/profile')} />
+}
 export function EditProfile({ open, onClose }) {
   const { user, setUser, showToast } = useApp()
   const { t } = useI18n()
@@ -62,18 +68,8 @@ export function EditProfile({ open, onClose }) {
       onClose())
   }
   return (
-    <>
-      <div className="backdrop" onClick={onClose} />
-      <div
-        className="sheet"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="ep-title"
-        style={{
-          maxHeight: '94%',
-        }}
-      >
-        <div className="sheet-handle" />
+    <Screen>
+      <div className="scroll pad safe-top" style={{ paddingBottom: 32 }}>
         <div
           className="row"
           style={{
@@ -89,9 +85,10 @@ export function EditProfile({ open, onClose }) {
           </button>
         </div>
         <div
-          className="row"
           style={{
-            gap: 16,
+            display: 'grid',
+            justifyItems: 'center',
+            gap: 10,
           }}
         >
           <button
@@ -140,7 +137,7 @@ export function EditProfile({ open, onClose }) {
             <button
               className="link"
               style={{
-                textAlign: 'start',
+                textAlign: 'center',
               }}
               onClick={() => {
                 return fileInput.current?.click()
@@ -148,19 +145,6 @@ export function EditProfile({ open, onClose }) {
             >
               {t('changePhoto')}
             </button>
-            {photo && (
-              <button
-                className="row tiny"
-                style={{
-                  gap: 6,
-                  color: 'var(--orange)',
-                  fontWeight: 600,
-                }}
-                onClick={() => setPhoto('')}
-              >
-                <Trash2 size={14} /> {t('removePhoto')}
-              </button>
-            )}
           </div>
           <input
             ref={fileInput}
@@ -182,8 +166,7 @@ export function EditProfile({ open, onClose }) {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 10,
+            gap: 14,
             marginTop: 22,
           }}
         >
@@ -319,17 +302,6 @@ export function EditProfile({ open, onClose }) {
           ))}
           <button
             role="radio"
-            aria-checked={customPronouns}
-            className={`chip ${customPronouns ? 'on' : ''}`}
-            onClick={() => {
-              setCustomPronouns(true)
-              pronounOptions.includes(pronouns) && setPronouns('')
-            }}
-          >
-            {t('pronOwn')}
-          </button>
-          <button
-            role="radio"
             aria-checked={!customPronouns && !pronouns}
             className={`chip ${!customPronouns && !pronouns ? 'on' : ''}`}
             onClick={() => {
@@ -338,6 +310,17 @@ export function EditProfile({ open, onClose }) {
             }}
           >
             {t('pronNone')}
+          </button>
+          <button
+            role="radio"
+            aria-checked={customPronouns}
+            className={`chip ${customPronouns ? 'on' : ''}`}
+            onClick={() => {
+              setCustomPronouns(true)
+              pronounOptions.includes(pronouns) && setPronouns('')
+            }}
+          >
+            {t('pronOwn')}
           </button>
         </div>
         {customPronouns && (
@@ -377,12 +360,9 @@ export function EditProfile({ open, onClose }) {
           <button className="btn btn-primary" onClick={save}>
             {t('saveChanges')}
           </button>
-          <button className="btn btn-soft" onClick={onClose}>
-            {t('cancel')}
-          </button>
         </div>
       </div>
-    </>
+    </Screen>
   )
 }
 export function usePronounLabel() {
