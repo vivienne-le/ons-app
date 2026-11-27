@@ -38,6 +38,7 @@ export const places = [
     id: 'cafe-de-ster',
     kind: 'toilet',
     name: 'Café De Ster',
+    photo: 'place-cafe-de-ster',
     open: true,
     free: true,
     info: 'Free · until 18:00',
