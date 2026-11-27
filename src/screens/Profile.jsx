@@ -199,7 +199,7 @@ export function Profile() {
           <p style={{ fontSize: 14, color: 'var(--muted)', margin: '12px 0 0' }}>{t('interestsHint')}</p>
           <StickersPreview />
           {user.role !== 'host' && <HostPromo />}
-          <BecomeHostCard placement="bottom" />
+          {app.hostRequest && <BecomeHostCard placement="bottom" />}
         </div>
       </div>
       <NavBar />

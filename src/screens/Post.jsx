@@ -1,7 +1,8 @@
 import { useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Camera, Check, CircleHelp, Clock, Heart, ListChecks, Lock, MapPin as PinIcon, Minus, Plus, Search as SearchIcon, Trash2, X } from 'lucide-react'
+import { Camera, Check, CircleHelp, Clock, Heart, ListChecks, Lock, MapPin as PinIcon, Minus, Pencil, Plus, Search as SearchIcon, Trash2, X } from 'lucide-react'
 import { Flower } from '../components/Flower'
+import { MonthCalendar, dayKey } from '../components/MonthCalendar'
 import { Icon } from '../components/Icon'
 import { Avatar } from '../components/Img'
 import { BackButton, Progress, Screen, WhenWhere } from '../components/UI'
@@ -88,14 +89,14 @@ export function FieldLabel({ htmlFor: a, children, aside }) {
         marginBottom: 8,
       }}
     >
-      <label className="eyebrow" htmlFor={a}>
+      <label htmlFor={a} style={{ fontSize: 15, fontWeight: 600 }}>
         {children}
       </label>
       {aside && <span className="tiny">{aside}</span>}
     </div>
   )
 }
-export const postCategories = ['Sport', 'Food', 'Social', 'Creative', 'Outdoors']
+export const postCategories = ['Sport', 'Food', 'Games', 'Crafts', 'Music', 'Walks', 'Language café', 'Other']
 export function PostWhat() {
   const { draft, setDraft } = useApp()
   const { t } = useI18n()
@@ -156,7 +157,7 @@ export function PostWhat() {
                 })
               }
             >
-              {t(catKey[postCategory])}
+              {postCategory === 'Other' ? `+ ${t(catKey[postCategory])}` : t(catKey[postCategory])}
             </button>
           ))}
         </div>
@@ -329,95 +330,19 @@ export function PostWhen() {
         : draft.repeat === 'monthly'
           ? 'repHintMonthly'
           : null
-  const endOk = draft.noEnd || draft.end > draft.start
+  const endOk = draft.end > draft.start
   return (
     <StepLayout step={2} title={t('postWhenTitle')} sub={t('postWhenSub')} canNext={endOk} next="/post/where">
       <div>
         <FieldLabel aside={dateShort(draft.date)}>{t('dateLabel')}</FieldLabel>
-        <div
-          className="card"
-          style={{
-            padding: 14,
+        <MonthCalendar
+          selected={dayKey(2026, 11, draft.date)}
+          onSelect={(k) => {
+            const [y, m, d] = k.split('-').map(Number)
+            y === 2026 && m === 11 && setDraft({ date: d })
           }}
-        >
-          <strong
-            style={{
-              display: 'block',
-              marginBottom: 10,
-              textTransform: 'capitalize',
-            }}
-          >
-            {monthTitle}
-          </strong>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(7, 1fr)',
-              gap: 4,
-              textAlign: 'center',
-            }}
-          >
-            {Array.from(
-              {
-                length: 7,
-              },
-              (e, f) => (
-                <span
-                  key={f}
-                  className="tiny"
-                  aria-hidden
-                  style={{
-                    fontSize: 11,
-                  }}
-                >
-                  {wd(7 + f)}
-                </span>
-              ),
-            )}
-            {Array.from(
-              {
-                length: leadingBlanks,
-              },
-              (e, f) => (
-                <span key={`e${f}`} />
-              ),
-            )}
-            {Array.from(
-              {
-                length: 31,
-              },
-              (e, f) => {
-                const g = f + 1
-                const h = g < TODAY
-                const i = draft.date === g
-                return (
-                  <button
-                    key={g}
-                    type="button"
-                    disabled={h}
-                    aria-pressed={i}
-                    aria-label={`${dayLong(g)} ${dateShort(g)}`}
-                    onClick={() =>
-                      setDraft({
-                        date: g,
-                      })
-                    }
-                    style={{
-                      height: 38,
-                      borderRadius: 12,
-                      fontSize: 15,
-                      fontWeight: i ? 600 : 400,
-                      background: i ? 'var(--ink)' : g === TODAY ? 'var(--white)' : 'transparent',
-                      color: i ? 'var(--white)' : h ? '#BDBBB6' : 'var(--ink)',
-                    }}
-                  >
-                    {g}
-                  </button>
-                )
-              },
-            )}
-          </div>
-        </div>
+          isDisabled={(y, m, d) => y < 2026 || (y === 2026 && (m < 11 || (m === 11 && d < TODAY)))}
+        />
       </div>
       <div>
         <FieldLabel>{t('timeLabel')}</FieldLabel>
@@ -443,7 +368,7 @@ export function PostWhen() {
               <option key={time}>{time}</option>
             ))}
           </select>
-          {!draft.noEnd && (
+          {(
             <>
               <span className="small">{t('toLabel')}</span>
               <select
@@ -466,31 +391,6 @@ export function PostWhen() {
             </>
           )}
         </div>
-        <label
-          className="row"
-          style={{
-            marginTop: 10,
-            gap: 10,
-            fontSize: 15,
-            cursor: 'pointer',
-          }}
-        >
-          <input
-            type="checkbox"
-            checked={draft.noEnd}
-            onChange={(e) =>
-              setDraft({
-                noEnd: e.target.checked,
-              })
-            }
-            style={{
-              width: 20,
-              height: 20,
-              accentColor: 'var(--ink)',
-            }}
-          />
-          {t('noEndTime')}
-        </label>
       </div>
       <div>
         <FieldLabel>{t('repeat')}</FieldLabel>
@@ -582,7 +482,7 @@ export function PostWhen() {
           </strong>
           <button
             type="button"
-            className="icon-btn white"
+            className="icon-btn dark"
             aria-label={t('more')}
             disabled={draft.capacity >= 50}
             onClick={() =>
@@ -956,9 +856,13 @@ export function PostDetails() {
           {steps.length < 6 && (
             <button
               type="button"
-              className="btn btn-sm btn-soft"
+              className="btn btn-sm"
               style={{
                 width: '100%',
+                height: 48,
+                background: 'transparent',
+                border: '1.5px dashed #BDBBB6',
+                fontWeight: 400,
               }}
               onClick={() =>
                 setDraft({
@@ -1013,10 +917,20 @@ export function PostDetails() {
                 className={`chip ${l ? 'on' : ''}`}
                 style={{
                   opacity: m ? 0.4 : 1,
+                  height: 36,
+                  fontSize: 14,
+                  background: l ? undefined : 'var(--white)',
+                  boxShadow: l ? undefined : 'inset 0 0 0 1.5px var(--ink)',
                 }}
                 onClick={() => toggleGood(k)}
               >
-                {l ? <Check size={15} aria-hidden /> : <Plus size={15} aria-hidden />}
+                {l ? (
+                  <Flower accent="lime" size={20}>
+                    <Check size={11} aria-hidden />
+                  </Flower>
+                ) : (
+                  <Plus size={15} aria-hidden />
+                )}
                 {goodOpts.includes(k) ? t(k) : k}
               </button>
             )
@@ -1054,14 +968,19 @@ export function PostDetails() {
           draft.good.length < 4 && (
             <button
               type="button"
-              className="link"
+              className="btn"
               style={{
                 marginTop: 10,
+                width: '100%',
+                height: 48,
+                background: 'transparent',
+                border: '1.5px dashed #BDBBB6',
+                fontWeight: 400,
+                fontSize: 15,
               }}
               onClick={() => setWritingOwn(true)}
             >
-              {'+ '}
-              {t('writeOwn')}
+              <Pencil size={15} aria-hidden /> {t('writeOwn')}
             </button>
           )
         )}

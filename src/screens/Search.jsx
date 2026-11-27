@@ -22,6 +22,12 @@ export const catKey = {
   Social: 'catSocial',
   Creative: 'catCreative',
   Outdoors: 'catOutdoors',
+  Games: 'catGames',
+  Crafts: 'catCrafts',
+  Music: 'catMusic',
+  Walks: 'catWalks',
+  'Language café': 'catLanguage',
+  Other: 'catOther',
 }
 export function Search() {
   const [params, setParams] = useSearchParams()

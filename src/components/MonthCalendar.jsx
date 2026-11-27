@@ -16,7 +16,7 @@ export const dayKey = (y, m, d) => `${y}-${m}-${d}`
 // neighbouring months greyed, today ringed, the selected day filled black.
 // marks: { 'y-m-d': [{ color, ring }] } draws small dots under a day.
 // bold: Set of 'y-m-d' keys shown in bold (days with plans).
-export function MonthCalendar({ selected, onSelect, marks = {}, bold, legend }) {
+export function MonthCalendar({ selected, onSelect, marks = {}, bold, legend, isDisabled }) {
   const { t, lang } = useI18n()
   const [monthIndex, setMonthIndex] = useState(2)
   const [year, month] = calMonths[monthIndex]
@@ -75,6 +75,7 @@ export function MonthCalendar({ selected, onSelect, marks = {}, bold, legend }) 
           const d = date.getDate()
           const key = dayKey(y, m, d)
           const inMonth = m === month
+          const off = !inMonth || !!isDisabled?.(y, m, d)
           const isToday = y === 2026 && m === 11 && d === TODAY
           const isSel = selected === key
           const dots = inMonth ? (marks[key] ?? []) : []
@@ -82,7 +83,7 @@ export function MonthCalendar({ selected, onSelect, marks = {}, bold, legend }) 
           return (
             <button
               key={key}
-              disabled={!inMonth}
+              disabled={off}
               onClick={() => onSelect?.(key)}
               aria-pressed={isSel}
               aria-label={longDay(date)}
@@ -98,7 +99,7 @@ export function MonthCalendar({ selected, onSelect, marks = {}, bold, legend }) 
                   fontSize: 15,
                   fontWeight: isSel || isBold ? 600 : 400,
                   background: isSel ? 'var(--ink)' : 'transparent',
-                  color: isSel ? 'var(--white)' : inMonth ? 'var(--ink)' : '#B5B3AE',
+                  color: isSel ? 'var(--white)' : !off ? 'var(--ink)' : '#B5B3AE',
                   boxShadow: isToday && !isSel ? 'inset 0 0 0 1.5px var(--ink)' : undefined,
                 }}
               >
