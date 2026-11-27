@@ -105,6 +105,7 @@ export function AvatarStack({ ids, label }) {
             key={id}
             style={{
               marginLeft: b ? -7 : 0,
+              display: 'flex',
             }}
           >
             <Avatar name={neighbourNames[id] ?? id} img={id} size={23} ring />
@@ -112,9 +113,10 @@ export function AvatarStack({ ids, label }) {
         ))}
       </span>
       <span
-        className="tiny"
         style={{
           color: 'var(--ink)',
+          fontSize: 12,
+          lineHeight: '18px',
         }}
       >
         {label}

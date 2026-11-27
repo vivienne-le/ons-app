@@ -1,7 +1,7 @@
 import { useId } from 'react'
 export const cssVar = (name) => `var(--${name})`
 /** `gradient` = [top colour, bottom colour] draws the clover with a soft top-to-bottom gradient. */
-export function Flower({ accent = 'lime', size = 40, color, gradient, children, className: a, style: b }) {
+export function Flower({ accent = 'lime', size = 40, color, gradient, stroke, children, className: a, style: b }) {
   const gradientId = 'clover' + useId().replace(/:/g, '')
   const fill = gradient ? `url(#${gradientId})` : (color ?? cssVar(accent))
   return (
@@ -36,6 +36,15 @@ export function Flower({ accent = 'lime', size = 40, color, gradient, children, 
             </linearGradient>
           </defs>
         )}
+        {stroke ? (
+          <path
+            transform="translate(1.5 1.5) scale(0.5909)"
+            d="M20.47 20.47 A23.76 23.76 0 1 1 67.53 20.47 A23.76 23.76 0 1 1 67.53 67.53 A23.76 23.76 0 1 1 20.47 67.53 A23.76 23.76 0 1 1 20.47 20.47 Z"
+            fill={fill}
+            stroke={stroke}
+            strokeWidth={2.5}
+          />
+        ) : (
         <g fill={fill}>
           <circle cx="27.5" cy="14.85" r="14.85" />
           <circle cx="40.15" cy="27.5" r="14.85" />
@@ -43,6 +52,7 @@ export function Flower({ accent = 'lime', size = 40, color, gradient, children, 
           <circle cx="14.85" cy="27.5" r="14.85" />
           <rect x="14.85" y="14.85" width="25.3" height="25.3" />
         </g>
+        )}
       </svg>
       <span
         style={{

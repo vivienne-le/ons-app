@@ -56,7 +56,7 @@ export const defaults = {
   hostRequest: null,
   following: ['org:cvd', 'org:zorgvrijstaat', 'person:noon', 'person:mo'],
 }
-export const STORAGE_KEY = 'cvd-app-v1'
+export const STORAGE_KEY = 'cvd-app-v2'
 export function loadState() {
   try {
     const a = localStorage.getItem(STORAGE_KEY)

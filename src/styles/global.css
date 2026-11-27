@@ -134,8 +134,9 @@ img {
 .eyebrow {
   font-family: var(--mono);
   font-size: 12px;
+  line-height: 16px;
   font-weight: 500;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -155,8 +156,9 @@ img {
 }
 .h2 {
   font-size: 24px;
+  line-height: 28px;
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 .h3 {
@@ -184,7 +186,8 @@ img {
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 3px;
-  font-size: 14px;
+  font-size: 13px;
+  letter-spacing: -0.01em;
 }
 .btn {
   display: flex;
@@ -310,7 +313,7 @@ img {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin: 28px 0 14px;
+  margin: 24px 0 16px;
 }
 .when-where {
   display: grid;

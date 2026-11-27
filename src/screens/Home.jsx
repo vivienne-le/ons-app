@@ -14,6 +14,8 @@ export const sortKey = (id) => {
   return (event.month === 'Dec' ? 0 : 100) + event.date
 }
 export const TODAY = 13
+const forYouAccent = { 'pool-tournament': 'turq', 'kerststol-kitchen': 'pink', 'football-beer': 'lime', 'bowling-monday': 'lav' }
+const popularFrame = { 'warm-hats': 'orange', 'bike-repair': 'turq', 'football-beer': 'lav' }
 export function upcomingOnly(ids) {
   return ids
     .map((id) => byId(id))
@@ -88,147 +90,67 @@ export function Home() {
             borderRadius: '0 0 40px 40px',
             position: 'relative',
             overflow: 'hidden',
-            padding: '56px var(--pad) 28px',
+            padding: '56px var(--pad) 23px',
           }}
         >
-          <Flower
-            color="#E7F269"
-            size={210}
-            style={{
-              position: 'absolute',
-              right: -60,
-              top: 90,
-            }}
-          />
-          <Flower
-            color="#E7F269"
-            size={120}
-            style={{
-              position: 'absolute',
-              right: 90,
-              top: -40,
-            }}
-          />
-          <div
-            className="row"
-            style={{
-              justifyContent: 'space-between',
-              position: 'relative',
-            }}
-          >
+          <Flower color="#E7F269" size={190} style={{ position: 'absolute', right: -60, top: 10, transform: 'rotate(14deg)' }} />
+          <div className="row" style={{ justifyContent: 'space-between', position: 'relative', alignItems: 'flex-start' }}>
             {user.role === 'host' ? (
-              <span
-                className="row"
-                style={{
-                  gap: 6,
-                }}
-              >
+              <span className="row" style={{ gap: 6, marginTop: 15 }}>
                 <span className="tag host">
                   <BadgeCheck size={12} /> {t('hostBadge')}
                 </span>
-                <span
-                  className="eyebrow"
-                  style={{
-                    color: 'var(--ink)',
-                  }}
-                >
+                <span className="eyebrow" style={{ color: 'var(--ink)' }}>
                   {user.org}
                 </span>
               </span>
             ) : (
-              <span
-                className="eyebrow"
-                style={{
-                  color: 'var(--ink)',
-                }}
-              >
-                {user.area}
+              <span className="eyebrow" style={{ color: 'var(--ink)', marginTop: 15 }}>
+                {user.area || 'Middelland'}
               </span>
             )}
             <button
-              className="icon-btn white"
               aria-label={t(hasNews ? 'updatesNew' : 'updates')}
               onClick={() => nav('/updates')}
-              style={{
-                position: 'relative',
-              }}
+              style={{ position: 'relative', width: 44, height: 44, borderRadius: '50%', background: 'var(--white)', display: 'grid', placeItems: 'center', marginTop: 6 }}
             >
               <Bell size={20} />
               {hasNews && (
                 <span
-                  className="dot"
-                  style={{
-                    position: 'absolute',
-                    top: 9,
-                    right: 11,
-                  }}
+                  style={{ position: 'absolute', top: 2, right: -4, width: 12, height: 12, borderRadius: '50%', background: 'var(--orange)', boxShadow: '0 0 0 2px var(--lime)' }}
                 />
               )}
             </button>
           </div>
-          <h1
-            className="h-display"
-            style={{
-              fontSize: 46,
-              marginTop: 14,
-              position: 'relative',
-            }}
-          >
+          <h1 style={{ fontSize: 44, lineHeight: '48px', fontWeight: 500, letterSpacing: '-0.03em', margin: '11px 0 0', position: 'relative' }}>
             {t('hoi')}
             <br />
             {user.firstName || t('neighbour')}
           </h1>
-          <div
-            className="row"
-            style={{
-              marginTop: 20,
-              position: 'relative',
-            }}
-          >
+          <div className="row" style={{ marginTop: 20, position: 'relative', justifyContent: 'space-between' }}>
             <button
               onClick={() => nav('/search')}
               style={{
-                flex: 1,
-                minWidth: 0,
+                width: 284,
+                maxWidth: 'calc(100% - 72px)',
                 height: 56,
-                borderRadius: 999,
-                background: 'var(--white)',
-                boxShadow: 'inset 0 0 0 2px var(--ink)',
+                borderRadius: 30,
+                background: 'transparent',
+                border: '2px solid var(--ink)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: 10,
-                padding: '0 18px',
-                color: 'var(--muted)',
-                fontSize: 15,
+                gap: 4,
+                padding: '0 20px',
+                color: 'var(--ink)',
+                fontSize: 14,
+                lineHeight: '21px',
               }}
             >
-              <SearchIcon
-                size={20}
-                color="var(--ink)"
-                style={{
-                  flex: 'none',
-                }}
-              />{' '}
-              <span
-                style={{
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                {t('searchPlaceholder')}
-              </span>
+              <SearchIcon size={20} style={{ flex: 'none' }} />
+              <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t('searchPlaceholder')}</span>
             </button>
-            <button
-              className="icon-btn dark"
-              style={{
-                width: 56,
-                height: 56,
-              }}
-              aria-label={t('filter')}
-              onClick={() => setFilterOpen(true)}
-            >
-              <SlidersHorizontal size={20} />
+            <button className="icon-btn dark" style={{ width: 56, height: 56 }} aria-label={t('filter')} onClick={() => setFilterOpen(true)}>
+              <SlidersHorizontal size={22} />
             </button>
           </div>
         </div>
@@ -237,51 +159,26 @@ export function Home() {
             <button
               onClick={() => nav(`/event/${upcoming.id}`)}
               style={{
-                marginTop: 20,
+                marginTop: 28,
                 width: '100%',
+                height: 67,
                 background: 'var(--ink)',
                 color: 'var(--white)',
                 borderRadius: 20,
-                padding: '14px 14px 14px 18px',
+                padding: '0 19px 0 18px',
                 display: 'flex',
                 alignItems: 'center',
                 textAlign: 'start',
               }}
             >
-              <span
-                style={{
-                  flex: 1,
-                }}
-              >
-                <span
-                  className="eyebrow"
-                  style={{
-                    color: 'var(--lime)',
-                    fontSize: 11,
-                  }}
-                >
-                  {t('nextEvent', {
-                    when: dayLabel(upcoming.date),
-                    time: upcoming.start,
-                  })}
+              <span style={{ flex: 1, display: 'grid', gap: 4 }}>
+                <span className="eyebrow" style={{ color: 'var(--lime)' }}>
+                  {t('nextEvent', { when: dayLabel(upcoming.date), time: upcoming.start })}
                 </span>
-                <strong
-                  style={{
-                    display: 'block',
-                    fontSize: 20,
-                    marginTop: 2,
-                  }}
-                >
-                  {ev(upcoming).title}
-                </strong>
+                <strong style={{ display: 'block', fontSize: 20, lineHeight: '24px', fontWeight: 600, letterSpacing: '-0.02em' }}>{ev(upcoming).title}</strong>
               </span>
-              <span
-                className="icon-btn lime"
-                style={{
-                  color: 'var(--ink)',
-                }}
-              >
-                <ArrowRight size={20} className="flip-rtl" />
+              <span style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--lime)', color: 'var(--ink)', display: 'grid', placeItems: 'center' }}>
+                <ArrowRight size={18} className="flip-rtl" />
               </span>
             </button>
           )}
@@ -484,16 +381,16 @@ export function Home() {
         <div
           style={{
             display: 'flex',
-            gap: 10,
+            gap: 8,
             overflowX: 'auto',
-            padding: '0 var(--pad) 4px',
+            padding: '0 var(--pad) 0',
             scrollSnapType: 'x mandatory',
             scrollPaddingLeft: 20,
           }}
           className="scroll-x"
         >
           {forYou.map((e) => (
-            <TileCard key={e} e={byId(e)} />
+            <TileCard key={e} e={byId(e)} accent={forYouAccent[e]} />
           ))}
         </div>
         <div className="pad">
@@ -503,212 +400,96 @@ export function Home() {
               {t('seeAll')}
             </button>
           </div>
-          <div
-            className="stack"
-            style={{
-              gap: 6,
-            }}
-          >
-            {popular.map((e) => (
-              <RowCard key={e} e={byId(e)} />
-            ))}
+          <div className="stack" style={{ gap: 8 }}>
+            {popular.map((e, i) => [
+              i > 0 && <div key={e + 'l'} style={{ height: 1, background: 'var(--grey-2)' }} />,
+              <RowCard key={e} e={byId(e)} frame={popularFrame[e]} />,
+            ])}
           </div>
           <div className="section-head">
             <h2 className="h2">{t('joinToday')}</h2>
           </div>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '56px 1fr',
-              rowGap: 10,
-              position: 'relative',
-            }}
-          >
-            <span
-              aria-hidden
-              style={{
-                position: 'absolute',
-                left: 37,
-                top: 20,
-                bottom: 20,
-                borderLeft: '2px dotted #CFCDC7',
-              }}
-            />
+          <div style={{ paddingLeft: 20, marginTop: -4 }}>
             {joinToday.map((e) => {
               const f = ev(byId(e))
-              const g = f.capacity - goingCount(e)
-              return [
-                <span
-                  key={e + 't'}
-                  className="eyebrow"
-                  style={{
-                    color: 'var(--ink)',
-                    alignSelf: 'center',
-                    background: 'var(--white)',
-                    position: 'relative',
-                    fontSize: 12,
-                  }}
-                >
-                  {f.start}
-                </span>,
-                <button
-                  key={e}
-                  onClick={() => nav(`/event/${e}`)}
-                  className="card"
-                  style={{
-                    display: 'flex',
-                    gap: 12,
-                    alignItems: 'center',
-                    padding: 12,
-                    textAlign: 'start',
-                  }}
-                >
-                  <Flower accent={f.accent} size={50}>
-                    <Icon name={f.icon} size={22} />
-                  </Flower>
-                  <span
+              const left = f.capacity - goingCount(e)
+              return (
+                <div key={e} style={{ display: 'flex', alignItems: 'flex-start', height: 86 }}>
+                  <span style={{ width: 65, flex: 'none', position: 'relative', height: 86 }}>
+                    <span className="eyebrow" style={{ color: 'var(--ink)', position: 'absolute', top: 12, left: 0 }}>
+                      {f.start}
+                    </span>
+                    <span style={{ position: 'absolute', left: 19, top: 34, width: 2, height: 46, borderRadius: 2, background: '#E8E6E0' }} />
+                  </span>
+                  <button
+                    onClick={() => nav(`/event/${e}`)}
                     style={{
+                      flex: 1,
+                      height: 80,
+                      borderRadius: 20,
+                      background: 'var(--grey)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 16,
+                      padding: '0 11px',
+                      textAlign: 'start',
                       minWidth: 0,
                     }}
                   >
-                    <strong
-                      style={{
-                        display: 'block',
-                        fontSize: 17,
-                      }}
-                    >
-                      {f.title}
-                    </strong>
-                    <span
-                      className="tiny"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 3,
-                      }}
-                    >
-                      <PinIcon size={11} />
-                      {f.place}
-                      {' · '}
-                      {t('byHost', {
-                        name: f.host.name,
-                      })}
+                    <Flower accent={f.accent} size={56}>
+                      <Icon name={f.icon} size={24} />
+                    </Flower>
+                    <span style={{ minWidth: 0, display: 'grid', gap: 2 }}>
+                      <strong style={{ display: 'block', fontSize: 17, lineHeight: '22px', fontWeight: 600, letterSpacing: '-0.01em' }}>{f.title}</strong>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 14, lineHeight: '21px', color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                        <PinIcon size={10} />
+                        {f.place} · {t('byHost', { name: f.host.name })}
+                      </span>
+                      <span style={{ fontSize: 13, lineHeight: '17px', fontWeight: 600, letterSpacing: '-0.01em' }}>
+                        {t('going', { n: goingCount(e) })}
+                        {left <= 3 ? ` · ${t('spotsLeft', { n: left })}` : ''}
+                      </span>
                     </span>
-                    <span
-                      style={{
-                        fontSize: 13,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {t('going', {
-                        n: goingCount(e),
-                      })}
-                      {g <= 3
-                        ? ` · ${t('spotsLeft', {
-                            n: g,
-                          })}`
-                        : ''}
-                    </span>
-                  </span>
-                </button>,
-              ]
+                  </button>
+                </div>
+              )
             })}
           </div>
           <button
             onClick={() => nav('/map')}
             style={{
-              marginTop: 28,
+              marginTop: 32,
               width: '100%',
+              height: 155,
               background: 'var(--turq)',
-              borderRadius: 24,
-              padding: 20,
-              minHeight: 150,
+              borderRadius: 28,
+              padding: '18px 20px',
               position: 'relative',
               overflow: 'hidden',
               textAlign: 'start',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
+              display: 'block',
             }}
           >
-            <svg
-              aria-hidden
-              viewBox="0 0 362 150"
-              style={{
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-              }}
-            >
-              <path
-                d="M-10 120 C 80 90, 140 140, 220 70 S 330 20, 380 60"
-                stroke="#8FE3EE"
-                strokeWidth="14"
-                fill="none"
-              />
-              <path d="M150 -10 C 170 60, 260 90, 250 170" stroke="#8FE3EE" strokeWidth="10" fill="none" />
+            <svg aria-hidden viewBox="0 0 362 155" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+              <path d="M-10 128 C 70 120, 130 150, 220 112 S 320 70, 372 74" stroke="#8FE3EE" strokeWidth="12" fill="none" />
+              <path d="M160 -10 C 175 50, 205 100, 200 170" stroke="#8FE3EE" strokeWidth="10" fill="none" />
+              <path d="M300 -10 C 300 60, 320 110, 330 170" stroke="#8FE3EE" strokeWidth="9" fill="none" />
             </svg>
-            <Flower
-              accent="lime"
-              size={40}
-              style={{
-                position: 'absolute',
-                right: 120,
-                top: 24,
-              }}
-            />
-            <Flower
-              accent="pink"
-              size={34}
-              style={{
-                position: 'absolute',
-                right: 70,
-                top: 64,
-              }}
-            />
-            <Flower
-              accent="orange"
-              size={38}
-              style={{
-                position: 'absolute',
-                right: 26,
-                top: 22,
-              }}
-            />
-            <span
-              className="eyebrow"
-              style={{
-                color: 'var(--ink)',
-                position: 'relative',
-              }}
-            >
+            <Flower accent="lime" stroke="var(--ink)" size={34} style={{ position: 'absolute', left: 206, top: 20 }} />
+            <Flower accent="pink" stroke="var(--ink)" size={34} style={{ position: 'absolute', left: 262, top: 50 }} />
+            <Flower accent="orange" stroke="var(--ink)" size={34} style={{ position: 'absolute', left: 318, top: 18 }} />
+            <span className="eyebrow" style={{ color: 'var(--ink)', position: 'relative', display: 'block' }}>
               {t('nearYou')}
             </span>
-            <span
-              className="row"
-              style={{
-                position: 'relative',
-                justifyContent: 'space-between',
-                alignItems: 'flex-end',
-                marginTop: 40,
-              }}
+            <strong
+              style={{ position: 'absolute', left: 20, top: 81, fontSize: 24, lineHeight: '28px', fontWeight: 600, letterSpacing: '-0.02em', maxWidth: 220 }}
             >
-              <strong
-                style={{
-                  fontSize: 24,
-                  lineHeight: 1.15,
-                  fontWeight: 600,
-                  maxWidth: 220,
-                }}
-              >
-                {t('thingsNear', {
-                  n: events.length,
-                })}
-              </strong>
-              <span className="icon-btn dark">
-                <ArrowRight size={20} className="flip-rtl" />
-              </span>
+              {t('thingsNear', { n: 6 })}
+            </strong>
+            <span
+              style={{ position: 'absolute', right: 20, bottom: 18, width: 40, height: 40, borderRadius: '50%', background: 'var(--ink)', color: 'var(--white)', display: 'grid', placeItems: 'center' }}
+            >
+              <ArrowRight size={18} className="flip-rtl" />
             </span>
           </button>
         </div>

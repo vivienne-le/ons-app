@@ -40,11 +40,12 @@ export function HeartButton({ id, light, size: a = 32 }) {
     </button>
   )
 }
-export function TileCard({ e: event }) {
+export function TileCard({ e: event, accent }) {
   const nav = useNavigate()
   const { goingCount } = useApp()
   const { t, ev, wd } = useI18n()
-  const e = ev(event)
+  const e = { ...ev(event), ...(accent ? { accent } : {}) }
+  const onDark = e.accent === 'lav'
   return (
     <div
       role="link"
@@ -52,64 +53,40 @@ export function TileCard({ e: event }) {
       onClick={() => nav(`/event/${e.id}`)}
       onKeyDown={(b) => b.key === 'Enter' && nav(`/event/${e.id}`)}
       style={{
-        width: 172,
+        width: 173,
+        height: 185,
         flex: 'none',
-        borderRadius: 20,
-        overflow: 'hidden',
+        borderRadius: 24,
         background: `var(--${e.accent})`,
+        color: onDark ? 'var(--white)' : 'var(--ink)',
         cursor: 'pointer',
         position: 'relative',
         scrollSnapAlign: 'start',
       }}
     >
-      <div
-        style={{
-          padding: 5,
-        }}
-      >
-        <Img
-          name={e.card}
-          photo={e.photo}
-          w={500}
-          alt=""
-          accent={e.accent}
-          icon={e.icon}
-          radius={16}
-          style={{
-            width: '100%',
-            height: 100,
-          }}
-        />
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          top: 12,
-          right: 12,
-        }}
-      >
+      <Img
+        name={e.card}
+        photo={e.photo}
+        w={500}
+        alt=""
+        accent={e.accent}
+        icon={e.icon}
+        radius={16}
+        style={{ position: 'absolute', left: 6, top: 8, width: 162, height: 93 }}
+      />
+      <div style={{ position: 'absolute', top: 13, left: 131 }}>
         <HeartButton id={e.id} light />
       </div>
-      <div
-        style={{
-          padding: '6px 12px 12px',
-        }}
-      >
-        <div
-          className="eyebrow"
-          style={{
-            color: 'var(--ink)',
-            fontSize: 11,
-          }}
-        >
-          {wd(e.date)} {e.date}
-          {' · '}
-          {e.start}
+      <div style={{ position: 'absolute', left: 14, top: 110, right: 10 }}>
+        <div className="eyebrow" style={{ color: 'inherit' }}>
+          {wd(e.date)} {e.date} · {e.start}
         </div>
         <div
           style={{
             fontWeight: 600,
-            fontSize: 16,
+            fontSize: 15,
+            lineHeight: '20px',
+            letterSpacing: '-0.01em',
             marginTop: 4,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
@@ -118,27 +95,16 @@ export function TileCard({ e: event }) {
         >
           {e.title}
         </div>
-        <div
-          style={{
-            fontSize: 12,
-            marginTop: 2,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 3,
-          }}
-        >
-          <PinIcon size={11} />
-          {e.place}
-          {' · '}
-          {t('going', {
-            n: goingCount(e.id),
-          })}
+        <div style={{ fontSize: 12, lineHeight: '18px', marginTop: 4, display: 'flex', alignItems: 'center', gap: 4, color: onDark ? '#D5D9F5' : 'inherit' }}>
+          <PinIcon size={10} />
+          {e.place} · {t('going', { n: goingCount(e.id) })}
         </div>
       </div>
     </div>
   )
 }
-export function RowCard({ e: event, sub }) {
+const rowFrame = { warm: 'orange', lime: 'orange' }
+export function RowCard({ e: event, sub, frame }) {
   const nav = useNavigate()
   const { goingCount } = useApp()
   const { t, ev, wd } = useI18n()
@@ -150,85 +116,31 @@ export function RowCard({ e: event, sub }) {
       onClick={() => nav(`/event/${e.id}`)}
       onKeyDown={(b) => b.key === 'Enter' && nav(`/event/${e.id}`)}
       className="row"
-      style={{
-        cursor: 'pointer',
-        padding: '8px 0',
-        alignItems: 'center',
-      }}
+      style={{ cursor: 'pointer', alignItems: 'center', gap: 17 }}
     >
       <span
         style={{
-          padding: 3,
-          borderRadius: 18,
-          background: `var(--${e.accent === 'lime' ? 'orange' : e.accent})`,
+          width: 80,
+          height: 80,
+          padding: 4,
+          borderRadius: 20,
+          background: `var(--${frame ?? rowFrame[e.accent] ?? e.accent})`,
           flex: 'none',
+          boxSizing: 'border-box',
         }}
       >
-        <Img
-          name={e.thumb ?? e.card}
-          photo={e.photo}
-          w={200}
-          alt=""
-          accent={e.accent}
-          icon={e.icon}
-          radius={15}
-          style={{
-            width: 71,
-            height: 71,
-          }}
-        />
+        <Img name={e.thumb ?? e.card} photo={e.photo} w={200} alt="" accent={e.accent} icon={e.icon} radius={16} style={{ width: 71, height: 71 }} />
       </span>
-      <span
-        style={{
-          flex: 1,
-          minWidth: 0,
-        }}
-      >
-        <span
-          className="eyebrow"
-          style={{
-            color: 'var(--ink)',
-            fontSize: 11,
-          }}
-        >
-          {wd(e.date)} {e.date}
-          {' · '}
-          {e.start}
+      <span style={{ flex: 1, minWidth: 0, display: 'grid', gap: 4 }}>
+        <span className="eyebrow" style={{ color: 'var(--ink)' }}>
+          {wd(e.date)} {e.date} · {e.start}
         </span>
-        <span
-          style={{
-            display: 'block',
-            fontWeight: 600,
-            fontSize: 19,
-            margin: '2px 0',
-          }}
-        >
-          {e.title}
-        </span>
-        <span
-          className="tiny"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 3,
-          }}
-        >
-          <PinIcon size={12} />
+        <span style={{ display: 'block', fontWeight: 600, fontSize: 20, lineHeight: '24px', letterSpacing: '-0.02em' }}>{e.title}</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, lineHeight: '18px', color: 'var(--muted)' }}>
+          <PinIcon size={10} />
           {sub ?? e.place}
         </span>
-        <span
-          style={{
-            display: 'block',
-            marginTop: 4,
-          }}
-        >
-          <AvatarStack
-            ids={e.goingAvatars}
-            label={t('going', {
-              n: goingCount(e.id),
-            })}
-          />
-        </span>
+        <AvatarStack ids={e.goingAvatars} label={t('going', { n: goingCount(e.id) })} />
       </span>
       <HeartButton id={e.id} />
     </div>
