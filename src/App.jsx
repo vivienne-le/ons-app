@@ -9,7 +9,7 @@ import { Joined } from './screens/Joined'
 import { EventMap, MapTab } from './screens/Maps'
 import { ConnectionsScreen, OrgScreen, PersonScreen } from './screens/People'
 import { Plans } from './screens/Plans'
-import { MyPost, PostDetails, PostPreview, PostSent, PostStart, PostWhat, PostWhen, PostWhere } from './screens/Post'
+import { HostLive, MyPost, PostDetails, PostPreview, PostSent, PostStart, PostWhat, PostWhen, PostWhere } from './screens/Post'
 import { Profile, SettingsScreen } from './screens/Profile'
 import { Search } from './screens/Search'
 import { Updates } from './screens/Updates'
@@ -240,6 +240,14 @@ export function AppRoutes() {
             element={
               <NeedsAccount>
                 <MyPost />
+              </NeedsAccount>
+            }
+          />
+          <Route
+            path="/post/live/:id"
+            element={
+              <NeedsAccount>
+                <HostLive />
               </NeedsAccount>
             }
           />

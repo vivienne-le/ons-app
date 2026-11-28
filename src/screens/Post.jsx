@@ -1,6 +1,6 @@
-import { useMemo, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Camera, Check, CircleHelp, Clock, Heart, ListChecks, Lock, MapPin as PinIcon, Minus, Pencil, Plus, Search as SearchIcon, Trash2, X } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Camera, Check, ChevronRight, CircleHelp, Clock, Heart, Info, Mail, ListChecks, Lock, MapPin as PinIcon, Minus, Pencil, Plus, Search as SearchIcon, Trash2, X } from 'lucide-react'
 import { Flower } from '../components/Flower'
 import { MonthCalendar, dayKey } from '../components/MonthCalendar'
 import { CvdBadge, OrgLogo } from '../components/OrgLogo'
@@ -1377,9 +1377,19 @@ export function PostPreview() {
 }
 export function PostSent() {
   const nav = useNavigate()
-  const { posts } = useApp()
+  const { posts, approvePost, showToast } = useApp()
   const { t } = useI18n()
   const post = posts[0]
+  // demo: a few seconds later CVD approves it and the host dashboard opens by itself
+  useEffect(() => {
+    if (!post || post.status !== 'review') return
+    const timer = setTimeout(() => {
+      approvePost(post.id)
+      showToast(t('cvdApproved'))
+      nav(`/post/live/${post.id}`, { replace: true })
+    }, 4000)
+    return () => clearTimeout(timer)
+  }, [post?.id])
   const cvd = organisations.find((o) => o.id === 'cvd')
   const steps = [
     { key: 'sentStepSent', sub: post ? `${post.title} · ${t('today')}` : t('today'), state: 'done' },
@@ -1458,6 +1468,7 @@ export function MyPost() {
   const { posts } = useApp()
   const { t } = useI18n()
   const post = useMemo(() => posts.find((b) => b.id === id), [posts, id])
+  if (post?.status === 'live') return <Navigate to={`/post/live/${post.id}`} replace />
   return post ? (
     <Screen>
       <div
@@ -1506,6 +1517,103 @@ const hostRules = [
   { key: 'rulePrivacy', Icon: Lock, accent: 'lav' },
   { key: 'ruleHelp', Icon: CircleHelp, color: 'var(--grey)' },
 ]
+// Host dashboard once CVD has approved the activity (Figma: Live (host dashboard))
+export function HostLive() {
+  const { id } = useParams()
+  const nav = useNavigate()
+  const { posts, showToast } = useApp()
+  const { t, dayLong, full } = useI18n()
+  const post = posts.find((b) => b.id === id)
+  if (!post) return <Navigate to="/home" replace />
+  const title = post.title || t('demoRunTitle')
+  const day = dayLong(post.date)
+  const when = post.repeat === 'once' ? full(post.date) : t('everyDay', { day: day.charAt(0).toUpperCase() + day.slice(1) })
+  const time = post.noEnd ? post.start : `${post.start} – ${post.end}`
+  const place = post.place || 'Het Park'
+  const going = 9
+  const mono = { font: "500 10px/13px 'Roboto Mono', monospace", letterSpacing: '0.05em', textTransform: 'uppercase' }
+  const actions = [
+    { Icon: Mail, title: t('answerQuestions'), sub: t('answerQuestionsSub'), badge: t('nNew', { n: 1 }), toast: 'answerQuestionsToast' },
+    { Icon: Pencil, title: t('editActivity'), sub: t('editActivitySub'), toast: 'editActivityToast' },
+    { Icon: Clock, title: t('skipWeek'), sub: t('skipWeekSub'), toast: 'skipWeekToast' },
+    { Icon: X, title: t('cancelActivity'), sub: t('cancelActivitySub'), danger: true, toast: 'cancelActivityToast' },
+  ]
+  return (
+    <Screen>
+      <div className="scroll" style={{ background: 'var(--white)', paddingBottom: 40 }}>
+        <div style={{ background: 'var(--ink)', borderRadius: '0 0 32px 32px', height: 330, position: 'relative', color: 'var(--white)' }}>
+          <span style={{ position: 'absolute', left: 20, top: 62 }}>
+            <BackButton variant="white" to="/home" />
+          </span>
+          <span style={{ position: 'absolute', right: 20, top: 70, display: 'flex', alignItems: 'center', gap: 4, background: '#3F9B5F', borderRadius: 100, padding: '4px 12px 4px 8px', font: '600 13px/17px Inter, sans-serif', letterSpacing: '-0.01em' }}>
+            <span style={{ width: 6, height: 6, borderRadius: 3, background: 'var(--white)' }} />
+            {t('liveBadge')}
+          </span>
+          <div style={{ position: 'absolute', left: 20, right: 20, top: 118 }}>
+            <div style={{ font: "500 12px/16px 'Roboto Mono', monospace", letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--lime)' }}>{t('youreHosting')}</div>
+            <h1 style={{ margin: '8px 0 0', font: '600 28px/34px Inter, sans-serif', letterSpacing: '-0.02em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</h1>
+            <p style={{ margin: '4px 0 0', fontSize: 12, lineHeight: '18px' }}>
+              {when} · {time} · {place}
+            </p>
+          </div>
+          <div style={{ position: 'absolute', left: 20, right: 20, top: 218, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, color: 'var(--ink)' }}>
+            {[
+              [`${t('nextLabel')} · ${full(post.date)}`, t('nGoing', { n: going }), t('spotsLeft', { n: Math.max(0, (post.capacity || 12) - going) }), 'var(--lime)'],
+              [t('commentsLabel'), '4', t('questionsToAnswer', { n: 1 }), 'var(--pink)'],
+            ].map(([eyebrow, big, sub, bg]) => (
+              <div key={eyebrow} style={{ background: bg, borderRadius: 20, padding: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <span style={mono}>{eyebrow}</span>
+                <strong style={{ font: '600 24px/28px Inter, sans-serif', letterSpacing: '-0.02em' }}>{big}</strong>
+                <span style={{ fontSize: 12, lineHeight: '18px' }}>{sub}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ padding: '24px 20px 0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 24, color: 'var(--ink)' }}>
+            <h2 style={{ margin: 0, font: '600 20px/24px Inter, sans-serif', letterSpacing: '-0.02em' }}>{t('whosComing')}</h2>
+            <button style={{ font: '600 13px/17px Inter, sans-serif', textDecoration: 'underline', color: 'var(--ink)' }} onClick={() => showToast(t('whosComingToast'))}>
+              {t('seeAll')}
+            </button>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
+            <span style={{ display: 'flex' }}>
+              {['mo', 'sara', 'lisa', 'diego', 'christian'].map((p, i) => (
+                <img key={p} src={`${import.meta.env.BASE_URL}img/${p}.jpg`} alt="" style={{ width: 32, height: 32, borderRadius: 16, border: '2px solid var(--white)', objectFit: 'cover', marginInlineEnd: i < 4 ? -8 : 0 }} />
+              ))}
+            </span>
+            <span style={{ fontSize: 12, lineHeight: '18px', color: '#737373' }}>{t('goingNames', { a: 'Mo', b: 'Sara', n: going - 2 })}</span>
+          </div>
+          <div style={{ background: '#F1F0EC', borderRadius: 20, padding: '4px 16px', marginTop: 24 }}>
+            {actions.map((a, i) => (
+              <button
+                key={a.title}
+                onClick={() => showToast(t(a.toast))}
+                style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', padding: '12px 0', textAlign: 'start', borderBottom: i < actions.length - 1 ? '1px solid #E2E0DA' : 0 }}
+              >
+                <span style={{ width: 36, height: 36, borderRadius: 18, background: 'var(--white)', display: 'grid', placeItems: 'center', flex: 'none', color: a.danger ? '#E85D2A' : 'var(--ink)' }}>
+                  <a.Icon size={20} />
+                </span>
+                <span style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <strong style={{ font: '600 15px/20px Inter, sans-serif', letterSpacing: '-0.01em', color: a.danger ? '#E85D2A' : 'var(--ink)' }}>{a.title}</strong>
+                  <span style={{ fontSize: 12, lineHeight: '18px', color: '#737373' }}>{a.sub}</span>
+                </span>
+                {a.badge && <span style={{ background: '#E85D2A', color: 'var(--white)', borderRadius: 100, padding: '2px 8px', font: '600 12px/18px Inter, sans-serif' }}>{a.badge}</span>}
+                {!a.danger && <ChevronRight size={20} className="flip-rtl" color="#737373" />}
+              </button>
+            ))}
+          </div>
+          <p style={{ display: 'flex', gap: 8, alignItems: 'flex-start', margin: '20px 0 0', fontSize: 12, lineHeight: '18px', color: '#737373' }}>
+            <Info size={16} style={{ flex: 'none', marginTop: 1 }} aria-hidden />
+            <span>
+              {t('needHelpDay')} <strong style={{ fontWeight: 600, color: 'var(--ink)' }}>{t('contactCvd')}</strong>. {t('annaContact')}
+            </span>
+          </p>
+        </div>
+      </div>
+    </Screen>
+  )
+}
 export function PostStart() {
   const nav = useNavigate()
   const { t } = useI18n()

@@ -196,6 +196,9 @@ export function AppProvider({ children }) {
             ...h,
           },
         })),
+      // demo: CVD approves a submitted activity, it goes live
+      approvePost: (id) =>
+        setState((i) => ({ ...i, posts: i.posts.map((p) => (p.id === id ? { ...p, status: 'live' } : p)) })),
       submitDraft: () => {
         const h = `post-${Date.now()}`
         setState((i) => ({
