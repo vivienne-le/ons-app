@@ -12,6 +12,8 @@ import { goingPeople, orgOfEvent, profileLink } from '../data/people'
 import { useI18n } from '../i18n/index'
 import { useApp } from '../state/AppState'
 const attended = (eventId) => beenTo.some((b) => b.eventId === eventId)
+// "What you'll do" always runs yellow, pink, sky blue, as in Figma
+const stepColors = ['lime', 'pink', 'turq']
 export function EventScreen() {
   const { id = '' } = useParams()
   const raw = byId(id)
@@ -434,7 +436,7 @@ export function EventScreen() {
                 borderLeft: '2px dotted #CFCDC7',
               }}
             />
-            {e.steps.map((step) => (
+            {e.steps.map((step, i) => (
               <div
                 key={step.title}
                 className="row"
@@ -442,13 +444,13 @@ export function EventScreen() {
                   position: 'relative',
                 }}
               >
-                <Flower accent={step.accent} size={52}>
+                <Flower accent={stepColors[i % 3]} size={52}>
                   <Icon name={step.icon} size={20} />
                 </Flower>
                 <div
                   style={{
                     flex: 1,
-                    background: `var(--${step.accent})`,
+                    background: `var(--${stepColors[i % 3]})`,
                     borderRadius: 18,
                     padding: '10px 14px',
                   }}
