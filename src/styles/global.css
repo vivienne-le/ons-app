@@ -79,8 +79,12 @@ img {
 }
 @media (min-width: 520px) {
   .phone {
+    flex: none;
     width: 402px;
-    height: min(874px, calc(100vh - 32px));
+    height: 874px;
+    transform: scale(var(--phone-scale, 0.83));
+    /* the scaled phone takes less room, so pull the page in around it */
+    margin: calc(874px * (var(--phone-scale, 0.83) - 1) / 2) calc(402px * (var(--phone-scale, 0.83) - 1) / 2);
     border-radius: 44px;
     box-shadow:
       0 0 0 10px #1c1b1c,

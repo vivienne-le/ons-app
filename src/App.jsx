@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { HashRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { BadgeWatcher, StampDefs, StickersScreen } from './components/Badges'
 import { EditProfileScreen } from './components/EditProfile'
@@ -33,11 +34,25 @@ export function NeedsAccount({ children }) {
   const location = useLocation()
   return !onboarded && !location.pathname.startsWith('/signup') ? <Navigate to="/" replace /> : <>{children}</>
 }
+// On a computer the phone is laid out at the real iPhone size (402×874 points, as in Figma)
+// and then shrunk so it looks about as big as an iPhone in your hand, or smaller to fit the window.
+const REAL_SIZE = 0.83
+function usePhoneScale() {
+  const fit = () => Math.min(REAL_SIZE, (window.innerHeight - 40) / 894, (window.innerWidth - 40) / 422)
+  const [scale, setScale] = useState(fit)
+  useEffect(() => {
+    const onResize = () => setScale(fit())
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+  return scale
+}
 export function AppRoutes() {
   const { onboarded } = useApp()
   const location = useLocation()
+  const scale = usePhoneScale()
   return (
-    <div className="shell">
+    <div className="shell" style={{ '--phone-scale': scale }}>
       <div className="phone">
         <Routes key={location.pathname} location={location}>
           <Route path="/" element={onboarded ? <Navigate to="/home" replace /> : <Welcome />} />
