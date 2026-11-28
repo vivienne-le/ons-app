@@ -38,11 +38,13 @@ export function Flower({ accent = 'lime', size = 40, color, gradient, stroke, ch
         )}
         {stroke ? (
           <path
-            transform="translate(1.5 1.5) scale(0.5909)"
+            // the arcs bulge ~6.6 units past the 0–88 box, so fit -6.6…94.6 inside the 55 box
+            transform="translate(4.9 4.9) scale(0.5138)"
             d="M20.47 20.47 A23.76 23.76 0 1 1 67.53 20.47 A23.76 23.76 0 1 1 67.53 67.53 A23.76 23.76 0 1 1 20.47 67.53 A23.76 23.76 0 1 1 20.47 20.47 Z"
             fill={fill}
             stroke={stroke}
-            strokeWidth={2.5}
+            strokeWidth={1.5}
+            vectorEffect="non-scaling-stroke"
           />
         ) : (
         <g fill={fill}>
