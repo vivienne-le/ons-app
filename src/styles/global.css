@@ -235,6 +235,7 @@ img {
   width: auto;
 }
 .icon-btn {
+  color: var(--ink);
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -249,6 +250,7 @@ img {
 }
 .icon-btn.white {
   background: var(--white);
+  color: var(--ink);
   box-shadow: 0 2px 10px #0000001f;
 }
 .icon-btn.dark {
