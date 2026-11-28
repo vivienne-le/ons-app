@@ -93,7 +93,7 @@ export const nl = {
     goingToEvent: 'Gaat naar {event}!',
     yourName: 'Je naam',
     aboutTitle: 'Iets over jezelf',
-    looksGood: 'Ziet er goed uit',
+    looksGood: 'Afronden',
     editMyCard: 'Kaart aanpassen',
     neverShownSub: 'Je telefoonnummer, achternaam, leeftijd en gender blijven privé.',
     neverShownTitle: 'Nooit zichtbaar',

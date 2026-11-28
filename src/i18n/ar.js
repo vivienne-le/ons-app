@@ -93,7 +93,7 @@ export const ar = {
     goingToEvent: 'سيذهب إلى {event}!',
     yourName: 'اسمك',
     aboutTitle: 'قليلًا عنك',
-    looksGood: 'تبدو جيدة',
+    looksGood: 'إنهاء',
     editMyCard: 'تعديل بطاقتي',
     neverShownSub: 'يبقى رقم هاتفك واسم عائلتك وعمرك وجنسك خاصًا.',
     neverShownTitle: 'لا يظهر أبدًا',

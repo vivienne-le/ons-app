@@ -93,7 +93,7 @@ export const uk = {
     goingToEvent: 'Іде на «{event}»!',
     yourName: 'Твоє ім’я',
     aboutTitle: 'Трохи про тебе',
-    looksGood: 'Виглядає добре',
+    looksGood: 'Завершити',
     editMyCard: 'Змінити картку',
     neverShownSub: 'Твій номер телефону, прізвище, вік і стать залишаються приватними.',
     neverShownTitle: 'Ніколи не показується',

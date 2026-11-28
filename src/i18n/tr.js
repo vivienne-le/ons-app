@@ -93,7 +93,7 @@ export const tr = {
     goingToEvent: '{event} etkinliğine gidiyor!',
     yourName: 'Adın',
     aboutTitle: 'Biraz kendinden bahset',
-    looksGood: 'Güzel görünüyor',
+    looksGood: 'Bitir',
     editMyCard: 'Kartımı düzenle',
     neverShownSub: 'Telefon numaran, soyadın, yaşın ve cinsiyetin gizli kalır.',
     neverShownTitle: 'Asla gösterilmez',

@@ -92,7 +92,7 @@ export const en = {
   goingToEvent: 'Going to {event}!',
   yourName: 'Your name',
   aboutTitle: 'A bit about you',
-  looksGood: 'Looks good',
+  looksGood: 'Finish',
   editMyCard: 'Edit my card',
   neverShownSub: 'Your phone number, last name, age and gender stay private.',
   neverShownTitle: 'Never shown',

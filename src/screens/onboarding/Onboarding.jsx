@@ -1309,9 +1309,8 @@ export function DoneStep() {
             }}
           >
             {suggestedIds.map((suggestedId) => (
-              <button
+              <div
                 key={suggestedId.id}
-                onClick={() => finish(`/event/${suggestedId.id}`)}
                 className="card"
                 style={{
                   background: `var(--${suggestedId.id === 'pool-tournament' ? 'turq' : suggestedId.id === 'football-beer' ? 'lav' : 'lime'})`,
@@ -1365,7 +1364,7 @@ export function DoneStep() {
                       })}
                 </span>
                 )}
-              </button>
+              </div>
             ))}
           </div>
         </div>

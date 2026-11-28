@@ -93,7 +93,7 @@ export const pl = {
     goingToEvent: 'Idzie na: {event}!',
     yourName: 'Twoje imię',
     aboutTitle: 'Kilka słów o tobie',
-    looksGood: 'Wygląda dobrze',
+    looksGood: 'Zakończ',
     editMyCard: 'Edytuj moją kartę',
     neverShownSub: 'Twój numer telefonu, nazwisko, wiek i płeć pozostają prywatne.',
     neverShownTitle: 'Nigdy niewidoczne',
