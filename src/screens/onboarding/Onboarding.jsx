@@ -155,7 +155,14 @@ export function Welcome() {
         </div>
       </div>
       <div className="bottom-cta">
-        <button className="btn btn-primary" onClick={() => nav('/signup/role')}>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            // a new account starts with nothing picked
+            setUser({ interests: [] })
+            nav('/signup/role')
+          }}
+        >
           {t('getStarted')}
         </button>
         <button
@@ -1192,11 +1199,7 @@ export function InterestsStep() {
             disabled={count < 3}
             onClick={() => nav('/signup/preview')}
           >
-            {count >= 3
-              ? t('nextPicked', {
-                  n: count,
-                })
-              : t('pickThree')}
+            {count > 0 ? t('nextPicked', { n: count }) : t('next')}
           </button>
           </>
         )}
