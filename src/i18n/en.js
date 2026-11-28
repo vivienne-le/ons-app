@@ -233,6 +233,7 @@ export const en = {
   spotSaved: 'Spot saved',
   ago2h: '2h ago',
   justNow: 'Just now',
+  helpNearby: "Help nearby",
   cvdApproved: "CVD approved your activity. It's live!",
   liveBadge: "Live",
   demoRunTitle: "Sunday morning run",

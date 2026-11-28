@@ -234,6 +234,7 @@ export const uk = {
     spotSaved: 'Місце заброньовано',
     ago2h: '2 год тому',
     justNow: 'Щойно',
+    helpNearby: "Допомога поруч",
     cvdApproved: "CVD схвалила твою подію. Вона вже опублікована!",
     liveBadge: "Наживо",
     demoRunTitle: "Недільна ранкова пробіжка",

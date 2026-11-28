@@ -276,6 +276,24 @@ const listKey = { food: 'nFoodPlaces', toilet: 'nToilets', health: 'nHealthPlace
 const ME = [210, 410]
 const at = ([dx, dy]) => [LAT0 - ((ME[1] + dy) / MAP_H) * (LAT0 - LAT1), LNG0 + ((ME[0] + dx) / MAP_W) * (LNG1 - LNG0)]
 const MAP_YOU = at([0, 0])
+// A place's photo (public/img/place-<id>.jpg), with its coloured icon until the photo exists
+function PlacePhoto({ p, size, radius, iconSize = 18 }) {
+  const [failed, setFailed] = useState(false)
+  const k = kindStyle[p.kind]
+  const KIcon = k.Icon
+  return failed ? (
+    <span style={{ width: size, height: size, borderRadius: radius, background: k.color, color: k.fg ?? 'var(--ink)', display: 'grid', placeItems: 'center', flex: 'none' }}>
+      <KIcon size={iconSize} aria-hidden />
+    </span>
+  ) : (
+    <img
+      src={`${import.meta.env.BASE_URL}img/${p.photo ?? `place-${p.id}`}.jpg`}
+      alt=""
+      onError={() => setFailed(true)}
+      style={{ width: size, height: size, borderRadius: radius, objectFit: 'cover', flex: 'none', background: k.color }}
+    />
+  )
+}
 function PlacePin({ p, label, selected, onClick }) {
   const k = kindStyle[p.kind]
   const KIcon = k.Icon
@@ -341,8 +359,9 @@ export function MapTab() {
     .map(([id, a]) => ({ e: ev(byId(id)), ...a }))
     .filter((a) => a.e)
     .sort((x, y) => x.m - y.m)
-  const shownPlaces = places.filter((p) => (kind === 'all' || kind === p.kind) && (!openOnly || p.open))
-  const showActs = kind === 'all' || kind === 'activities'
+  const shownPlaces = kind === 'activities' ? [] : places.filter((p) => (kind === 'all' || kind === p.kind) && (!openOnly || p.open))
+  // activities and help places are shown apart, so the pins don't pile up
+  const showActs = kind === 'activities'
   const inKind = kind === 'activities' ? acts : shownPlaces.slice().sort((x, y) => x.m - y.m)
   const nearest = kind === 'all' ? null : inKind[0]
   const selected = places.find((p) => p.id === selectedId)
@@ -433,9 +452,10 @@ export function MapTab() {
           </button>
         </div>
         <div role="group" aria-label={t('mapFilters')} className="scroll-x" style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '10px 20px' }}>
-          {chip('all', t('catAll'))}
-          {chip('activities', t('mapActivities'), kindStyle.activities.color)}
+          {chip('all', t('helpNearby'))}
           {placeKinds.map((k) => chip(k, t(kindStyle[k].key), kindStyle[k].color))}
+          <span aria-hidden style={{ width: 1, flex: 'none', alignSelf: 'stretch', margin: '6px 2px', background: 'rgba(32,30,31,.2)' }} />
+          {chip('activities', t('mapActivities'), kindStyle.activities.color)}
         </div>
       </div>
       {kind === 'all' && (
@@ -524,9 +544,7 @@ export function MapTab() {
                     <Icon name={x.e.icon} size={16} />
                   </Flower>
                 ) : (
-                  <span style={{ width: 36, height: 36, borderRadius: '50%', background: k.color, color: k.fg ?? 'var(--ink)', display: 'grid', placeItems: 'center', flex: 'none' }}>
-                    <KIcon size={16} aria-hidden />
-                  </span>
+                  <PlacePhoto p={x} size={48} radius={12} />
                 )}
                 <span style={{ flex: 1, minWidth: 0 }}>
                   <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{isAct ? x.e.title : x.name}</strong>
@@ -560,31 +578,7 @@ export function MapTab() {
             <X size={15} />
           </button>
           <div className="row" style={{ gap: 12, alignItems: 'flex-start' }}>
-            {selected.photo ? (
-              <img
-                src={`${import.meta.env.BASE_URL}img/${selected.photo}.jpg`}
-                alt=""
-                style={{ width: 84, height: 84, borderRadius: 16, objectFit: 'cover', flex: 'none' }}
-              />
-            ) : (
-            <span
-              style={{
-                width: 84,
-                height: 84,
-                borderRadius: 16,
-                background: kindStyle[selected.kind].color,
-                color: kindStyle[selected.kind].fg ?? 'var(--ink)',
-                display: 'grid',
-                placeItems: 'center',
-                flex: 'none',
-              }}
-            >
-              {(() => {
-                const KIcon = kindStyle[selected.kind].Icon
-                return <KIcon size={30} aria-hidden />
-              })()}
-            </span>
-            )}
+            <PlacePhoto p={selected} size={84} radius={16} iconSize={30} />
             <span style={{ flex: 1, minWidth: 0, paddingInlineEnd: 24 }}>
               <span className="eyebrow row" style={{ fontSize: 10, color: 'var(--ink)', gap: 6 }}>
                 <span aria-hidden style={{ width: 7, height: 7, borderRadius: '50%', background: kindStyle[selected.kind].color }} />

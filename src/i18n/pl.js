@@ -234,6 +234,7 @@ export const pl = {
     spotSaved: 'Miejsce zarezerwowane',
     ago2h: '2 godz. temu',
     justNow: 'Przed chwilą',
+    helpNearby: "Pomoc w pobliżu",
     cvdApproved: "CVD zatwierdziło twoje wydarzenie. Jest już widoczne!",
     liveBadge: "Na żywo",
     demoRunTitle: "Niedzielny poranny bieg",

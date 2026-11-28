@@ -6,7 +6,9 @@ export const LNG1 = 4.4705
 export const LAT0 = 51.9205
 export const LAT1 = 51.8915
 // extra map drawn left and right of the main area, so the map can be dragged sideways
-export const EXT = 360
+export const EXT = 90
+// and a little above and below
+export const EXTY = 90
 export const toXY = ([lat, lng]) => [((lng - LNG0) / (LNG1 - LNG0)) * MAP_W, ((LAT0 - lat) / (LAT0 - LAT1)) * MAP_H]
 export const streets = [
   [-20, 214, 430, 196, 18, 'Nieuwe Binnenweg'],
@@ -35,13 +37,16 @@ export const streets = [
   [702, -20, 706, 900, 8],
 ].map(([x1, y1, x2, y2, w, name]) => {
   // stretch the east–west streets across the wider map, keeping their slope
-  if (Math.abs(x2 - x1) < Math.abs(y2 - y1)) return [x1, y1, x2, y2, w, name]
+  if (Math.abs(x2 - x1) < Math.abs(y2 - y1)) {
+    const x = (y) => x1 + ((x2 - x1) * (y - y1)) / (y2 - y1)
+    return [x(-EXTY - 20), -EXTY - 20, x(MAP_H + EXTY + 20), MAP_H + EXTY + 20, w, name]
+  }
   const y = (x) => y1 + ((y2 - y1) * (x - x1)) / (x2 - x1)
   return [-EXT - 20, y(-EXT - 20), MAP_W + EXT + 20, y(MAP_W + EXT + 20), w, name]
 })
 export function Blocks() {
   const xs = [-380, -296, -222, -159, -88, -26, 103, 161, 229, 292, 353, 430, 494, 564, 630, 704, 780]
-  const ys = [-20, 62, 205, 295, 387, 466, 554, 634, 710, 900]
+  const ys = [-110, -20, 62, 205, 295, 387, 466, 554, 634, 710, 900]
   const blocks = []
   for (let d = 0; d < xs.length - 1; d++)
     for (let e = 0; e < ys.length - 1; e++) {
@@ -79,15 +84,19 @@ export function CityMap({ children, route, you, onBackgroundClick }) {
     return () => g.disconnect()
   }, [])
   const youXY = you && toXY(you)
-  // drag (or trackpad-scroll) the map sideways, kept inside the drawn area
+  // drag (or trackpad-scroll) the map a little in any direction, kept inside the drawn area
   const drag = useRef(null)
   const moved = useRef(false)
-  const panTo = (x) =>
+  const panTo = (x, y) =>
     setView((v) => {
       const w = viewport.current?.clientWidth ?? MAP_W
-      const min = w - (MAP_W + EXT) * v.s
-      const max = EXT * v.s
-      return { ...v, x: Math.min(max, Math.max(min, x)) }
+      const h = viewport.current?.clientHeight ?? MAP_H
+      const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n))
+      return {
+        ...v,
+        x: clamp(x, w - (MAP_W + EXT) * v.s, EXT * v.s),
+        y: clamp(y, h - (MAP_H + EXTY) * v.s, EXTY * v.s),
+      }
     })
   return (
     <div
@@ -97,23 +106,24 @@ export function CityMap({ children, route, you, onBackgroundClick }) {
         inset: 0,
         overflow: 'hidden',
         background: '#EFEDE8',
-        touchAction: 'pan-y',
+        touchAction: 'none',
         cursor: drag.current ? 'grabbing' : 'grab',
       }}
       onPointerDown={(ev) => {
-        drag.current = { x: ev.clientX, start: view.x }
+        drag.current = { x: ev.clientX, y: ev.clientY, sx: view.x, sy: view.y }
         moved.current = false
       }}
       onPointerMove={(ev) => {
         if (!drag.current) return
         const dx = ev.clientX - drag.current.x
-        if (Math.abs(dx) > 4) moved.current = true
-        if (moved.current) panTo(drag.current.start + dx)
+        const dy = ev.clientY - drag.current.y
+        if (Math.hypot(dx, dy) > 4) moved.current = true
+        if (moved.current) panTo(drag.current.sx + dx, drag.current.sy + dy)
       }}
       onPointerUp={() => (drag.current = null)}
       onPointerLeave={() => (drag.current = null)}
       onPointerCancel={() => (drag.current = null)}
-      onWheel={(ev) => Math.abs(ev.deltaX) > Math.abs(ev.deltaY) && panTo(view.x - ev.deltaX)}
+      onWheel={(ev) => panTo(view.x - ev.deltaX, view.y - ev.deltaY)}
       onClickCapture={(ev) => {
         // a drag is not a tap on a pin or the background
         if (moved.current) {
@@ -137,21 +147,21 @@ export function CityMap({ children, route, you, onBackgroundClick }) {
       >
         <svg
           width={MAP_W + 2 * EXT}
-          height={MAP_H}
-          viewBox={`${-EXT} 0 ${MAP_W + 2 * EXT} ${MAP_H}`}
+          height={MAP_H + 2 * EXTY}
+          viewBox={`${-EXT} ${-EXTY} ${MAP_W + 2 * EXT} ${MAP_H + 2 * EXTY}`}
           aria-hidden
           style={{
             position: 'absolute',
             left: -EXT,
-            top: 0,
+            top: -EXTY,
           }}
         >
-          <rect x={-EXT} width={MAP_W + 2 * EXT} height={MAP_H} fill="#EFEDE8" />
+          <rect x={-EXT} y={-EXTY} width={MAP_W + 2 * EXT} height={MAP_H + 2 * EXTY} fill="#EFEDE8" />
           {Blocks()}
           <rect x={18} y={322} width={72} height={52} rx={10} fill="#D5E7C6" />
           <path d="M172 566 H284 Q300 566 300 582 V690 H166 V576 Q166 566 172 566Z" fill="#D5E7C6" />
-          <path d="M-400 820 C -200 800, -60 790, 80 790 S 220 830, 430 800 S 700 790, 800 815 V900 H-400Z" fill="#BFE0EA" />
-          <path d="M96 -20 L104 900" stroke="#CDE6EE" strokeWidth={6} />
+          <path d="M-400 820 C -200 800, -60 790, 80 790 S 220 830, 430 800 S 700 790, 800 815 V1000 H-400Z" fill="#BFE0EA" />
+          <path d="M95 -110 L105 980" stroke="#CDE6EE" strokeWidth={6} />
           {streets.map(([e, f, g, h, i], j) => (
             <line key={j} x1={e} y1={f} x2={g} y2={h} stroke="#FFFFFF" strokeWidth={i} strokeLinecap="round" />
           ))}

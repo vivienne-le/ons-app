@@ -234,6 +234,7 @@ export const nl = {
     spotSaved: 'Plek gereserveerd',
     ago2h: '2 uur geleden',
     justNow: 'Zojuist',
+    helpNearby: "Hulp in de buurt",
     cvdApproved: "CVD heeft je activiteit goedgekeurd. Hij staat live!",
     liveBadge: "Live",
     demoRunTitle: "Zondagochtend hardlopen",

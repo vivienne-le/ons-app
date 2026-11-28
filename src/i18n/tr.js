@@ -234,6 +234,7 @@ export const tr = {
     spotSaved: 'Yer ayrıldı',
     ago2h: '2 saat önce',
     justNow: 'Az önce',
+    helpNearby: "Yakındaki yardım",
     cvdApproved: "CVD etkinliğini onayladı. Artık yayında!",
     liveBadge: "Yayında",
     demoRunTitle: "Pazar sabahı koşusu",

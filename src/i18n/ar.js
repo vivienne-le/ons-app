@@ -234,6 +234,7 @@ export const ar = {
     spotSaved: 'تم حجز مكانك',
     ago2h: 'قبل ساعتين',
     justNow: 'الآن',
+    helpNearby: "مساعدة قريبة",
     cvdApproved: "وافقت CVD على نشاطك. أصبح منشورًا!",
     liveBadge: "مباشر",
     demoRunTitle: "جري صباح الأحد",
