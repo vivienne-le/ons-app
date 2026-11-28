@@ -3,14 +3,16 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { CalendarDays, ChevronLeft, House, Map as MapIcon, Plus, User } from 'lucide-react'
 import { useI18n } from '../i18n/index'
 import { useApp } from '../state/AppState'
-export function BackButton({ to, variant = 'grey', label }) {
+// Goes back to the page you came from. `to` forces a destination; `fallback` is only used
+// when there is no earlier page in this app (e.g. the link was opened directly).
+export function BackButton({ to, fallback = '/home', variant = 'grey', label }) {
   const nav = useNavigate()
   const { t } = useI18n()
   return (
     <button
       className={`icon-btn ${variant === 'white' ? 'white' : ''}`}
       aria-label={label ?? t('back')}
-      onClick={() => (to ? nav(to) : window.history.length > 1 ? nav(-1) : nav('/home'))}
+      onClick={() => (to ? nav(to) : (window.history.state?.idx ?? 0) > 0 ? nav(-1) : nav(fallback))}
     >
       <ChevronLeft size={22} className="flip-rtl" />
     </button>

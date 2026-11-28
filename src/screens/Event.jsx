@@ -269,7 +269,7 @@ export function EventScreen() {
               justifyContent: 'space-between',
             }}
           >
-            <BackButton variant="white" to={attended(e.id) ? '/plans?tab=been' : undefined} />
+            <BackButton variant="white" fallback={attended(e.id) ? '/plans?tab=been' : '/home'} />
             <div
               className="row"
               style={{
