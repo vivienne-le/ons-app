@@ -1,3 +1,4 @@
+import { CvdHeart } from '../components/OrgLogo'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { BadgeCheck, Check, ChevronRight, Globe, Heart, LoaderCircle, Send, Share2, Users, X } from 'lucide-react'
@@ -332,12 +333,11 @@ export function EventScreen() {
                 name: e.host.name,
               })}
             >
-              <Avatar name={e.host.name} img={e.host.avatar} size={40} />
+              {e.host.id === 'cvd' ? <CvdHeart size={40} /> : <Avatar name={e.host.name} img={e.host.avatar} size={40} />}
               <span style={{ fontSize: 16, lineHeight: '24px', color: '#737373' }}>
                 {t('hostedBy', { name: '' })}
                 <strong style={{ fontWeight: 600, color: 'var(--ink)' }}>{e.host.name}</strong>
-                {' · '}
-                {e.host.role}
+                {e.host.id !== 'cvd' && <> · {e.host.role}</>}
               </span>
             </button>
           </div>
