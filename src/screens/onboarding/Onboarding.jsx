@@ -1023,9 +1023,6 @@ export function AboutStep() {
         </div>
       </div>
       <div className="bottom-cta">
-        <button className="link" onClick={() => nav('/signup/interests')} style={{ justifySelf: 'center', marginBottom: 4 }}>
-          {t('skipForNow')}
-        </button>
         <button className="btn btn-primary" onClick={() => nav('/signup/interests')}>
           {t('next')}
         </button>
