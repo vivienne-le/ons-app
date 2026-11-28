@@ -732,7 +732,7 @@ export const events = [
   },
   {
     id: 'football-beer',
-    photo: '1571828644697-579293821c40',
+    hero: 'th-footballbeer',
     title: 'Football & Beer',
     short: 'A relaxed game in the park, then a drink together.',
     desc: 'A relaxed football game in Het Park, then a drink together. Mixed teams, no pressure.',
