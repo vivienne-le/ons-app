@@ -979,7 +979,7 @@ export const pl = {
     },
     comments: {
       b1: 'Cześć! To mój pierwszy raz. Czy muszę coś przynieść?',
-      b1r: 'Witaj Sara! 😊 Buty są za darmo.',
+      b1r: 'Witaj Sara! ☺️ Buty są za darmo.',
       b2: 'Czy na lunch będzie coś wegetariańskiego?',
       b2r: 'Tak, zawsze są kanapki z serem i warzywami.',
       k1: 'Czy mogę przyjść z córką? Ma 10 lat i uwielbia piec.',

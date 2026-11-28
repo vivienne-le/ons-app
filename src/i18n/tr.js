@@ -979,7 +979,7 @@ export const tr = {
     },
     comments: {
       b1: 'Merhaba! Bu benim ilk seferim. Yanımda bir şey getirmem gerekiyor mu?',
-      b1r: 'Hoş geldin Sara! 😊 Ayakkabılar ücretsiz.',
+      b1r: 'Hoş geldin Sara! ☺️ Ayakkabılar ücretsiz.',
       b2: 'Öğle yemeğinde vejetaryen bir şey var mı?',
       b2r: 'Evet, her zaman peynirli ve sebzeli sandviçler var.',
       k1: 'Kızımı getirebilir miyim? 10 yaşında ve pasta yapmayı çok seviyor.',

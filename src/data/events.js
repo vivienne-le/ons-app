@@ -24,6 +24,11 @@ export const people = {
     name: 'Mo',
     avatar: 'mo',
   },
+  beatrise: {
+    id: 'beatrise',
+    name: 'Beatrise',
+    avatar: 'beatrise',
+  },
   anna: {
     id: 'anna',
     name: 'Anna',
@@ -151,12 +156,12 @@ export const events = [
         replies: [
           {
             id: 'b1r',
-            author: people.noon,
+            author: people.beatrise,
             isHost: true,
             ago: '1d',
             lang: 'nl',
-            text: 'Welkom Sara! 😊 Schoenen zijn gratis.',
-            en: 'Welcome Sara! 😊 Shoes are free.',
+            text: 'Welkom Sara! ☺️ Schoenen zijn gratis.',
+            en: 'Welcome Sara! ☺️ Shoes are free.',
           },
         ],
       },
@@ -169,7 +174,7 @@ export const events = [
         replies: [
           {
             id: 'b2r',
-            author: people.noon,
+            author: people.beatrise,
             isHost: true,
             ago: '2d',
             lang: 'nl',
