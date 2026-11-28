@@ -1183,6 +1183,10 @@ export function InterestsStep() {
             })}
           </button>
         ) : (
+          <>
+          <button className="link" onClick={() => nav('/signup/preview')} style={{ justifySelf: 'center', marginBottom: 4 }}>
+            {t('skipForNow')}
+          </button>
           <button
             className="btn btn-primary"
             disabled={count < 3}
@@ -1194,6 +1198,7 @@ export function InterestsStep() {
                 })
               : t('pickThree')}
           </button>
+          </>
         )}
       </div>
     </Screen>
