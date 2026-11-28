@@ -763,8 +763,7 @@ export const nl = {
         ],
         good: [
           ['Geen ervaring nodig', 'Sam legt de regels uit'],
-          ['Drankjes voor eigen rekening', 'Kraanwater is gratis'],
-        ],
+          ['Drankjes voor eigen rekening', 'Kraanwater is gratis'], ["Keus zijn aanwezig", "Neem gerust je eigen mee"],],
       },
       'warm-hats': {
         title: 'Warme Mutsen Club',
@@ -775,7 +774,7 @@ export const nl = {
           ['Leer een steek', 'Anna laat het stap voor stap zien'],
           ['Neem je muts mee', 'Of maak hem volgende week af'],
         ],
-        good: [['Alles is aanwezig', 'Wol, naalden en thee']],
+        good: [['Alles is aanwezig', 'Wol, naalden en thee'], ["Beginners welkom", "Anna leert je de eerste steek"], ["Thee en koekjes", "Neem pauze wanneer je wilt"],],
       },
       'kerststol-kitchen': {
         title: 'Kerststol bakken',
@@ -801,7 +800,7 @@ export const nl = {
           ['5 km lopen', 'Twee tempogroepen'],
           ['Daarna koffie', 'In het parkcafé'],
         ],
-        good: [['Neem hardloopschoenen mee', 'Er zijn geen kluisjes']],
+        good: [['Neem hardloopschoenen mee', 'Er zijn geen kluisjes'], ["Elk tempo is welkom", "Niemand loopt alleen"], ["Koffie van ons", "Na afloop in het parkcafé"],],
       },
       'bike-repair': {
         title: 'Fietsreparatiedag',
@@ -812,7 +811,7 @@ export const nl = {
           ['Samen repareren', 'Leer terwijl je repareert'],
           ['Proefrit', 'Een rondje door het park'],
         ],
-        good: [['Kleine onderdelen zijn gratis', 'Grotere onderdelen tegen kostprijs']],
+        good: [['Kleine onderdelen zijn gratis', 'Grotere onderdelen tegen kostprijs'], ["Elke fiets is goed", "Zelfs een bakfiets"], ["Gereedschap is aanwezig", "Pompen, sleutels en plakkers"],],
       },
       'football-beer': {
         title: 'Voetbal & Biertje',
@@ -823,7 +822,7 @@ export const nl = {
           ['Twee helften spelen', 'Elk 30 minuten'],
           ['Samen iets drinken', 'Ook alcoholvrij'],
         ],
-        good: [['Draag comfortabele schoenen', 'Het gras kan nat zijn']],
+        good: [['Draag comfortabele schoenen', 'Het gras kan nat zijn'], ["Alle niveaus", "Nooit gespeeld? Perfect"], ["Drankjes voor eigen rekening", "Water is gratis"],],
       },
       'walk-talk': {
         title: 'Wandelen & Praten',
@@ -831,9 +830,8 @@ export const nl = {
         desc: 'Een rustige wandeling door Het Park met een goed gesprek. Halverwege drinken we thee.',
         steps: [
           ['Verzamelen bij het hek', 'Naast de speeltuin'],
-          ['Wandelen en kletsen', 'Ongeveer 3 km, rustig tempo'],
-        ],
-        good: [['Rolstoelvriendelijk', 'Alleen verharde paden']],
+          ['Wandelen en kletsen', 'Ongeveer 3 km, rustig tempo'], ["Thee halverwege", "Bij het paviljoen in het park"],],
+        good: [['Rolstoelvriendelijk', 'Alleen verharde paden'], ["Kleed je op het weer", "We lopen ook bij lichte regen"], ["Kom alleen of samen", "De meeste mensen komen alleen"],],
       },
       'open-kitchen': {
         title: 'Open Keuken',
@@ -841,9 +839,8 @@ export const nl = {
         desc: 'Samen een eenvoudig diner koken en eten aan één lange tafel. Neem alleen trek mee.',
         steps: [
           ['Samen koken', 'Iedereen krijgt een klein taakje'],
-          ['Samen eten', 'Eén lange tafel'],
-        ],
-        good: [['Vegetarisch diner', 'Laat ons weten of je allergieën hebt']],
+          ['Samen eten', 'Eén lange tafel'], ["Samen opruimen", "Vele handen, klaar in 10 minuten"],],
+        good: [['Vegetarisch diner', 'Laat ons weten of je allergieën hebt'], ["Neem niets mee", "Alle ingrediënten zijn er"], ["Kinderen welkom", "Met een ouder"],],
       },
       'board-games': {
         title: 'Spelletjesavond',
@@ -851,9 +848,8 @@ export const nl = {
         desc: 'Klassieke en nieuwe bordspellen met buren. Hapjes op tafel, de regels worden uitgelegd.',
         steps: [
           ['Kies een spel', 'Meer dan 40 om uit te kiezen'],
-          ['Spelen en kletsen', 'Tafels van 4–6'],
-        ],
-        good: [['Nog maar 2 plekken', 'Meld je snel aan']],
+          ['Spelen en kletsen', 'Tafels van 4–6'], ["Een winnaar", "Een week lang opscheppen"],],
+        good: [['Nog maar 2 plekken', 'Meld je snel aan'], ["Regels worden uitgelegd", "Mo kent elk spel"], ["Drankjes voor eigen rekening", "Kraanwater is gratis"],],
       },
       'christmas-dinner': {
         title: 'Kerstdiner',
@@ -864,21 +860,21 @@ export const nl = {
           ['Kerstdiner', 'Drie gangen'],
           ['Muziek', 'Een band uit de buurt speelt'],
         ],
-        good: [['30 plekken vrijgekomen', 'Meld je aan om een plek te reserveren']],
+        good: [['30 plekken vrijgekomen', 'Meld je aan om een plek te reserveren'], ["Neem iemand mee", "Iedereen uit de buurt is welkom"], ["Halal en vegetarisch", "Laat ons weten of je allergieën hebt"],],
       },
       'retro-games': {
-        title: 'Retro Game Avond',
+        title: "Retrospellen",
         short: 'Oude spelcomputers, groot scherm, veel lol.',
         desc: 'Oude spelcomputers op een groot scherm. Mario Kart-toernooi om 18:00.',
-        steps: [['Samen spelen', 'Elke ronde nieuwe teams']],
-        good: [['Geen ervaring nodig', 'Wild op knoppen drukken mag']],
+        steps: [['Samen spelen', 'Elke ronde nieuwe teams'], ["Mario Kart-finale", "Begint om 18:00"], ["Snacks en een prijs", "Voor de winnaar en de langzaamste coureur"],],
+        good: [['Geen ervaring nodig', 'Wild op knoppen drukken mag'], ["Snacks zijn er", "Chips en limonade"], ["Kinderen welkom", "Vanaf 8 jaar, met een ouder"],],
       },
       oliebollen: {
-        title: 'Oliebollen bakwedstrijd',
+        title: "Oliebollen bakken",
         short: 'Samen oliebollen bakken voor oudejaarsavond.',
         desc: 'Samen oliebollen bakken voor oudejaarsavond en stemmen op de lekkerste.',
-        steps: [['Bakken & proeven', 'Stem op de lekkerste']],
-        good: [['Alles is aanwezig', 'Schorten ook']],
+        steps: [['Bakken & proeven', 'Stem op de lekkerste'], ["Deel met de buren", "Breng er een paar naar de buren"], ["Neem wat mee naar huis", "Neem een doos mee voor oudjaar"],],
+        good: [['Alles is aanwezig', 'Schorten ook'], ["Kinderen welkom", "Met een ouder, uit de buurt van de frituur"], ["Notenvrij", "Laat Noon weten of je allergieën hebt"],],
       },
     },
     roles: {
@@ -981,6 +977,27 @@ export const nl = {
     comments: {
       b2: 'Is er iets vegetarisch bij de lunch?',
       k2: 'Fijn dat er een notenvrije versie is. Kan het ook glutenvrij?',
+      p1: "Kunnen echte beginners meedoen? Ik heb nog nooit een keu vastgehouden.",
+      p1r: "Zeker! Ik laat je de basis zien voordat we beginnen.",
+      w2: "Is het goed als ik wat later kom? Ik werk tot 16:30.",
+      w2r: "Geen probleem, loop gewoon binnen. De thee is dan nog warm.",
+      r1: "Hoe snel is de langzame groep? Ik begin net weer.",
+      r1r: "Zo’n 7 à 8 minuten per km. We wachten bij elke bocht op iedereen.",
+      br2: "Ik heb nog geen fiets, maar wil het leren. Mag ik toch komen?",
+      br2r: "Natuurlijk, kom kijken en helpen. Je leert veel.",
+      f1: "Zijn er keepershandschoenen, of moet ik de mijne meenemen?",
+      f1r: "We hebben er twee paar, maar neem de jouwe mee als je die fijner vindt.",
+      wt2: "Eerste keer dat ik meedoe. Komen mensen meestal alleen?",
+      wt2r: "De meesten wel! Binnen vijf minuten ben je aan het kletsen.",
+      o2: "Ik ben allergisch voor selderij. Is dat een probleem?",
+      o2r: "Fijn dat je het zegt! We houden een portie zonder selderij voor je apart.",
+      bg1: "Hebben jullie Codenames? Dat is mijn favoriet.",
+      bg1r: "Ja, en Ticket to Ride ook. Ik leg hem op jouw tafel.",
+      c2: "Kan ik helpen met koken of klaarzetten?",
+      c2r: "Graag! Kom om 15:00 en vraag naar mij in de keuken.",
+      rg1: "Welke spelcomputers zijn er?",
+      ob1: "Nog nooit oliebollen gegeten. Moet ik iets meenemen?",
+      ob1r: "Alleen jezelf! En een doos als je wat mee naar huis wilt nemen.",
     },
   },
 }
