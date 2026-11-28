@@ -95,7 +95,7 @@ export function EventScreen() {
     .map(langName)
     .join(', ')
   const myLangName = langName(lang)
-  const visibleComments = showAll ? allComments : allComments.slice(0, 2)
+  const visibleComments = showAll || allComments.length <= 3 ? allComments : allComments.slice(0, 3)
   const translate = () => {
     setMode('translating')
     window.setTimeout(() => setMode('translated'), 950)
@@ -119,9 +119,8 @@ export function EventScreen() {
         className="row"
         style={{
           alignItems: 'flex-start',
-          gap: 10,
-          marginLeft: J ? 36 : 0,
-          marginTop: J ? 12 : 18,
+          gap: J ? 4 : 12,
+          marginTop: J ? 4 : 16,
         }}
       >
         <button
@@ -131,6 +130,7 @@ export function EventScreen() {
           style={{
             flex: 'none',
             borderRadius: '50%',
+            marginTop: J ? 1 : 2,
           }}
           onClick={() => {
             const n = profileLink(T.author.id)
@@ -156,19 +156,25 @@ export function EventScreen() {
         <div
           style={{
             flex: 1,
+            minWidth: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 4,
           }}
         >
           <div
             className="row"
             style={{
-              gap: 6,
+              gap: 4,
               flexWrap: 'wrap',
+              alignItems: 'flex-end',
             }}
           >
             <button
               style={{
-                fontSize: 15,
-                fontWeight: 700,
+                font: '600 15px/20px Inter, sans-serif',
+                letterSpacing: '-0.01em',
+                color: '#000',
               }}
               onClick={() => {
                 const n = profileLink(T.author.id)
@@ -177,8 +183,12 @@ export function EventScreen() {
             >
               {Ql ? `${T.author.name} ${t('youSuffix')}` : T.author.name}
             </button>
-            {T.isHost && <span className="tag host">{t('hostBadge')}</span>}
-            <span className="tiny">{T.ago}</span>
+            {T.isHost && (
+              <span style={{ background: '#29615A', color: 'var(--white)', borderRadius: 30, height: 20, padding: '0 6px', font: '600 14px/20px Inter, sans-serif', alignSelf: 'center' }}>
+                {t('hostBadge')}
+              </span>
+            )}
+            <span style={{ fontSize: 14, lineHeight: '21px', color: '#737373' }}>{T.ago}</span>
             {m && (
               <span className="tag">
                 <Globe size={11} /> {t('translatedTag')}
@@ -189,19 +199,20 @@ export function EventScreen() {
             lang={m ? lang : T.lang}
             dir="auto"
             style={{
-              margin: '3px 0 0',
-              fontSize: 15,
-              lineHeight: 1.45,
+              margin: 0,
+              fontSize: 14,
+              lineHeight: '21px',
+              color: '#000',
             }}
           >
             {m ? commentIn(T) : T.text}
           </p>
           {!J && (
             <button
-              className="tiny"
               style={{
-                fontWeight: 600,
-                marginTop: 6,
+                alignSelf: 'flex-start',
+                font: '600 14px/21px Inter, sans-serif',
+                color: '#737373',
               }}
               onClick={() => {
                 setReplyTo({
@@ -579,6 +590,9 @@ export function EventScreen() {
             id="comments"
             style={{
               margin: '30px 0 12px',
+              font: '600 24px/28px Inter, sans-serif',
+              letterSpacing: '-0.02em',
+              color: '#000',
             }}
           >
             {t('comments')}{' '}
@@ -616,10 +630,10 @@ export function EventScreen() {
                 flex: 1,
                 display: 'flex',
                 alignItems: 'center',
-                background: 'var(--grey)',
-                borderRadius: 999,
-                height: 44,
-                padding: '0 6px 0 16px',
+                background: '#F1F0EC',
+                borderRadius: 30,
+                height: 40,
+                padding: '0 4px 0 15px',
               }}
             >
               <span className="sr-only">{t('addComment')}</span>
@@ -639,7 +653,8 @@ export function EventScreen() {
                   border: 0,
                   background: 'transparent',
                   outline: 'none',
-                  fontSize: 15,
+                  fontSize: 14,
+                  lineHeight: '21px',
                   minWidth: 0,
                 }}
               />
@@ -648,8 +663,8 @@ export function EventScreen() {
                   type="submit"
                   className="icon-btn dark"
                   style={{
-                    width: 34,
-                    height: 34,
+                    width: 32,
+                    height: 32,
                   }}
                   aria-label={t('post')}
                 >
@@ -682,13 +697,13 @@ export function EventScreen() {
           )}
           {translatableCount > 0 &&
             (mode === 'original' ? (
-              <div className="row" style={{ marginTop: 14, gap: 12, background: 'var(--grey)', borderRadius: 16, padding: '12px 14px' }}>
+              <div className="row" style={{ marginTop: 12, gap: 12, background: '#F1F0EC', borderRadius: 16, padding: '12px 16px' }}>
                 <Globe size={20} aria-hidden />
-                <span style={{ flex: 1 }}>
-                  <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{t('someInLang', { lang: foreignLangs })}</strong>
-                  <span style={{ fontSize: 13 }}>{t('nOfTotalComments', { n: translatableCount, total: totalComments })}</span>
+                <span style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <strong style={{ font: '600 15px/20px Inter, sans-serif', letterSpacing: '-0.01em' }}>{t('someInLang', { lang: foreignLangs })}</strong>
+                  <span style={{ fontSize: 12, lineHeight: '18px' }}>{t('nOfTotalComments', { n: translatableCount, total: totalComments })}</span>
                 </span>
-                <button className="link" onClick={translate}>
+                <button className="link" style={{ fontSize: 13, lineHeight: '17px' }} onClick={translate}>
                   {t('translateBtn')}
                 </button>
               </div>
@@ -722,7 +737,7 @@ export function EventScreen() {
             </p>
           )}
           {visibleComments.map((visibleComment) => renderComment(visibleComment))}
-          {allComments.length > 2 && (
+          {allComments.length > 3 && (
             <button
               className="tiny"
               style={{
@@ -734,7 +749,7 @@ export function EventScreen() {
               {showAll
                 ? t('showFewer')
                 : t('viewMore', {
-                    n: allComments.length - 2,
+                    n: allComments.length - 3,
                   })}
             </button>
           )}
