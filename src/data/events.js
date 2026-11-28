@@ -597,6 +597,7 @@ export const events = [
     going: 13,
     capacity: 22,
     card: 'ev-football',
+    thumb: 'th-footballbeer',
     goingAvatars: tuple('g7', 'g8', 'g9'),
     comments: [],
   },
@@ -812,25 +813,26 @@ export const events = [
   },
   {
     id: 'retro-games',
+    card: 'ev-pool',
     photo: '1550745165-9bc0b252726f',
-    title: 'Retro Game Night',
+    title: 'Retro games',
     short: 'Old consoles, big screen, lots of laughs.',
-    desc: 'Old consoles on a big screen. Mario Kart tournament at 21:00.',
+    desc: 'Old consoles on a big screen. Mario Kart tournament at 18:00.',
     accent: 'lav',
     icon: 'gamepad',
     category: 'Social',
-    day: 'Sun',
-    date: 27,
+    day: 'Sat',
+    date: 19,
     month: 'Dec',
-    time: '19:00 - 22:00',
-    start: '19:00',
+    time: '16:00 - 19:00',
+    start: '16:00',
     place: 'Zorgvrijstaat',
     area: 'Middelland',
     address: 'Claes de Vrieselaan 72, 3021 JS Rotterdam',
     walk: '350 m · 5 min walk',
     coords: [51.9085, 4.4598],
     host: {
-      ...people.sam,
+      ...people.noon,
       role: 'Neighbourhood Host',
     },
     tags: ['Social', 'Free', 'Games'],
@@ -857,18 +859,19 @@ export const events = [
   },
   {
     id: 'oliebollen',
+    card: 'th-warmhats',
     photo: '1607690670342-ef9efe87f798',
-    title: 'Oliebollen Bake-off',
+    title: 'Oliebollen baking',
     short: 'Bake oliebollen for New Year’s Eve together.',
     desc: 'Bake oliebollen for New Year’s Eve together, and vote for the best one.',
     accent: 'lime',
     icon: 'bread',
     category: 'Food',
-    day: 'Wed',
-    date: 30,
+    day: 'Thu',
+    date: 31,
     month: 'Dec',
-    time: '14:00 - 17:00',
-    start: '14:00',
+    time: '11:00 - 14:00',
+    start: '11:00',
     place: 'Zorgvrijstaat',
     area: 'Middelland',
     address: 'Claes de Vrieselaan 72, 3021 JS Rotterdam',
@@ -949,20 +952,20 @@ export const popular = ['warm-hats', 'bike-repair', 'football-beer']
 export const joinToday = ['walk-talk', 'open-kitchen', 'board-games']
 export const invites = [
   {
-    id: 'inv-sam',
-    from: people.sam,
-    when: '2h ago',
-    eventId: 'pool-tournament',
-    note: 'You were great last time, come play again!',
-    accent: 'turq',
-  },
-  {
     id: 'inv-noon',
     from: people.noon,
-    when: 'Yesterday',
+    when: 'Just now',
     eventId: 'kerststol-kitchen',
     note: 'We’re baking Christmas bread, you’d love it.',
     accent: 'pink',
+  },
+  {
+    id: 'inv-sam',
+    from: people.sam,
+    when: 'Yesterday',
+    eventId: 'pool-tournament',
+    note: 'You were great last time, come play again!',
+    accent: 'turq',
   },
 ]
 export const suggestions = [
@@ -1060,51 +1063,27 @@ export const languages = [
 ]
 export const interestOptions = [
   {
+    id: 'Fashion',
+    accent: 'pink',
+  },
+  {
+    id: 'Tennis',
+    accent: 'lime',
+  },
+  {
+    id: 'Languages',
+    accent: 'turq',
+  },
+  {
     id: 'Football',
     accent: 'turq',
   },
   {
-    id: 'Cycling',
-    accent: 'lime',
-  },
-  {
-    id: 'Fishing',
-    accent: 'lav',
-  },
-  {
-    id: 'Cooking',
+    id: 'Traveling',
     accent: 'orange',
   },
   {
-    id: 'Darts',
-    accent: 'pink',
-  },
-  {
-    id: 'Pool',
-    accent: 'turq',
-  },
-  {
-    id: 'Walking',
-    accent: 'lime',
-  },
-  {
-    id: 'Gardening',
-    accent: 'lav',
-  },
-  {
-    id: 'DIY & repairs',
-    accent: 'orange',
-  },
-  {
-    id: 'Card games',
-    accent: 'pink',
-  },
-  {
-    id: 'Chess',
-    accent: 'turq',
-  },
-  {
-    id: 'Fitness',
+    id: 'Volunteering',
     accent: 'lime',
   },
   {
@@ -1112,12 +1091,68 @@ export const interestOptions = [
     accent: 'pink',
   },
   {
-    id: 'Cars & motors',
+    id: 'Cooking',
+    accent: 'orange',
+  },
+  {
+    id: 'Arts',
     accent: 'lav',
   },
   {
-    id: 'Coffee & a chat',
+    id: 'Walking',
+    accent: 'lime',
+  },
+  {
+    id: 'Running',
+    accent: 'lime',
+  },
+  {
+    id: 'Games',
+    accent: 'pink',
+  },
+  {
+    id: 'Reading',
+    accent: 'turq',
+  },
+  {
+    id: 'Movies',
     accent: 'orange',
+  },
+  {
+    id: 'Museum',
+    accent: 'lav',
+  },
+  {
+    id: 'Gardening',
+    accent: 'lime',
+  },
+  {
+    id: 'Craft',
+    accent: 'pink',
+  },
+  {
+    id: 'Cycling',
+    accent: 'lav',
+  },
+  {
+    id: 'Concert',
+    accent: 'turq',
+  },
+  {
+    id: 'Dance',
+    accent: 'pink',
+  },
+  {
+    id: 'Painting',
+    accent: 'orange',
+  },
+  {
+    id: 'Coffee',
+    accent: 'lime',
+  },
+  {
+    id: 'Yoga',
+    accent: 'turq',
   },
 ]
 export const organisations = [
@@ -1132,6 +1167,7 @@ export const organisations = [
     id: 'zorgvrijstaat',
     name: 'Zorgvrijstaat',
     domain: 'zorgvrijstaat.nl',
+    photo: 'place-zorgvrijstaat',
     events: ['kerststol-kitchen', 'retro-games', 'oliebollen'],
   },
   {

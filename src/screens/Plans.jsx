@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Check, Images, MessageSquare, PartyPopper, MapPin as PinIcon } from 'lucide-react'
+import { Check, MessageSquare, PartyPopper, MapPin as PinIcon } from 'lucide-react'
 import { FlowerRow } from '../components/Cards'
 import { Flower } from '../components/Flower'
 import { Icon } from '../components/Icon'
-import { MonthCalendar } from '../components/MonthCalendar'
+import { MonthCalendar, dayKey } from '../components/MonthCalendar'
+import { useDayLabel } from '../components/DayList'
+import { ViewToggle } from '../components/ViewToggle'
 import { NavBar, Screen, SegTabs } from '../components/UI'
 import { beenTo, byId } from '../data/events'
 import { useI18n } from '../i18n/index'
@@ -13,6 +16,9 @@ export function Plans() {
   const nav = useNavigate()
   const [params, setParams] = useSearchParams()
   const tab = params.get('tab') ?? 'upcoming'
+  const view = params.get('view') === 'calendar' ? 'calendar' : 'list'
+  const setView = (v) => setParams(v === 'calendar' ? { tab, view: v } : { tab }, { replace: true })
+  const dayLabel = useDayLabel()
   const app = useApp()
   const { t, ev, full, dm, beenTo: b, commentIn } = useI18n()
   const upcoming = app.joined
@@ -23,8 +29,32 @@ export function Plans() {
     .map((d) => byId(d))
     .filter(Boolean)
     .sort((d, i) => d.date - i.date)
-  const thisWeek = saved.filter((d) => d.date <= TODAY + 6)
-  const later = saved.filter((d) => d.date > TODAY + 6)
+  const [selected, setSelected] = useState(dayKey(2026, 11, upcoming[0]?.date ?? TODAY))
+  const [selY, selM, selD] = selected.split('-').map(Number)
+  const inDec = selY === 2026 && selM === 11
+  const onDay = (d) => view === 'list' || (inDec && d.date === selD)
+  const visitKey = (v) => {
+    const [day, mon] = v.last.split(' ')
+    return dayKey(2026, { Oct: 9, Nov: 10, Dec: 11 }[mon], +day)
+  }
+  const upShown = upcoming.filter(onDay)
+  const savedShown = saved.filter(onDay)
+  const beenShown = view === 'list' ? beenTo : beenTo.filter((v) => visitKey(v) === selected)
+  const thisWeek = savedShown.filter((d) => d.date <= TODAY + 6)
+  const later = savedShown.filter((d) => d.date > TODAY + 6)
+  const marks = {}
+  const mark = (k, color) => (marks[k] ??= []).push({ color })
+  if (tab === 'upcoming') upcoming.forEach((d) => mark(dayKey(2026, 11, d.date), `var(--${d.accent === 'lime' ? 'ink' : d.accent})`))
+  if (tab === 'saved') saved.forEach((d) => mark(dayKey(2026, 11, d.date), `var(--${d.accent === 'lime' ? 'ink' : d.accent})`))
+  if (tab === 'been') beenTo.forEach((v) => mark(visitKey(v), `var(--${v.accent === 'lime' ? 'ink' : v.accent})`))
+  const summary =
+    view === 'calendar'
+      ? null
+      : tab === 'upcoming'
+        ? t('nPlansInDec', { n: upcoming.length })
+        : tab === 'been'
+          ? t('nPlacesSince', { n: 12 })
+          : null
   const savedRow = (d) => {
     const i = app.joined.includes(d.id)
     return (
@@ -39,9 +69,13 @@ export function Plans() {
         <FlowerRow
           e={d}
           line1={`${full(d.date)} · ${d.place}`}
-          line2={t('going', {
-            n: app.goingCount(d.id),
-          })}
+          line2={
+            d.date <= TODAY + 6 && d.date > TODAY
+              ? t('startsIn', { n: d.date - TODAY })
+              : t('going', {
+                  n: app.goingCount(d.id),
+                })
+          }
           right={
             i ? (
               <span
@@ -94,9 +128,7 @@ export function Plans() {
             value={tab}
             onChange={(d) =>
               setParams(
-                {
-                  tab: d,
-                },
+                view === 'calendar' ? { tab: d, view } : { tab: d },
                 {
                   replace: true,
                 },
@@ -120,9 +152,28 @@ export function Plans() {
         </div>
       </div>
       <div className="scroll pad with-nav">
-        <MonthCalendar />
+        <div className="row" style={{ justifyContent: 'space-between', margin: '2px 0 12px', gap: 12 }}>
+          {tab === 'saved' && view === 'list' ? (
+            <p className="small" style={{ fontSize: 14 }}>
+              {t('onlyYouSaved')}
+            </p>
+          ) : (
+            <span className="eyebrow" style={{ color: 'var(--ink)' }}>
+              {summary ?? t('decemberYear')}
+            </span>
+          )}
+          <ViewToggle value={view} onChange={setView} />
+        </div>
+        {view === 'calendar' && (
+          <div style={{ marginBottom: 18 }}>
+            <MonthCalendar selected={selected} onSelect={setSelected} marks={marks} />
+          </div>
+        )}
         {tab === 'upcoming' &&
-          (upcoming.length === 0 ? (
+          (upShown.length === 0 ? (
+            view === 'calendar' ? (
+              <p className="small">{t('nothingThatDay')}</p>
+            ) :
             <EmptyState
               title={t('noPlans')}
               text={t('noPlansSub')}
@@ -130,7 +181,7 @@ export function Plans() {
               onCta={() => nav('/search')}
             />
           ) : (
-            upcoming.map((d) => {
+            upShown.map((d) => {
               const i = ev(d)
               const j = i.comments.slice(-1)[0]
               return (
@@ -146,8 +197,7 @@ export function Plans() {
                       marginBottom: 8,
                     }}
                   >
-                    {full(i.date)}
-                    {i.date === TODAY + 1 ? ` · ${t('tomorrow')}` : ''}
+                    {dayLabel(i.date)}
                   </h2>
                   <div
                     className="card"
@@ -226,14 +276,31 @@ export function Plans() {
                           <span
                             style={{
                               fontSize: 13,
-                              color: 'var(--muted-2)',
                             }}
                           >
-                            {t('wrote', {
-                              name: j.author.name,
-                              text: commentIn(j).slice(0, 38) + '…',
-                            })}
+                            {i.comments.length > 1
+                              ? t('commentedOthers', {
+                                  name: j.author.id === i.host.id ? `${j.author.name} (${t('host')})` : j.author.name,
+                                  n: i.comments.length - 1,
+                                })
+                              : t('commentedOne', { name: j.author.name })}
                           </span>
+                        </span>
+                        <span
+                          style={{
+                            width: 26,
+                            height: 26,
+                            borderRadius: '50%',
+                            background: 'var(--ink)',
+                            color: 'var(--white)',
+                            display: 'grid',
+                            placeItems: 'center',
+                            fontSize: 12,
+                            fontWeight: 600,
+                            flex: 'none',
+                          }}
+                        >
+                          {i.comments.length}
                         </span>
                       </button>
                     )}
@@ -252,14 +319,7 @@ export function Plans() {
             />
           ) : (
             <>
-              <p
-                className="tiny"
-                style={{
-                  margin: '6px 0 12px',
-                }}
-              >
-                {t('onlyYouSaved')}
-              </p>
+              {view === 'calendar' && savedShown.length === 0 && <p className="small">{t('nothingThatDay')}</p>}
               {thisWeek.length > 0 && (
                 <h2
                   className="eyebrow"
@@ -286,6 +346,8 @@ export function Plans() {
           ))}
         {tab === 'been' && (
           <>
+            {view === 'calendar' && beenShown.length === 0 && <p className="small">{t('nothingThatDay')}</p>}
+            {view === 'list' && (
             <div
               className="card row"
               style={{
@@ -321,6 +383,8 @@ export function Plans() {
                 <PartyPopper size={16} /> {t('nice')}
               </button>
             </div>
+            )}
+            {view === 'list' && (
             <h2
               className="eyebrow"
               style={{
@@ -329,7 +393,8 @@ export function Plans() {
             >
               {t('mostJoined')}
             </h2>
-            {beenTo.map((i) => (
+            )}
+            {beenShown.map((i) => (
               <div
                 key={i.title}
                 className="card row"
@@ -379,20 +444,6 @@ export function Plans() {
                         n: i.times,
                       })}
                 </span>
-                <button
-                  className="icon-btn white"
-                  style={{
-                    width: 40,
-                    height: 40,
-                  }}
-                  aria-label={`${t('albumLink')}: ${b(i.title)}`}
-                  onClick={(d) => {
-                    d.stopPropagation()
-                    nav(`/event/${i.eventId}/album`)
-                  }}
-                >
-                  <Images size={18} />
-                </button>
               </div>
             ))}
           </>

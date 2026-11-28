@@ -1,5 +1,17 @@
 // Interest pill with a coloured flower icon (Figma: Profile › Interests).
 import {
+  BookOpen,
+  Clapperboard,
+  HandHeart,
+  Landmark,
+  Languages,
+  Leaf,
+  Mic,
+  Paintbrush,
+  Palette,
+  Plane,
+  Scissors,
+  Shirt,
   Bike,
   Car,
   CircleDot,
@@ -38,6 +50,22 @@ export const interestIcons = {
   Music,
   'Cars & motors': Car,
   'Coffee & a chat': Coffee,
+  Fashion: Shirt,
+  Tennis: CircleDot,
+  Languages,
+  Traveling: Plane,
+  Volunteering: HandHeart,
+  Arts: Palette,
+  Running: Footprints,
+  Reading: BookOpen,
+  Movies: Clapperboard,
+  Museum: Landmark,
+  Craft: Scissors,
+  Concert: Mic,
+  Dance: Music,
+  Painting: Paintbrush,
+  Coffee,
+  Yoga: Leaf,
 }
 const fallbackAccents = ['lime', 'pink', 'turq', 'lav', 'orange']
 
@@ -54,19 +82,21 @@ export function InterestChip({ id, index = 0, background = 'var(--grey)' }) {
         gap: 8,
         background,
         borderRadius: 30,
-        padding: '5px 16px 5px 6px',
-        fontSize: 16,
-        fontWeight: 500,
+        padding: '4px 16px 4px 8px',
+        fontSize: 14,
+        lineHeight: '21px',
+        letterSpacing: '-0.01em',
+        fontWeight: 600,
       }}
     >
       <Flower
         accent={accent}
-        size={34}
+        size={36}
         style={{
           color: accent === 'orange' ? '#fff' : undefined,
         }}
       >
-        <Icon size={15} aria-hidden />
+        <Icon size={16} aria-hidden />
       </Flower>
       {interest(id)}
     </span>

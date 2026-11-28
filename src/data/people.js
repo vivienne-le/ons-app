@@ -76,7 +76,13 @@ export const orgForPerson = {
   cvd: 'cvd',
 }
 export const profileLink = (id) =>
-  id === 'me' ? '/profile' : orgForPerson[id] ? `/org/${orgForPerson[id]}` : profiles[id] ? `/person/${id}` : null
+  id === 'me'
+    ? '/profile'
+    : orgForPerson[id]
+      ? `/org/${orgForPerson[id]}`
+      : profiles[id] && hostedBy(id).length
+        ? `/person/${id}`
+        : null
 export const hostedBy = (personId) => events.filter((event) => event.host.id === personId)
 export const orgOfEvent = (eventId) => organisations.find((organisation) => organisation.events.includes(eventId))
 export const orgsOfHost = (personId) => [
@@ -113,7 +119,7 @@ export const eventsOf = (personId) =>
   )
 export const orgInfo = {
   cvd: {
-    kind: 'community',
+    kind: 'care',
     followers: 214,
     area: 'Middelland',
   },

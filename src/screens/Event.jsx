@@ -1,17 +1,17 @@
+import { CvdHeart } from '../components/OrgLogo'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { BadgeCheck, Check, Globe, Heart, ImagePlus, Images, LoaderCircle, Send, Share2, Users, X } from 'lucide-react'
+import { BadgeCheck, Check, ChevronRight, Globe, Heart, LoaderCircle, Send, Share2, Users, X } from 'lucide-react'
 import { Flower } from '../components/Flower'
 import { Icon } from '../components/Icon'
 import { Avatar, AvatarStack, Img } from '../components/Img'
 import { ShareSheet } from '../components/ShareSheet'
 import { BackButton, Screen, Sheet, WhenWhere } from '../components/UI'
-import { byId, organisations } from '../data/events'
+import { beenTo, byId, organisations } from '../data/events'
 import { goingPeople, orgOfEvent, profileLink } from '../data/people'
 import { useI18n } from '../i18n/index'
-import { Lightbox, attended, useAddPhotos, useAlbum } from './Album'
-import { FriendButton } from './People'
 import { useApp } from '../state/AppState'
+const attended = (eventId) => beenTo.some((b) => b.eventId === eventId)
 export function EventScreen() {
   const { id = '' } = useParams()
   const raw = byId(id)
@@ -26,10 +26,7 @@ export function EventScreen() {
   const [confirmCancel, setConfirmCancel] = useState(false)
   const [signupsOpen, setSignupsOpen] = useState(false)
   const [whoGoingOpen, setWhoGoingOpen] = useState(false)
-  const [lightboxIndex, setLightboxIndex] = useState(null)
   const [sharing, setSharing] = useState(false)
-  const photos = useAlbum(id ?? '')
-  const adder = useAddPhotos(id ?? '')
   const commentInput = useRef(null)
   const scroller = useRef(null)
   const [params] = useSearchParams()
@@ -123,7 +120,7 @@ export function EventScreen() {
         style={{
           alignItems: 'flex-start',
           gap: 10,
-          marginLeft: J ? 44 : 0,
+          marginLeft: J ? 36 : 0,
           marginTop: J ? 12 : 18,
         }}
       >
@@ -273,7 +270,7 @@ export function EventScreen() {
               justifyContent: 'space-between',
             }}
           >
-            <BackButton variant="white" to={attended(e.id) ? '/plans?tab=been' : undefined} />
+            <BackButton variant="white" fallback={attended(e.id) ? '/plans?tab=been' : '/home'} />
             <div
               className="row"
               style={{
@@ -324,48 +321,25 @@ export function EventScreen() {
             <button
               className="row"
               style={{
-                gap: 8,
+                gap: 4,
                 textAlign: 'start',
               }}
               onClick={() => {
                 const T = profileLink(e.host.id)
-                T && nav(T)
+                // organisation pages aren't in Figma yet, so only people link through
+                T && !T.startsWith('/org/') && nav(T)
               }}
               aria-label={t('viewProfile', {
                 name: e.host.name,
               })}
             >
-              <Avatar name={e.host.name} img={e.host.avatar} size={30} />
-              <span
-                style={{
-                  fontSize: 15,
-                  color: 'var(--muted)',
-                  textDecoration: 'underline',
-                  textUnderlineOffset: 3,
-                  textDecorationColor: 'var(--grey-2)',
-                }}
-              >
-                {t('hostedByRole', {
-                  name: e.host.name,
-                  role: e.host.role,
-                })}
+              {e.host.id === 'cvd' ? <CvdHeart size={40} /> : <Avatar name={e.host.name} img={e.host.avatar} size={40} />}
+              <span style={{ fontSize: 16, lineHeight: '24px', color: '#737373' }}>
+                {t('hostedBy', { name: '' })}
+                <strong style={{ fontWeight: 600, color: 'var(--ink)' }}>{e.host.name}</strong>
+                {e.host.id !== 'cvd' && <> · {e.host.role}</>}
               </span>
             </button>
-            {org && e.host.id !== 'cvd' ? (
-              <button
-                onClick={() => nav(`/org/${org.id}`)}
-                style={{
-                  fontSize: 15,
-                  fontWeight: 600,
-                  textDecoration: 'underline',
-                  textUnderlineOffset: 3,
-                }}
-              >
-                {t('withOrg', {
-                  org: org.name,
-                })}
-              </button>
-            ) : null}
           </div>
           <p
             className="body"
@@ -600,105 +574,6 @@ export function EventScreen() {
               </span>
             </div>
           ))}
-          {attended(e.id) && (
-            <section aria-labelledby="album-h">
-              <div
-                className="section-head"
-                style={{
-                  marginTop: 30,
-                }}
-              >
-                <h2
-                  className="h2"
-                  id="album-h"
-                  style={{
-                    margin: 0,
-                  }}
-                >
-                  <Images
-                    size={20}
-                    aria-hidden
-                    style={{
-                      verticalAlign: -3,
-                    }}
-                  />{' '}
-                  {t('albumTitle')}{' '}
-                  <span
-                    style={{
-                      color: 'var(--muted)',
-                    }}
-                  >
-                    {photos.length}
-                  </span>
-                </h2>
-                <button className="link" onClick={() => nav(`/event/${e.id}/album`)}>
-                  {t('seeAll2')}
-                </button>
-              </div>
-              <div
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(4, 1fr)',
-                  gap: 4,
-                }}
-              >
-                {photos.slice(0, 3).map((photo, J) => (
-                  <button
-                    key={photo.id}
-                    onClick={() => setLightboxIndex(J)}
-                    style={{
-                      aspectRatio: '1',
-                      borderRadius: 12,
-                      overflow: 'hidden',
-                    }}
-                    aria-label={t('photoOf', {
-                      n: J + 1,
-                      m: photos.length,
-                    })}
-                  >
-                    <img
-                      src={photo.src}
-                      alt=""
-                      loading="lazy"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        display: 'block',
-                      }}
-                    />
-                  </button>
-                ))}
-                {adder.el}
-                <button
-                  onClick={adder.open}
-                  disabled={adder.busy}
-                  style={{
-                    aspectRatio: '1',
-                    borderRadius: 12,
-                    border: '2px dashed var(--grey-2)',
-                    display: 'grid',
-                    placeItems: 'center',
-                    alignContent: 'center',
-                    gap: 2,
-                    fontSize: 12,
-                    fontWeight: 600,
-                  }}
-                >
-                  <ImagePlus size={20} aria-hidden />
-                  {adder.busy ? '…' : t('addPhotos')}
-                </button>
-              </div>
-              <p
-                className="tiny"
-                style={{
-                  marginTop: 8,
-                }}
-              >
-                {t('albumConsent')}
-              </p>
-            </section>
-          )}
           <h2
             className="h2"
             id="comments"
@@ -807,89 +682,32 @@ export function EventScreen() {
           )}
           {translatableCount > 0 &&
             (mode === 'original' ? (
-              <button
-                onClick={translate}
-                className="row"
-                style={{
-                  marginTop: 14,
-                  gap: 6,
-                  fontSize: 14,
-                  fontWeight: 600,
-                  textDecoration: 'underline',
-                  textUnderlineOffset: 3,
-                }}
-              >
-                <Globe size={15} />{' '}
-                {t('translateTo', {
-                  lang: myLangName,
-                })}
-              </button>
-            ) : mode === 'translating' ? (
-              <div
-                className="row"
-                role="status"
-                style={{
-                  marginTop: 12,
-                  gap: 8,
-                  background: 'var(--grey)',
-                  borderRadius: 999,
-                  padding: '7px 14px',
-                  width: 'fit-content',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: 'var(--muted-2)',
-                }}
-              >
-                <LoaderCircle size={15} className="spin" />{' '}
-                {t('translating', {
-                  n: translatableCount,
-                  lang: myLangName,
-                })}
-              </div>
-            ) : (
-              <div
-                className="row"
-                role="status"
-                style={{
-                  marginTop: 12,
-                  background: 'var(--turq)',
-                  borderRadius: 16,
-                  padding: '12px 14px',
-                  gap: 10,
-                }}
-              >
-                <Globe size={20} />
-                <span
-                  style={{
-                    flex: 1,
-                  }}
-                >
-                  <strong
-                    style={{
-                      display: 'block',
-                      fontSize: 15,
-                    }}
-                  >
-                    {t('translatedFrom', {
-                      lang: foreignLangs,
-                    })}
-                  </strong>
-                  <span
-                    style={{
-                      fontSize: 13,
-                      color: 'var(--muted-2)',
-                    }}
-                  >
-                    {t('translatedMeta', {
-                      n: translatableCount,
-                      total: totalComments,
-                    })}
-                  </span>
+              <div className="row" style={{ marginTop: 14, gap: 12, background: 'var(--grey)', borderRadius: 16, padding: '12px 14px' }}>
+                <Globe size={20} aria-hidden />
+                <span style={{ flex: 1 }}>
+                  <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{t('someInLang', { lang: foreignLangs })}</strong>
+                  <span style={{ fontSize: 13 }}>{t('nOfTotalComments', { n: translatableCount, total: totalComments })}</span>
                 </span>
-                <button className="link" onClick={() => setMode('original')}>
-                  {t('showOriginal')}
+                <button className="link" onClick={translate}>
+                  {t('translateBtn')}
                 </button>
               </div>
+            ) : mode === 'translating' ? (
+              <div className="row" role="status" style={{ marginTop: 14, gap: 12, background: 'var(--turq)', borderRadius: 16, padding: '12px 14px' }}>
+                <Globe size={20} className="spin" aria-hidden />
+                <span style={{ flex: 1 }}>
+                  <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{t('translatingTo', { lang: myLangName })}</strong>
+                  <span style={{ fontSize: 13 }}>{t('translatingMeta', { n: translatableCount, total: totalComments })}</span>
+                </span>
+              </div>
+            ) : (
+              <p role="status" className="small" style={{ marginTop: 14, fontSize: 14 }}>
+                <Globe size={14} aria-hidden style={{ verticalAlign: -2 }} /> {t('translatedTo', { lang: myLangName })}
+                {'  ·  '}
+                <button className="link" style={{ fontSize: 14 }} onClick={() => setMode('original')}>
+                  {t('showOriginal')}
+                </button>
+              </p>
             ))}
           {totalComments === 0 && (
             <p
@@ -1151,59 +969,45 @@ export function EventScreen() {
           {t('sendReminder')}
         </button>
       </Sheet>
-      {lightboxIndex !== null && photos[lightboxIndex] && (
-        <Lightbox
-          photos={photos}
-          index={lightboxIndex}
-          setIndex={setLightboxIndex}
-          eventId={e.id}
-          onProfile={(T) => nav(`/person/${T}`)}
-        />
-      )}
       <ShareSheet open={sharing} onClose={() => setSharing(false)} e={e} />
-      <Sheet open={whoGoingOpen} onClose={() => setWhoGoingOpen(false)} title={t('whosGoing')}>
-        <div
-          className="stack"
-          style={{
-            gap: 0,
-          }}
-        >
-          {people.map((person) => (
-            <div
-              key={person.id}
-              className="row"
-              style={{
-                padding: '8px 0',
-                borderBottom: '1px solid var(--grey-2)',
-              }}
-            >
+      <Sheet open={whoGoingOpen} onClose={() => setWhoGoingOpen(false)}>
+        <div className="row" style={{ justifyContent: 'space-between', marginBottom: 8 }}>
+          <h2 className="h2">{t('whosGoing')}</h2>
+          <span className="eyebrow">{t('nGoing', { n: going })}</span>
+        </div>
+        <div className="stack" style={{ gap: 0 }}>
+          {[
+            { ...e.host, badge: 'host' },
+            ...people.filter((person) => person.id !== e.host.id),
+            ...(app.joined.includes(e.id) ? [{ id: 'me', name: app.user.firstName || t('friend'), avatar: 'ruben', badge: 'you' }] : []),
+          ].map((person) => {
+            const link = person.id !== 'me' && profileLink(person.id)
+            return (
               <button
+                key={person.id}
                 className="row"
-                style={{
-                  flex: 1,
-                  gap: 10,
-                  textAlign: 'start',
-                }}
-                onClick={() => nav(`/person/${person.id}`)}
-                aria-label={t('viewProfile', {
-                  name: person.name,
-                })}
+                style={{ padding: '10px 0', gap: 12, textAlign: 'start', borderBottom: '1px solid var(--grey-2)', width: '100%' }}
+                disabled={!link}
+                onClick={() => link && nav(link)}
+                aria-label={t('viewProfile', { name: person.name })}
               >
-                <Avatar name={person.name} img={person.avatar} size={40} />
-                <span>
-                  <strong
-                    style={{
-                      display: 'block',
-                    }}
-                  >
-                    {person.name}
-                  </strong>
-                  <span className="tiny">{person.area}</span>
-                </span>
+                <Avatar name={person.name} img={person.avatar} size={44} />
+                <strong style={{ fontSize: 16, fontWeight: 600 }}>{person.name}</strong>
+                {person.badge === 'host' && (
+                  <span className="tag" style={{ background: 'var(--green)', color: 'var(--white)', fontSize: 12, padding: '3px 8px' }}>
+                    {t('host')}
+                  </span>
+                )}
+                {person.badge === 'you' && (
+                  <span className="tag" style={{ fontSize: 12, padding: '3px 8px' }}>
+                    {t('you')}
+                  </span>
+                )}
+                <span style={{ flex: 1 }} />
+                {link && <ChevronRight size={18} className="flip-rtl" aria-hidden />}
               </button>
-              <FriendButton compact p={person} />
-            </div>
-          ))}
+            )
+          })}
         </div>
       </Sheet>
       <Sheet open={confirmCancel} onClose={() => setConfirmCancel(false)} title={t('cancelTitle')}>

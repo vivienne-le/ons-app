@@ -1,17 +1,16 @@
 import { HashRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
-import { BadgeWatcher, StampDefs } from './components/Badges'
+import { BadgeWatcher, StampDefs, StickersScreen } from './components/Badges'
+import { EditProfileScreen } from './components/EditProfile'
 import { ToastHost } from './components/UI'
-import { Album } from './screens/Album'
 import { BecomeHostIntro, BecomeHostOrg, BecomeHostSent } from './screens/BecomeHost'
 import { EventScreen } from './screens/Event'
 import { Home } from './screens/Home'
 import { Joined } from './screens/Joined'
 import { EventMap, MapTab } from './screens/Maps'
-import { Network } from './screens/Network'
 import { ConnectionsScreen, OrgScreen, PersonScreen } from './screens/People'
 import { Plans } from './screens/Plans'
-import { MyPost, PostDetails, PostPreview, PostSent, PostWhat, PostWhen, PostWhere } from './screens/Post'
-import { Profile } from './screens/Profile'
+import { HostLive, MyPost, PostDetails, PostPreview, PostSent, PostStart, PostWhat, PostWhen, PostWhere } from './screens/Post'
+import { Profile, SettingsScreen } from './screens/Profile'
 import { Search } from './screens/Search'
 import { Updates } from './screens/Updates'
 import {
@@ -20,7 +19,8 @@ import {
   DoneStep,
   InterestsStep,
   LanguageStep,
-  NameStep,
+  AreaStep,
+  PreviewStep,
   PhoneStep,
   PhotoStep,
   Welcome,
@@ -49,9 +49,11 @@ export function AppRoutes() {
           <Route path="/signup/code" element={<CodeStep />} />
           <Route path="/signup/language" element={<LanguageStep />} />
           <Route path="/signup/photo" element={<PhotoStep />} />
-          <Route path="/signup/name" element={<NameStep />} />
+          <Route path="/signup/name" element={<Navigate to="/signup/photo" replace />} />
+          <Route path="/signup/area" element={<AreaStep />} />
           <Route path="/signup/about" element={<AboutStep />} />
           <Route path="/signup/interests" element={<InterestsStep />} />
+          <Route path="/signup/preview" element={<PreviewStep />} />
           <Route path="/signup/done" element={<DoneStep />} />
           <Route
             path="/home"
@@ -133,30 +135,9 @@ export function AppRoutes() {
               </NeedsAccount>
             }
           />
-          <Route
-            path="/become-host"
-            element={
-              <NeedsAccount>
-                <BecomeHostIntro />
-              </NeedsAccount>
-            }
-          />
-          <Route
-            path="/become-host/org"
-            element={
-              <NeedsAccount>
-                <BecomeHostOrg />
-              </NeedsAccount>
-            }
-          />
-          <Route
-            path="/become-host/sent"
-            element={
-              <NeedsAccount>
-                <BecomeHostSent />
-              </NeedsAccount>
-            }
-          />
+          <Route path="/become-host" element={<Navigate to="/profile" replace />} />
+          <Route path="/become-host/org" element={<Navigate to="/profile" replace />} />
+          <Route path="/become-host/sent" element={<Navigate to="/profile" replace />} />
           <Route
             path="/person/:id"
             element={
@@ -165,35 +146,44 @@ export function AppRoutes() {
               </NeedsAccount>
             }
           />
-          <Route
-            path="/org/:id"
-            element={
-              <NeedsAccount>
-                <OrgScreen />
-              </NeedsAccount>
-            }
-          />
-          <Route
-            path="/event/:id/album"
-            element={
-              <NeedsAccount>
-                <Album />
-              </NeedsAccount>
-            }
-          />
-          <Route
-            path="/network"
-            element={
-              <NeedsAccount>
-                <Network />
-              </NeedsAccount>
-            }
-          />
+          <Route path="/org/:id" element={<Navigate to="/connections" replace />} />
           <Route
             path="/connections"
             element={
               <NeedsAccount>
                 <ConnectionsScreen />
+              </NeedsAccount>
+            }
+          />
+          <Route
+            path="/post/start"
+            element={
+              <NeedsAccount>
+                <PostStart />
+              </NeedsAccount>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <NeedsAccount>
+                <SettingsScreen />
+              </NeedsAccount>
+            }
+          />
+          <Route
+            path="/profile/edit"
+            element={
+              <NeedsAccount>
+                <EditProfileScreen />
+              </NeedsAccount>
+            }
+          />
+          <Route
+            path="/stickers"
+            element={
+              <NeedsAccount>
+                <StickersScreen />
               </NeedsAccount>
             }
           />
@@ -250,6 +240,14 @@ export function AppRoutes() {
             element={
               <NeedsAccount>
                 <MyPost />
+              </NeedsAccount>
+            }
+          />
+          <Route
+            path="/post/live/:id"
+            element={
+              <NeedsAccount>
+                <HostLive />
               </NeedsAccount>
             }
           />

@@ -3,14 +3,16 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { CalendarDays, ChevronLeft, House, Map as MapIcon, Plus, User } from 'lucide-react'
 import { useI18n } from '../i18n/index'
 import { useApp } from '../state/AppState'
-export function BackButton({ to, variant = 'grey', label }) {
+// Goes back to the page you came from. `to` forces a destination; `fallback` is only used
+// when there is no earlier page in this app (e.g. the link was opened directly).
+export function BackButton({ to, fallback = '/home', variant = 'grey', label }) {
   const nav = useNavigate()
   const { t } = useI18n()
   return (
     <button
       className={`icon-btn ${variant === 'white' ? 'white' : ''}`}
       aria-label={label ?? t('back')}
-      onClick={() => (to ? nav(to) : window.history.length > 1 ? nav(-1) : nav('/home'))}
+      onClick={() => (to ? nav(to) : (window.history.state?.idx ?? 0) > 0 ? nav(-1) : nav(fallback))}
     >
       <ChevronLeft size={22} className="flip-rtl" />
     </button>
@@ -176,7 +178,7 @@ export function Progress({ step, total = 5 }) {
     <div
       style={{
         display: 'flex',
-        gap: 5,
+        gap: 4,
       }}
       aria-label={t('stepOf', {
         n: step,
@@ -194,12 +196,45 @@ export function Progress({ step, total = 5 }) {
               width: 22,
               height: 4,
               borderRadius: 2,
-              background: b < step ? 'var(--ink)' : 'var(--grey-2)',
+              background: b < step ? 'var(--ink)' : '#E8E6E0',
               transition: 'background .3s',
             }}
           />
         ),
       )}
     </div>
+  )
+}
+export function Switch({ on, onChange, label }) {
+  return (
+    <button
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      onClick={() => onChange(!on)}
+      style={{
+        width: 50,
+        height: 30,
+        borderRadius: 999,
+        background: on ? 'var(--ink)' : 'var(--grey-2)',
+        position: 'relative',
+        transition: 'background .2s',
+        flex: 'none',
+      }}
+    >
+      <span
+        style={{
+          position: 'absolute',
+          top: 3,
+          left: on ? 23 : 3,
+          width: 24,
+          height: 24,
+          borderRadius: '50%',
+          background: 'var(--white)',
+          transition: 'left .2s var(--ease)',
+          boxShadow: '0 1px 3px rgba(0,0,0,.2)',
+        }}
+      />
+    </button>
   )
 }

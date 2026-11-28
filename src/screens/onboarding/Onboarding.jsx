@@ -6,50 +6,44 @@ import {
   ChevronDown,
   Clock,
   Globe,
-  Image as ImageIcon,
+  Lock,
   MessageSquare,
   Phone,
   MapPin as PinIcon,
   User,
 } from 'lucide-react'
 import { Flower } from '../../components/Flower'
-import { Avatar } from '../../components/Img'
 import { OnsLogo } from '../../components/OnsLogo'
 import { BackButton, Progress, Screen, Sheet } from '../../components/UI'
+import { ProfileCard } from '../HowOthersSee'
 import { byId, interestOptions, languages } from '../../data/events'
 import { useI18n } from '../../i18n/index'
 import { useApp } from '../../state/AppState'
 export const bubblePlaces = [
   {
     bg: 'var(--pink)',
-    x: 40,
-    y: 150,
-    r: -8,
+    x: 46,
+    y: 187,
+    r: 8,
   },
   {
     bg: 'var(--turq)',
-    x: 258,
-    y: 118,
-    r: 6,
+    x: 282,
+    y: 187,
+    r: -6,
   },
   {
     bg: 'var(--orange)',
-    x: 20,
-    y: 238,
-    r: -4,
+    x: 29,
+    y: 319,
+    r: 4,
   },
   {
-    bg: '#5560D8',
-    x: 292,
-    y: 256,
-    r: 8,
+    bg: 'var(--lav)',
+    x: 260,
+    y: 345,
+    r: -8,
     light: true,
-  },
-  {
-    bg: 'var(--white)',
-    x: 256,
-    y: 388,
-    r: -6,
   },
 ]
 export function Welcome() {
@@ -78,7 +72,7 @@ export function Welcome() {
             style={{
               position: 'absolute',
               left: 'calc(50% - 95px)',
-              top: '37%',
+              top: '41%',
               width: 190,
               height: 190,
               animation: 'float 4.6s ease-in-out 0.9s infinite alternate',
@@ -113,7 +107,8 @@ export function Welcome() {
               top: 'max(52px, env(safe-area-inset-top))',
               insetInlineEnd: 20,
               gap: 6,
-              background: 'var(--white)',
+              background: 'var(--ink)',
+              color: 'var(--white)',
               borderRadius: 999,
               padding: '8px 14px',
               fontWeight: 600,
@@ -134,11 +129,12 @@ export function Welcome() {
                 transform: `rotate(${bubblePlace.r}deg)`,
                 background: bubblePlace.bg,
                 color: bubblePlace.light ? 'var(--white)' : 'var(--ink)',
-                fontWeight: 600,
-                fontSize: 15,
-                padding: '10px 14px',
-                borderRadius: 14,
-                boxShadow: '0 4px 14px rgba(0,0,0,.08)',
+                fontWeight: 400,
+                fontSize: 16,
+                lineHeight: '24px',
+                padding: '8px 16px',
+                borderRadius: bubblePlace.light ? '22px 22px 22px 4px' : '22px 22px 4px 22px',
+                boxShadow: '0 8px 9px rgba(32,30,31,.1)',
                 animation: `float 4s ease-in-out ${f * 0.4}s infinite alternate`,
               }}
             >
@@ -152,33 +148,29 @@ export function Welcome() {
             textAlign: 'center',
           }}
         >
-          <h1
-            className="h1"
-            style={{
-              fontSize: 30,
-            }}
-          >
-            {t('welcomeTitle')}
-          </h1>
-          <p
-            style={{
-              margin: '10px 0 0',
-              fontSize: 15,
-            }}
-          >
+          <h1 style={{ fontSize: 34, lineHeight: '40px', fontWeight: 600, letterSpacing: '-0.02em', margin: 0, color: '#000' }}>{t('welcomeTitle')}</h1>
+          <p style={{ margin: '12px 0 0', fontSize: 16, lineHeight: '24px', color: '#000' }}>
             {t('welcomeSub')}
           </p>
         </div>
       </div>
       <div className="bottom-cta">
-        <button className="btn btn-primary" onClick={() => nav('/signup/role')}>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            // a new account starts with nothing picked
+            setUser({ interests: [] })
+            nav('/signup/role')
+          }}
+        >
           {t('getStarted')}
         </button>
         <button
           onClick={() => nav('/signup/role?login=1')}
           style={{
             fontSize: 14,
-            padding: 6,
+            lineHeight: '21px',
+            padding: 0,
           }}
         >
           {t('haveAccount')}
@@ -219,42 +211,15 @@ export function Welcome() {
 export function StepHeader({ eyebrow, title, sub, step: a }) {
   return (
     <>
-      <div
-        className="row"
-        style={{
-          justifyContent: 'space-between',
-        }}
-      >
+      <div className="row" style={{ justifyContent: 'space-between' }}>
         <BackButton />
         {a && <Progress step={a} />}
       </div>
-      <div
-        className="eyebrow"
-        style={{
-          marginTop: 24,
-        }}
-      >
+      <div className="eyebrow" style={{ marginTop: 12 }}>
         {eyebrow}
       </div>
-      <h1
-        className="h1"
-        style={{
-          marginTop: 8,
-        }}
-      >
-        {title}
-      </h1>
-      {sub && (
-        <p
-          className="small"
-          style={{
-            marginTop: 10,
-            fontSize: 15,
-          }}
-        >
-          {sub}
-        </p>
-      )}
+      <h1 style={{ marginTop: 8, fontSize: 34, lineHeight: '40px', fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 0 }}>{title}</h1>
+      {sub && <p style={{ margin: '12px 0 0', fontSize: 14, lineHeight: '21px', color: 'var(--muted)' }}>{sub}</p>}
     </>
   )
 }
@@ -300,17 +265,11 @@ export function PhoneStep() {
         id="phone-form"
       >
         <StepHeader
-          eyebrow={`${t('guest')} · ${t(isLogin ? 'logIn' : 'createAccount')}`}
+          eyebrow={t(isLogin ? 'logIn' : 'createAccount')}
           title={t(useEmail ? 'emailTitle' : 'phoneTitle')}
           sub={t(useEmail ? 'emailSub' : 'phoneSub')}
         />
-        <label
-          className="eyebrow label"
-          style={{
-            marginTop: 28,
-          }}
-          htmlFor="contact"
-        >
+        <label className="eyebrow" style={{ marginTop: 28, display: 'block', marginBottom: 8, color: 'var(--ink)' }} htmlFor="contact">
           {t(useEmail ? 'emailLabel' : 'phoneLabel')}
         </label>
         {useEmail ? (
@@ -329,7 +288,7 @@ export function PhoneStep() {
           <div
             className="row"
             style={{
-              gap: 8,
+              gap: 6,
             }}
           >
             <label className="sr-only" htmlFor="cc">
@@ -346,10 +305,14 @@ export function PhoneStep() {
                 onChange={(o) => setCountryCode(o.target.value)}
                 className="field"
                 style={{
-                  width: 84,
+                  width: 77,
                   appearance: 'none',
-                  paddingRight: 26,
+                  padding: '0 0 0 13px',
                   fontWeight: 600,
+                  fontSize: 20,
+                  letterSpacing: '-0.02em',
+                  background: 'var(--grey)',
+                  borderColor: 'transparent',
                 }}
               >
                 {countryCodes.map((o) => (
@@ -361,7 +324,7 @@ export function PhoneStep() {
                 style={{
                   position: 'absolute',
                   right: 10,
-                  top: 20,
+                  top: 21,
                   pointerEvents: 'none',
                 }}
               />
@@ -373,6 +336,7 @@ export function PhoneStep() {
               inputMode="tel"
               autoComplete="tel-national"
               placeholder="6 12 34 56 78"
+              style={{ fontSize: 20, fontWeight: 600, letterSpacing: '-0.02em', background: 'var(--white)', borderColor: 'var(--ink)' }}
               value={phone}
               onChange={(o) => setPhone(o.target.value)}
               autoFocus
@@ -384,7 +348,10 @@ export function PhoneStep() {
           className="link"
           style={{
             display: 'block',
-            marginTop: 14,
+            marginTop: 8,
+            fontSize: 14,
+            lineHeight: '21px',
+            color: '#000',
           }}
           onClick={() => setUseEmail((o) => !o)}
         >
@@ -398,36 +365,27 @@ export function PhoneStep() {
             background: 'var(--lime)',
             width: '100%',
             textAlign: 'start',
-            padding: 16,
+            padding: '15px 26px 15px 16px',
             marginTop: 28,
             display: 'flex',
-            gap: 12,
+            gap: 8,
+            alignItems: 'flex-start',
+            borderRadius: 20,
           }}
         >
           <span
             className="icon-btn dark"
             style={{
-              width: 32,
-              height: 32,
+              width: 36,
+              height: 36,
+              flex: 'none',
             }}
           >
-            <MessageSquare size={15} />
+            <MessageSquare size={16} />
           </span>
-          <span>
-            <strong
-              style={{
-                display: 'block',
-                fontSize: 16,
-              }}
-            >
-              {t('needHand')}
-            </strong>
-            <span
-              style={{
-                fontSize: 14,
-                color: 'var(--muted-2)',
-              }}
-            >
+          <span style={{ display: 'grid', gap: 4, fontSize: 14, lineHeight: '21px', color: 'var(--ink)' }}>
+            <span>{t('needHand')}</span>
+            <span>
               {t('needHandText')}
             </span>
           </span>
@@ -504,16 +462,10 @@ export function CodeStep() {
     <Screen>
       <div className="scroll pad safe-top">
         <StepHeader
-          eyebrow={`${t(isHost ? 'host' : 'guest')} · ${t(isLogin ? 'logIn' : 'createAccount')}`}
+          eyebrow={isHost ? `${t('host')} · ${t(isLogin ? 'logIn' : 'createAccount')}` : t(isLogin ? 'logIn' : 'createAccount')}
           title={t('codeTitle')}
         />
-        <p
-          className="small"
-          style={{
-            marginTop: 10,
-            fontSize: 15,
-          }}
-        >
+        <p style={{ margin: '12px 0 0', fontSize: 14, lineHeight: '21px', color: 'var(--muted)' }}>
           {isHost || (user.email && !user.phone) ? t('sentEmail') : t('sentText')}{' '}
           <strong
             style={{
@@ -523,13 +475,7 @@ export function CodeStep() {
             {sentTo}
           </strong>
         </p>
-        <label
-          className="eyebrow label"
-          style={{
-            marginTop: 28,
-          }}
-          htmlFor="otp"
-        >
+        <label className="eyebrow" style={{ marginTop: 28, marginBottom: 8, display: 'block', color: 'var(--ink)' }} htmlFor="otp">
           {t('codeLabel')}
         </label>
         <div
@@ -560,8 +506,8 @@ export function CodeStep() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(6, 1fr)',
-              gap: 8,
+              gridTemplateColumns: 'repeat(6, 55px)',
+              gap: 6,
             }}
             aria-hidden
           >
@@ -576,11 +522,12 @@ export function CodeStep() {
                   <div
                     key={l}
                     style={{
-                      height: 72,
-                      borderRadius: 18,
+                      height: 75,
+                      borderRadius: 20,
                       display: 'grid',
                       placeItems: 'center',
-                      fontSize: 30,
+                      fontSize: 34,
+                      letterSpacing: '-0.02em',
                       fontWeight: 600,
                       background: m ? 'var(--lime)' : n ? 'var(--white)' : 'var(--grey)',
                       boxShadow: n ? 'inset 0 0 0 2px var(--ink)' : 'none',
@@ -618,18 +565,14 @@ export function CodeStep() {
             {isHost || (user.email && !user.phone) ? t('filledEmail') : t('filledMessages')}
           </p>
         )}
-        <p
-          className="small"
-          style={{
-            marginTop: 22,
-          }}
-        >
+        <p style={{ marginTop: 28, fontSize: 14, lineHeight: '21px', color: 'var(--muted)', marginBottom: 0 }}>
           {t('didntGet')}{' '}
           <button
             className="link"
             style={{
               marginLeft: 8,
               color: 'var(--ink)',
+              fontSize: 14,
             }}
             onClick={() => {
               autoFilled.current = true
@@ -649,7 +592,9 @@ export function CodeStep() {
           className="link"
           style={{
             display: 'block',
-            marginTop: 16,
+            marginTop: 11,
+            fontSize: 14,
+            color: 'var(--ink)',
           }}
           onClick={() => nav(-1)}
         >
@@ -686,7 +631,7 @@ export function LanguageStep() {
           aria-label={t('appLanguage')}
           className="stack"
           style={{
-            marginTop: 24,
+            marginTop: 28,
             gap: 8,
           }}
         >
@@ -725,17 +670,17 @@ export function LanguageStep() {
                   >
                     {language.name}
                   </strong>
-                  <span className="tiny">{langName(language.id)}</span>
+                  <span style={{ fontSize: 14, lineHeight: '21px', color: b ? 'var(--ink)' : 'var(--muted)' }}>{langName(language.id)}</span>
                 </span>
                 <span
                   style={{
-                    width: 26,
-                    height: 26,
+                    width: 30,
+                    height: 30,
                     borderRadius: '50%',
                     display: 'grid',
                     placeItems: 'center',
                     background: b ? 'var(--ink)' : 'transparent',
-                    boxShadow: b ? 'none' : 'inset 0 0 0 1.5px #BDBBB6',
+                    boxShadow: b ? 'none' : 'inset 0 0 0 1.5px #C9C7C0',
                   }}
                 >
                   {b && <Check size={15} color="white" />}
@@ -771,8 +716,7 @@ export function PhotoStep() {
   const nav = useNavigate()
   const { user, setUser, showToast } = useApp()
   const { t } = useI18n()
-  const fileInput = useRef(null)
-  const cameraInput = useRef(null)
+  const photoInput = useRef(null)
   const pickPhoto = async (d) => {
     if (d)
       try {
@@ -784,29 +728,37 @@ export function PhotoStep() {
         showToast(t('photoFailed'))
       }
   }
+  // a photo is required: neighbours and hosts need to recognise each other
+  const ready = !!user.photo && !!user.firstName.trim()
   return (
     <Screen>
-      <div className="scroll pad safe-top">
+      <form
+        id="name-form"
+        className="scroll pad safe-top"
+        onSubmit={(a) => {
+          a.preventDefault()
+          ready && nav('/signup/area')
+        }}
+      >
         <StepHeader
           eyebrow={t('stepOf', {
             n: 2,
             total: 5,
           })}
           step={2}
-          title={t('photoTitle')}
-          sub={t('photoSub')}
+          title={t('nameTitle')}
+          sub={t('namePhotoSub')}
         />
         <div
           style={{
             display: 'grid',
             placeItems: 'center',
-            margin: '40px 0 32px',
+            margin: '21px 0 32px',
           }}
         >
           <button
-            onClick={() => {
-              return cameraInput.current?.click()
-            }}
+            type="button"
+            onClick={() => photoInput.current?.click()}
             aria-label={t('choosePhoto')}
             style={{
               position: 'relative',
@@ -817,226 +769,179 @@ export function PhotoStep() {
                 src={user.photo}
                 alt={t('yourPhoto')}
                 style={{
-                  width: 176,
-                  height: 176,
+                  width: 144,
+                  height: 144,
                   borderRadius: '50%',
                   objectFit: 'cover',
+                  display: 'block',
                 }}
               />
             ) : (
               <span
                 style={{
-                  width: 176,
-                  height: 176,
+                  width: 144,
+                  height: 144,
                   borderRadius: '50%',
                   background: 'var(--lime)',
                   display: 'grid',
                   placeItems: 'center',
                 }}
               >
-                <User size={56} strokeWidth={1.6} />
+                <User size={52} strokeWidth={2} />
               </span>
             )}
             <span
               className="icon-btn dark"
               style={{
                 position: 'absolute',
-                right: 4,
-                bottom: 8,
-                width: 48,
-                height: 48,
+                left: 106,
+                top: 106,
+                width: 40,
+                height: 40,
               }}
             >
               <Camera size={20} />
             </span>
           </button>
         </div>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 10,
-          }}
-        >
-          <button
-            className="btn btn-secondary btn-sm"
-            style={{
-              width: '100%',
-              height: 52,
-            }}
-            onClick={() => {
-              return fileInput.current?.click()
-            }}
-          >
-            <Camera size={18} /> {t('takePhoto')}
-          </button>
-          <button
-            className="btn btn-secondary btn-sm"
-            style={{
-              width: '100%',
-              height: 52,
-            }}
-            onClick={() => {
-              return cameraInput.current?.click()
-            }}
-          >
-            <ImageIcon size={18} /> {t('choosePhoto')}
-          </button>
-        </div>
         <input
-          ref={fileInput}
-          type="file"
-          accept="image/*"
-          capture="user"
-          hidden
-          onChange={(d) => {
-            return pickPhoto(d.target.files?.[0])
-          }}
-        />
-        <input
-          ref={cameraInput}
+          ref={photoInput}
           type="file"
           accept="image/*"
           hidden
-          onChange={(d) => {
-            return pickPhoto(d.target.files?.[0])
-          }}
+          onChange={(d) => pickPhoto(d.target.files?.[0])}
         />
-      </div>
+        <label className="eyebrow label" htmlFor="fn">
+          {t('firstName')}
+        </label>
+        <input
+          id="fn"
+          className="field"
+          style={user.firstName ? { background: 'var(--white)', borderColor: 'var(--ink)' } : undefined}
+          autoComplete="given-name"
+          value={user.firstName}
+          onChange={(a) =>
+            setUser({
+              firstName: a.target.value,
+            })
+          }
+        />
+        <p style={{ marginTop: 8, fontSize: 12, lineHeight: '18px', color: 'var(--muted)' }}>
+          {t('lastNameHidden')}
+        </p>
+      </form>
       <div className="bottom-cta">
-        <button className={`btn ${user.photo ? 'btn-primary' : 'btn-soft'}`} onClick={() => nav('/signup/name')}>
-          {user.photo ? t('next') : t('skipForNow')}
+        <button
+          className="btn btn-primary"
+          type="submit"
+          form="name-form"
+          disabled={!ready}
+        >
+          {user.photo ? t('next') : t('addPhotoFirst')}
         </button>
       </div>
     </Screen>
   )
 }
-export function NameStep() {
+export const areaCity = {
+  Middelland: 'Rotterdam West',
+  'Nieuwe Westen': 'Rotterdam West',
+  'Oude Westen': 'Rotterdam Centrum',
+  Delfshaven: 'Rotterdam West',
+  Cool: 'Rotterdam Centrum',
+  Spangen: 'Rotterdam West',
+}
+export function AreaStep() {
   const nav = useNavigate()
   const { user, setUser } = useApp()
-  const { t, ev } = useI18n()
+  const { t } = useI18n()
+  const options = [...Object.keys(areaCity), 'else']
   return (
     <Screen>
-      <form
-        id="name-form"
-        className="scroll pad safe-top"
-        onSubmit={(a) => {
-          a.preventDefault()
-          user.firstName.trim() && nav('/signup/about')
-        }}
-      >
+      <div className="scroll pad safe-top">
         <StepHeader
           eyebrow={t('stepOf', {
             n: 3,
             total: 5,
           })}
           step={3}
-          title={t('nameTitle')}
+          title={t('areaTitle')}
+          sub={t('areaSub')}
         />
         <div
+          role="radiogroup"
+          aria-label={t('neighbourhood')}
+          className="stack"
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 10,
             marginTop: 28,
+            gap: 8,
           }}
         >
-          <div>
-            <label className="eyebrow label" htmlFor="fn">
-              {t('firstName')}
-            </label>
-            <input
-              id="fn"
-              className="field"
-              autoComplete="given-name"
-              value={user.firstName}
-              onChange={(a) =>
-                setUser({
-                  firstName: a.target.value,
-                })
-              }
-            />
-          </div>
-          <div>
-            <label className="eyebrow label" htmlFor="ln">
-              {t('lastName')}
-            </label>
-            <input
-              id="ln"
-              className="field"
-              autoComplete="family-name"
-              value={user.lastName}
-              onChange={(a) =>
-                setUser({
-                  lastName: a.target.value,
-                })
-              }
-            />
-          </div>
+          {options.map((area) => {
+            const b = area === 'else' ? !areaCity[user.area] : user.area === area
+            return (
+              <button
+                key={area}
+                role="radio"
+                aria-checked={b}
+                onClick={() =>
+                  setUser({
+                    area: area === 'else' ? 'Rotterdam' : area,
+                  })
+                }
+                className="card"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '12px 18px',
+                  textAlign: 'start',
+                  background: b ? 'var(--lime)' : 'var(--grey)',
+                  transition: 'background .15s',
+                }}
+              >
+                <PinIcon size={18} aria-hidden style={{ flex: "none", marginInlineEnd: 12 }} />
+                <span
+                  style={{
+                    flex: 1,
+                  }}
+                >
+                  <strong
+                    style={{
+                      display: 'block',
+                      fontSize: 17,
+                      lineHeight: '22px',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {area === 'else' ? t('areaElse') : area}
+                  </strong>
+                  <span style={{ fontSize: 14, lineHeight: '21px', color: b ? 'var(--ink)' : 'var(--muted)' }}>
+                    {area === 'else' ? t('pickOnMap') : areaCity[area]}
+                  </span>
+                </span>
+                <span
+                  style={{
+                    width: 30,
+                    height: 30,
+                    borderRadius: '50%',
+                    display: 'grid',
+                    placeItems: 'center',
+                    background: b ? 'var(--ink)' : 'transparent',
+                    boxShadow: b ? 'none' : 'inset 0 0 0 1.5px #C9C7C0',
+                  }}
+                >
+                  {b && <Check size={15} color="white" />}
+                </span>
+              </button>
+            )
+          })}
         </div>
-        <p
-          className="tiny"
-          style={{
-            marginTop: 10,
-          }}
-        >
-          {t('onlyFirstName')}
+        <p style={{ marginTop: 16, fontSize: 12, lineHeight: '18px', color: 'var(--muted)' }}>
+          {t('areaPrivate')}
         </p>
-        <div
-          className="card"
-          style={{
-            background: 'var(--pink)',
-            padding: 16,
-            marginTop: 36,
-          }}
-        >
-          <div
-            className="eyebrow"
-            style={{
-              color: 'var(--ink)',
-              marginBottom: 12,
-            }}
-          >
-            {t('howOthersSee')}
-          </div>
-          <div className="row">
-            {user.photo ? (
-              <img
-                src={user.photo}
-                alt=""
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                }}
-              />
-            ) : (
-              <Avatar name={user.firstName || '?'} img="ruben" size={48} />
-            )}
-            <div>
-              <strong
-                style={{
-                  fontSize: 17,
-                }}
-              >
-                {user.firstName.trim() || t('yourName')}
-              </strong>
-              <div
-                style={{
-                  fontSize: 14,
-                }}
-              >
-                {t('goingToEvent', {
-                  event: ev(byId('bowling-monday')).title,
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
+      </div>
       <div className="bottom-cta">
-        <button className="btn btn-primary" type="submit" form="name-form" disabled={!user.firstName.trim()}>
+        <button className="btn btn-primary" onClick={() => nav('/signup/about')}>
           {t('next')}
         </button>
       </div>
@@ -1080,7 +985,7 @@ export function AboutStep() {
           className="field"
           inputMode="numeric"
           style={{
-            width: 100,
+            width: 96,
           }}
           value={user.age}
           onChange={(b) =>
@@ -1123,69 +1028,6 @@ export function AboutStep() {
             </button>
           ))}
         </div>
-        <label
-          className="eyebrow label"
-          style={{
-            marginTop: 24,
-          }}
-          htmlFor="area"
-        >
-          {t('neighbourhood')}
-        </label>
-        <div
-          style={{
-            position: 'relative',
-          }}
-        >
-          <PinIcon
-            size={20}
-            style={{
-              position: 'absolute',
-              left: 16,
-              top: 18,
-              pointerEvents: 'none',
-            }}
-          />
-          <select
-            id="area"
-            className="field"
-            value={user.area}
-            onChange={(b) =>
-              setUser({
-                area: b.target.value,
-              })
-            }
-            style={{
-              appearance: 'none',
-              paddingLeft: 46,
-              fontWeight: 600,
-              background: 'var(--white)',
-              borderColor: 'var(--ink)',
-            }}
-          >
-            {areas.map((area) => (
-              <option key={area}>{area}</option>
-            ))}
-          </select>
-          <ChevronDown
-            size={18}
-            style={{
-              position: 'absolute',
-              right: 16,
-              top: 19,
-              pointerEvents: 'none',
-            }}
-          />
-        </div>
-        <p
-          className="tiny"
-          style={{
-            marginTop: 8,
-            paddingLeft: 4,
-          }}
-        >
-          Rotterdam
-        </p>
       </div>
       <div className="bottom-cta">
         <button className="btn btn-primary" onClick={() => nav('/signup/interests')}>
@@ -1258,94 +1100,70 @@ export function InterestsStep() {
           title={t('interestsTitle')}
           sub={t('interestsSub')}
         />
-        <form
-          className="row"
-          style={{
-            marginTop: 20,
-          }}
-          onSubmit={(j) => {
-            j.preventDefault()
-            addCustom()
-          }}
-        >
-          <label htmlFor="own" className="sr-only">
-            {t('addOwn')}
-          </label>
-          <input
-            id="own"
-            className="field"
-            style={{
-              fontSize: 16,
-            }}
-            placeholder={t('addOwnPlaceholder')}
-            maxLength={24}
-            value={custom}
-            onChange={(j) => setCustom(j.target.value)}
-            enterKeyHint="done"
-            autoComplete="off"
-          />
-          <button
-            type="submit"
-            className="btn btn-primary btn-sm"
-            style={{
-              height: 56,
-              flex: 'none',
-            }}
-            disabled={!custom.trim()}
-          >
-            {t('add')}
-          </button>
-        </form>
-        {/* Flowers in 3 rows that scroll sideways; every other column sits a bit lower */}
-        <div
-          role="group"
-          aria-label={t('interestsTitle')}
-          className="scroll-x"
-          style={{
-            display: 'grid',
-            gridAutoFlow: 'column',
-            gridTemplateRows: 'repeat(3, auto)',
-            gridAutoColumns: 104,
-            gap: '4px 8px',
-            overflowX: 'auto',
-            margin: '20px calc(-1 * var(--pad)) 0',
-            padding: '0 var(--pad) 34px',
-            scrollSnapType: 'x proximity',
-            scrollPaddingInline: 'var(--pad)',
-          }}
-        >
-          {chips.map((chip, k) => {
-            const l = user.interests.includes(chip.id)
-            return (
-              <button
-                key={chip.id}
-                aria-pressed={l}
-                onClick={() => toggle(chip.id)}
-                style={{
-                  position: 'relative',
-                  top: Math.floor(k / 3) % 2 === 1 ? 30 : 0,
-                  scrollSnapAlign: 'start',
-                }}
-                className={l ? 'pop' : ''}
-              >
-                <Flower accent={chip.accent} color={l ? undefined : 'var(--grey)'} size={104}>
-                  <span
-                    style={{
-                      fontWeight: 600,
-                      fontSize: 14,
-                      lineHeight: 1.15,
-                      maxWidth: 80,
-                      textAlign: 'center',
-                      overflowWrap: 'anywhere',
-                    }}
-                  >
-                    {interest(chip.id)}
-                  </span>
-                </Flower>
-              </button>
-            )
-          })}
-        </div>
+        {/* Clovers in a honeycomb that scrolls sideways: 3 in a column, then 2 a bit lower */}
+        {(() => {
+          const slots = []
+          let col = 0
+          let row = 0
+          for (let k = 0; k < chips.length; k++) {
+            const odd = col % 2 === 1
+            slots.push({ x: col * 80.5, y: (odd ? 66 : 7) + row * 118 })
+            row++
+            if (row === (odd ? 2 : 3)) {
+              row = 0
+              col++
+            }
+          }
+          const width = (slots.length ? slots[slots.length - 1].x : 0) + 105 + 20
+          return (
+            <div
+              role="group"
+              aria-label={t('interestsTitle')}
+              className="scroll-x"
+              style={{ overflowX: 'auto', overflowY: 'hidden', margin: '49px calc(-1 * var(--pad)) 0', height: 360 }}
+            >
+              <div style={{ position: 'relative', width, height: 360 }}>
+                {chips.map((chip, k) => {
+                  const on = user.interests.includes(chip.id)
+                  const label = interest(chip.id)
+                  return (
+                    <button
+                      key={chip.id}
+                      aria-pressed={on}
+                      onClick={() => toggle(chip.id)}
+                      style={{
+                        position: 'absolute',
+                        left: slots[k].x,
+                        top: slots[k].y,
+                        width: 105,
+                        height: 105,
+                        filter: on ? 'drop-shadow(0 4px 2px rgba(0,0,0,.25))' : undefined,
+                        zIndex: on ? 2 : 1,
+                      }}
+                      className={on ? 'pop' : ''}
+                    >
+                      <Flower accent={chip.accent} color={on ? undefined : 'var(--grey)'} size={105}>
+                        <span
+                          style={{
+                            fontWeight: 600,
+                            fontSize: label.length > 9 ? 15 : 17,
+                            lineHeight: label.length > 9 ? '20px' : '22px',
+                            letterSpacing: '-0.01em',
+                            maxWidth: 92,
+                            textAlign: 'center',
+                            color: on && chip.accent === 'lav' ? 'var(--white)' : 'var(--ink)',
+                          }}
+                        >
+                          {label}
+                        </span>
+                      </Flower>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })()}
         {customInterests.length > 0 && (
           <p
             className="tiny"
@@ -1372,14 +1190,59 @@ export function InterestsStep() {
             })}
           </button>
         ) : (
-          <button className={`btn ${count ? 'btn-primary' : 'btn-soft'}`} onClick={() => nav('/signup/done')}>
-            {count
-              ? t('nextPicked', {
-                  n: count,
-                })
-              : t('skipForNow')}
+          <>
+          <button className="link" onClick={() => nav('/signup/preview')} style={{ justifySelf: 'center', marginBottom: 4 }}>
+            {t('skipForNow')}
           </button>
+          <button
+            className="btn btn-primary"
+            disabled={count < 3}
+            onClick={() => nav('/signup/preview')}
+          >
+            {count > 0 ? t('nextPicked', { n: count }) : t('next')}
+          </button>
+          </>
         )}
+      </div>
+    </Screen>
+  )
+}
+export function PreviewStep() {
+  const nav = useNavigate()
+  const { user } = useApp()
+  const { t } = useI18n()
+  return (
+    <Screen>
+      <div className="scroll pad safe-top">
+        <StepHeader eyebrow={t('almostDone')} step={5} title={t('previewCardTitle')} sub={t('previewCardSub')} />
+        <ProfileCard
+          subline={t('newNeighbour', {
+            area: user.area || 'Middelland',
+          })}
+        />
+        <div
+          className="card row"
+          style={{
+            marginTop: 12,
+            padding: 16,
+            gap: 12,
+            alignItems: 'flex-start',
+          }}
+        >
+          <Lock size={20} aria-hidden style={{ flex: 'none' }} />
+          <span style={{ display: 'grid', gap: 2 }}>
+            <strong style={{ display: 'block', fontSize: 15, lineHeight: '20px', fontWeight: 600, letterSpacing: '-0.01em' }}>{t('neverShownTitle')}</strong>
+            <span style={{ fontSize: 12, lineHeight: '18px', color: 'var(--muted)' }}>{t('neverShownSub')}</span>
+          </span>
+        </div>
+      </div>
+      <div className="bottom-cta">
+        <button className="link" onClick={() => nav('/signup/interests')} style={{ justifySelf: 'center', marginBottom: 4 }}>
+          {t('editMyCard')}
+        </button>
+        <button className="btn btn-primary" onClick={() => nav('/signup/done')}>
+          {t('looksGood')}
+        </button>
       </div>
     </Screen>
   )
@@ -1389,10 +1252,11 @@ export function DoneStep() {
   const { user, finishOnboarding, goingCount } = useApp()
   const { t, ev, wd } = useI18n()
   const suggestedIds = ['bowling-monday', 'pool-tournament', 'football-beer'].map((c) => ev(byId(c)))
-  const finish = (c) => {
+  const finish = (c, state) => {
     finishOnboarding()
     nav(c, {
       replace: true,
+      state,
     })
   }
   return (
@@ -1409,30 +1273,24 @@ export function DoneStep() {
             position: 'relative',
           }}
         >
-          <Flower
-            accent="lime"
-            size={180}
-            style={{
-              position: 'absolute',
-              right: -40,
-              top: -30,
-            }}
-          />
+          <Flower accent="lime" size={215} style={{ position: 'absolute', left: 226, top: 30, transform: 'rotate(12deg)' }} />
           <div
             className="eyebrow"
             style={{
-              color: 'var(--ink)',
-              marginTop: 36,
+              color: '#3B223D',
+              marginTop: 56,
               position: 'relative',
             }}
           >
             {t('allSet')}
           </div>
           <h1
-            className="h-display"
             style={{
-              fontSize: 40,
-              marginTop: 8,
+              fontSize: 44,
+              lineHeight: '48px',
+              fontWeight: 500,
+              letterSpacing: '-0.03em',
+              margin: '8px 0 0',
               position: 'relative',
             }}
           >
@@ -1440,29 +1298,24 @@ export function DoneStep() {
               name: user.firstName || t('friend'),
             })}
           </h1>
-          <p
-            style={{
-              fontSize: 16,
-              marginTop: 12,
-            }}
-          >
+          <p style={{ fontSize: 16, lineHeight: '24px', margin: '16px 0 0', color: 'rgba(32,30,31,.8)', position: 'relative' }}>
             {t('onThisWeek')}
           </p>
           <div
             className="stack"
             style={{
               marginTop: 28,
-              gap: 10,
+              gap: 12,
             }}
           >
             {suggestedIds.map((suggestedId) => (
-              <button
+              <div
                 key={suggestedId.id}
-                onClick={() => finish(`/event/${suggestedId.id}`)}
                 className="card"
                 style={{
                   background: `var(--${suggestedId.id === 'pool-tournament' ? 'turq' : suggestedId.id === 'football-beer' ? 'lav' : 'lime'})`,
                   padding: '14px 16px',
+                  color: suggestedId.id === 'football-beer' ? 'var(--white)' : 'var(--ink)',
                   textAlign: 'start',
                   display: 'flex',
                   alignItems: 'center',
@@ -1473,12 +1326,7 @@ export function DoneStep() {
                     flex: 1,
                   }}
                 >
-                  <span
-                    className="eyebrow"
-                    style={{
-                      color: 'var(--ink)',
-                    }}
-                  >
+                  <span className="eyebrow" style={{ color: suggestedId.id === 'football-beer' ? '#D5D9F5' : '#5C5D20' }}>
                     {wd(suggestedId.date)}
                     {' · '}
                     {suggestedId.start}
@@ -1486,19 +1334,27 @@ export function DoneStep() {
                   <strong
                     style={{
                       display: 'block',
-                      fontSize: 22,
-                      marginTop: 4,
+                      fontSize: 20,
+                      lineHeight: '24px',
+                      fontWeight: 600,
+                      letterSpacing: '-0.02em',
+                      marginTop: 2,
                     }}
                   >
                     {suggestedId.title}
                   </strong>
                 </span>
+                {suggestedId.id !== 'football-beer' && (
                 <span
-                  className="tag"
                   style={{
-                    background: 'var(--ink)',
-                    color: 'var(--white)',
-                    padding: '6px 10px',
+                    background: '#000',
+                    color: suggestedId.id === 'bowling-monday' ? 'var(--lime)' : 'var(--turq)',
+                    height: 27,
+                    padding: '0 12px',
+                    borderRadius: 30,
+                    fontSize: 12,
+                    lineHeight: '27px',
+                    fontWeight: 600,
                   }}
                 >
                   {suggestedId.id === 'bowling-monday'
@@ -1507,15 +1363,16 @@ export function DoneStep() {
                         n: goingCount(suggestedId.id),
                       })}
                 </span>
-              </button>
+                )}
+              </div>
             ))}
           </div>
         </div>
         <div className="bottom-cta">
-          <button className="btn btn-primary" onClick={() => finish('/search')}>
+          <button className="btn btn-primary" onClick={() => finish('/home')}>
             {t('exploreEvents')}
           </button>
-          <button className="btn btn-secondary" onClick={() => finish('/home')}>
+          <button className="btn btn-secondary" style={{ border: '1.5px solid #000' }} onClick={() => finish('/home', { invitePing: true })}>
             {t('goHome')}
           </button>
         </div>

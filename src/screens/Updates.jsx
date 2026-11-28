@@ -154,7 +154,7 @@ export function Updates() {
                           }}
                         >
                           {t('fromHost', {
-                            when: visibleInvite.when === '2h ago' ? t('ago2h') : t('yesterday'),
+                            when: visibleInvite.when === 'Just now' ? t('justNow') : visibleInvite.when === '2h ago' ? t('ago2h') : t('yesterday'),
                           })}
                         </div>
                       </div>
@@ -171,7 +171,7 @@ export function Updates() {
                         textAlign: 'start',
                       }}
                     >
-                      <Flower accent={visibleInvite.accent} size={40} color="var(--white)">
+                      <Flower accent={visibleInvite.accent} size={40}>
                         <Icon name={g.icon} size={18} />
                       </Flower>
                       <span>
@@ -272,7 +272,7 @@ export function Updates() {
                   fontSize: 13,
                   color: 'var(--ink)',
                 }}
-                onClick={() => nav('/profile?section=settings')}
+                onClick={() => nav('/settings')}
               >
                 {t('changeInSettings')}
               </button>

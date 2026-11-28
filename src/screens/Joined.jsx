@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { Bell, CalendarPlus, Check, MessageSquare } from 'lucide-react'
+import { Bell, Check, MessageSquare } from 'lucide-react'
 import { Flower } from '../components/Flower'
 import { Screen, WhenWhere } from '../components/UI'
 import { byId } from '../data/events'
@@ -56,14 +56,15 @@ export function Joined() {
           textAlign: 'center',
         }}
       >
-        <Flower color="var(--ink)" size={116} className="pop joined-art">
-          <Check size={52} color="var(--lime)" strokeWidth={2.4} />
+        <Flower color="var(--white)" size={132} className="pop joined-art">
+          <Check size={56} color="var(--ink)" strokeWidth={2.4} />
         </Flower>
         <h1
           className="h-display"
           style={{
-            fontSize: 34,
-            marginTop: 14,
+            fontSize: 44,
+            lineHeight: 1.1,
+            marginTop: 18,
           }}
         >
           {t('youreGoing', {
@@ -105,16 +106,9 @@ export function Joined() {
               alignItems: 'flex-start',
             }}
           >
-            <span
-              className="icon-btn"
-              style={{
-                background: 'var(--pink)',
-                width: 40,
-                height: 40,
-              }}
-            >
+            <Flower accent="pink" size={40}>
               <Bell size={18} />
-            </span>
+            </Flower>
             <span>
               <strong
                 style={{
@@ -144,16 +138,9 @@ export function Joined() {
             }}
             onClick={() => nav(`/event/${e.id}?c=1`)}
           >
-            <span
-              className="icon-btn"
-              style={{
-                background: 'var(--turq)',
-                width: 40,
-                height: 40,
-              }}
-            >
+            <Flower accent="turq" size={40}>
               <MessageSquare size={18} />
-            </span>
+            </Flower>
             <span>
               <strong
                 style={{
@@ -171,46 +158,6 @@ export function Joined() {
                 {t('askComments', {
                   host: e.host.name,
                 })}
-              </span>
-            </span>
-          </button>
-          <button
-            className="row"
-            style={{
-              marginTop: 14,
-              textAlign: 'start',
-              alignItems: 'flex-start',
-            }}
-            onClick={() => {
-              calendarFile(raw)
-              showToast(t('addedCalendar'))
-            }}
-          >
-            <span
-              className="icon-btn"
-              style={{
-                background: 'var(--white)',
-                width: 40,
-                height: 40,
-              }}
-            >
-              <CalendarPlus size={18} />
-            </span>
-            <span>
-              <strong
-                style={{
-                  display: 'block',
-                }}
-              >
-                {t('addCalendar')}
-              </strong>
-              <span
-                style={{
-                  fontSize: 14,
-                  color: 'var(--muted-2)',
-                }}
-              >
-                {t('addCalendarSub')}
               </span>
             </span>
           </button>

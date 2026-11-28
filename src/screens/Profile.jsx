@@ -1,700 +1,374 @@
-import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { BadgeCheck, ChevronRight, Globe, LogOut, Mail, Pencil, Repeat, RotateCcw, Sprout, Users } from 'lucide-react'
-import { BadgeSection, useStats } from '../components/Badges'
-import { EditProfile, usePronounLabel } from '../components/EditProfile'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  Award,
+  BadgeCheck,
+  Bell,
+  BookOpen,
+  CalendarDays,
+  ChevronRight,
+  CircleHelp,
+  Eye,
+  Flag,
+  Globe,
+  Lock,
+  Megaphone,
+  MessageSquare,
+  Pencil,
+  RotateCcw,
+  Settings,
+  Smartphone,
+} from 'lucide-react'
+import { BadgeIcon, StickerSheet, badges, useStats } from '../components/Badges'
+import { usePronounLabel } from '../components/EditProfile'
 import { Flower } from '../components/Flower'
 import { Avatar } from '../components/Img'
-import { NavBar, Screen, Sheet } from '../components/UI'
-import { languages } from '../data/events'
+import { OrgLogo } from '../components/OrgLogo'
+import { BackButton, NavBar, Screen, Sheet, Switch } from '../components/UI'
+import { languages, organisations } from '../data/events'
 import { profiles } from '../data/people'
 import { useI18n } from '../i18n/index'
-import { BecomeHostCard } from './BecomeHost'
 import { InterestChip } from '../components/InterestChip'
 import { useApp } from '../state/AppState'
-export function Switch({ on, onChange, label }) {
+function HostPromo() {
+  const nav = useNavigate()
+  const { t } = useI18n()
   return (
-    <button
-      role="switch"
-      aria-checked={on}
-      aria-label={label}
-      onClick={() => onChange(!on)}
-      style={{
-        width: 52,
-        height: 32,
-        borderRadius: 999,
-        background: on ? 'var(--ink)' : 'var(--grey-2)',
-        position: 'relative',
-        transition: 'background .2s',
-        flex: 'none',
-      }}
-    >
-      <span
-        style={{
-          position: 'absolute',
-          top: 3,
-          left: on ? 23 : 3,
-          width: 26,
-          height: 26,
-          borderRadius: '50%',
-          background: 'var(--white)',
-          transition: 'left .2s var(--ease)',
-          boxShadow: '0 1px 3px rgba(0,0,0,.2)',
-        }}
-      />
-    </button>
+    <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--ink)', borderRadius: 20, height: 232 }}>
+      <Flower accent="pink" size={120} style={{ position: 'absolute', left: 262, top: -36, transform: 'rotate(36deg)' }} />
+      <div style={{ position: 'absolute', left: 20, top: 22, width: 196, display: 'grid', gap: 12 }}>
+        <div className="eyebrow" style={{ color: 'var(--lime)' }}>
+          {t('becomeHostEyebrow')}
+        </div>
+        <h2 style={{ color: 'var(--white)', margin: 0, fontSize: 24, lineHeight: '28px', fontWeight: 600, letterSpacing: '-0.02em' }}>{t('somethingToShare')}</h2>
+        <p style={{ fontSize: 14, lineHeight: '21px', margin: 0, color: 'var(--grey)', width: 230 }}>{t('somethingToShareSub')}</p>
+      </div>
+      <button
+        onClick={() => nav('/post/start')}
+        style={{ position: 'absolute', left: 20, top: 164, width: 152, height: 40, borderRadius: 30, background: 'var(--lime)', color: '#000', fontSize: 14, lineHeight: '21px', fontWeight: 600 }}
+      >
+        {t('hostAnActivity')}
+      </button>
+    </section>
   )
 }
 export function Profile() {
   const nav = useNavigate()
-  const [params] = useSearchParams()
   const app = useApp()
   const { t } = useI18n()
   const { user } = app
-  const [prefs, setPrefs] = useState({
-    showJoined: true,
-    reminders: true,
-    news: true,
-    suggestions: true,
-  })
-  const [langOpen, setLangOpen] = useState(false)
-  const [editing, setEditing] = useState(false)
   const pronounLabel = usePronounLabel()
-  const [confirm, setConfirm] = useState(null)
-  const settingsRef = useRef(null)
-  const gardenRef = useRef(null)
-  useEffect(() => {
-    const f = params.get('section')
-    f === 'settings' &&
-      settingsRef.current?.scrollIntoView({
-        behavior: 'smooth',
-      })
-    f === 'garden' &&
-      gardenRef.current?.scrollIntoView({
-        block: 'center',
-      })
-  }, [params])
-  const togglePref = (f, S) => (N) => {
-    setPrefs((E) => ({
-      ...E,
-      [f]: N,
-    }))
-    app.showToast(
-      t(N ? 'settingOn' : 'settingOff', {
-        label: S,
-      }),
-    )
-  }
   const stats = useStats()
-  const interests = user.interests.length ? user.interests : ['Football', 'Cycling', 'Darts']
+  const interests = [...(user.interests.length ? user.interests : ['Cooking', 'Cycling', 'Football', 'Games', 'Running'])].sort()
+  const earned = badges.filter((b) => stats[b.stat] >= b.goal)
+  const [openSticker, setOpenSticker] = useState(null)
+  const section = (title, right) => (
+    <div className="row" style={{ gap: 8, justifyContent: 'space-between' }}>
+      <h2 style={{ flex: 1, margin: 0, fontSize: 24, lineHeight: '28px', fontWeight: 600, letterSpacing: '-0.02em', color: '#000' }}>{title}</h2>
+      {right}
+    </div>
+  )
   return (
     <Screen>
       <div className="scroll with-nav">
-        <div
-          style={{
-            background: 'var(--lime)',
-            borderRadius: '0 0 40px 40px',
-            padding: '56px var(--pad) 24px',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          <Flower
-            color="#E7F269"
-            size={200}
-            style={{
-              position: 'absolute',
-              right: -50,
-              top: -40,
-            }}
-          />
-          <div
-            className="row"
-            style={{
-              justifyContent: 'space-between',
-              position: 'relative',
-            }}
-          >
-            <div
-              className="eyebrow"
-              style={{
-                color: 'var(--ink)',
-              }}
-            >
-              {t('profile')}
-            </div>
-            <button
-              className="btn btn-sm"
-              onClick={() => setEditing(true)}
-              style={{
-                background: 'var(--white)',
-                height: 40,
-              }}
-            >
-              <Pencil size={16} /> {t('editProfile')}
-            </button>
+        <div style={{ background: 'var(--lime)', borderRadius: '0 0 40px 40px', height: 333, position: 'relative', overflow: 'hidden' }}>
+          <Flower color="#E7F269" size={182} style={{ position: 'absolute', left: 254, top: 38, transform: 'rotate(14deg)' }} />
+          <div className="eyebrow" style={{ color: 'var(--ink)', position: 'absolute', left: 20, top: 71 }}>
+            {t('profile')}
           </div>
-          <div
-            className="row"
-            style={{
-              marginTop: 16,
-              position: 'relative',
-              gap: 16,
-            }}
+          <button
+            aria-label={t('editProfile')}
+            onClick={() => nav('/profile/edit')}
+            style={{ position: 'absolute', right: 73, top: 62, width: 44, height: 44, borderRadius: 22, background: 'var(--white)', display: 'grid', placeItems: 'center' }}
           >
+            <Pencil size={20} />
+          </button>
+          <button
+            aria-label={t('settings')}
+            onClick={() => nav('/settings')}
+            style={{ position: 'absolute', right: 21, top: 62, width: 44, height: 44, borderRadius: 22, background: 'var(--white)', display: 'grid', placeItems: 'center' }}
+          >
+            <Settings size={20} />
+          </button>
+          <span style={{ position: 'absolute', left: 20, top: 117 }}>
             {user.photo ? (
-              <img
-                src={user.photo}
-                alt=""
-                style={{
-                  width: 90,
-                  height: 90,
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                }}
-              />
+              <img src={user.photo} alt="" style={{ width: 90, height: 90, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
             ) : (
               <Avatar name={user.firstName || 'R'} img="ruben" size={90} />
             )}
-            <div>
-              <h1 className="h1">
-                {user.firstName || t('you2')}
-                {user.pronouns && (
-                  <span
-                    style={{
-                      fontSize: 15,
-                      fontWeight: 500,
-                      color: 'var(--muted-2)',
-                      marginInlineStart: 8,
-                    }}
-                  >
-                    ({pronounLabel(user.pronouns)})
-                  </span>
-                )}
-              </h1>
-              {user.role === 'host' ? (
-                <span
-                  className="row"
-                  style={{
-                    gap: 6,
-                    marginTop: 4,
-                  }}
-                >
-                  <span className="tag host">
-                    <BadgeCheck size={12} /> {t('hostBadge')}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: 14,
-                    }}
-                  >
-                    {user.verifiedBy
-                      ? t('verifiedBy', {
-                          org: user.org,
-                        })
-                      : `${user.org}${user.jobTitle ? ` · ${user.jobTitle}` : ''}`}
-                  </span>
-                </span>
-              ) : (
-                <span
-                  style={{
-                    fontSize: 14,
-                  }}
-                >
-                  {t('guestLine', {
-                    area: user.area,
-                  })}
-                </span>
+          </span>
+          <div style={{ position: 'absolute', left: 122, top: 126, right: 16, display: 'grid', gap: 4 }}>
+            <p style={{ margin: 0, fontSize: 44, lineHeight: '48px', fontWeight: 500, letterSpacing: '-0.03em', color: '#000', whiteSpace: 'nowrap' }}>
+              {user.firstName || t('you2')}
+              {user.pronouns && (
+                <span style={{ fontSize: 16, fontWeight: 400, letterSpacing: 0, color: 'rgba(32,30,31,.6)' }}> {pronounLabel(user.pronouns)}</span>
               )}
-            </div>
-          </div>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: 10,
-              marginTop: 20,
-              position: 'relative',
-            }}
-          >
-            <button
-              className="card"
-              onClick={() => nav('/plans?tab=been')}
-              style={{
-                background: 'var(--ink)',
-                color: 'var(--white)',
-                padding: 14,
-                textAlign: 'start',
-              }}
-            >
-              <strong
-                style={{
-                  fontSize: 26,
-                  display: 'block',
-                }}
-              >
-                {stats.attended}
-              </strong>
-              <span
-                style={{
-                  fontSize: 13,
-                }}
-              >
-                {t('activitiesJoined')}
+            </p>
+            {user.role === 'host' ? (
+              <span className="row" style={{ gap: 6 }}>
+                <span className="tag host">
+                  <BadgeCheck size={12} /> {t('hostBadge')}
+                </span>
+                <span style={{ fontSize: 14 }}>{user.verifiedBy ? t('verifiedBy', { org: user.org }) : user.org}</span>
               </span>
+            ) : (
+              <span style={{ fontSize: 14, lineHeight: '21px' }}>{t('memberLineProfile', { area: user.area || 'Middelland' })}</span>
+            )}
+          </div>
+          <div style={{ position: 'absolute', left: 20, right: 20, top: 228, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+            <button
+              onClick={() => nav('/plans?tab=been')}
+              style={{ height: 78, borderRadius: 20, background: 'var(--ink)', color: 'var(--white)', padding: '13px 16px', textAlign: 'start', display: 'grid', alignContent: 'start', gap: 4 }}
+            >
+              <strong style={{ fontSize: 24, lineHeight: '28px', fontWeight: 600, letterSpacing: '-0.02em', color: 'var(--lime)' }}>{stats.attended}</strong>
+              <span style={{ fontSize: 14, lineHeight: '21px' }}>{t('activitiesJoined')}</span>
             </button>
             <button
-              className="card"
               onClick={() => nav('/profile/preview')}
-              style={{
-                background: 'var(--white)',
-                padding: 14,
-                textAlign: 'start',
-              }}
+              style={{ height: 78, borderRadius: 20, background: 'var(--white)', padding: '15px 16px', textAlign: 'start', display: 'grid', alignContent: 'start', gap: 6 }}
             >
-              <strong
-                style={{
-                  fontSize: 15,
-                  display: 'block',
-                }}
-              >
-                {t('howOthersSee')}
-              </strong>
-              <span className="tiny">{t('howOthersSub')}</span>
+              <Eye size={22} aria-hidden />
+              <span style={{ fontSize: 14, lineHeight: '21px', color: '#000' }}>{t('howOthersSee')}</span>
             </button>
           </div>
         </div>
-        <div className="pad">
-          <BecomeHostCard placement="top" />
+        <div style={{ padding: '24px 20px 0', display: 'grid', gap: 24 }}>
           <button
-            ref={gardenRef}
-            className="card row"
-            onClick={() => nav('/network')}
-            style={{
-              width: '100%',
-              padding: 14,
-              marginTop: 24,
-              textAlign: 'start',
-              background: 'var(--green)',
-              color: 'var(--white)',
-            }}
-          >
-            <Flower color="var(--lime)" size={44}>
-              <Sprout size={20} color="var(--green)" />
-            </Flower>
-            <span
-              style={{
-                flex: 1,
-              }}
-            >
-              <strong
-                style={{
-                  display: 'block',
-                  fontSize: 16,
-                }}
-              >
-                {t('gardenCard')}
-              </strong>
-              <span
-                style={{
-                  fontSize: 13,
-                  opacity: 0.85,
-                }}
-              >
-                {t('gardenCardSub', {
-                  f: Object.values(app.friends).filter((f) => f === 'friends').length,
-                  s: Object.values(app.friends).filter((f) => f === 'sent').length,
-                })}
-              </span>
-            </span>
-            <ChevronRight size={18} className="flip-rtl" />
-          </button>
-          <button
-            className="card row"
+            className="row"
             onClick={() => nav('/connections')}
-            style={{
-              width: '100%',
-              padding: 14,
-              marginTop: 10,
-              textAlign: 'start',
-            }}
+            style={{ width: '100%', minHeight: 52, padding: '10px 12px 10px 16px', borderRadius: 20, background: 'var(--grey)', textAlign: 'start', gap: 12 }}
           >
-            <span
-              style={{
-                display: 'flex',
-              }}
-            >
-              {Object.entries(app.friends)
-                .filter(([, f]) => f === 'friends')
-                .slice(0, 3)
-                .map(
-                  ([f], S) =>
-                    profiles[f] && (
-                      <span
-                        key={f}
-                        style={{
-                          marginInlineStart: S ? -10 : 0,
-                        }}
-                      >
-                        <Avatar name={profiles[f].name} img={profiles[f].avatar} size={34} ring />
-                      </span>
-                    ),
-                )}
-              {!Object.values(app.friends).includes('friends') && (
-                <span
-                  className="icon-btn white"
-                  style={{
-                    width: 34,
-                    height: 34,
-                  }}
-                >
-                  <Users size={17} />
-                </span>
-              )}
-            </span>
-            <span
-              style={{
-                flex: 1,
-              }}
-            >
-              <strong
-                style={{
-                  display: 'block',
-                  fontSize: 16,
-                }}
-              >
-                {t('friendsFollowing')}
-              </strong>
-              <span className="tiny">
-                {t('friendsCount', {
-                  n: Object.values(app.friends).filter((f) => f === 'friends').length,
-                })}
-                {' · '}
-                {t('followingCount', {
-                  n: app.following.length,
-                })}
-              </span>
+            <strong style={{ flex: 1, fontSize: 16, lineHeight: '24px', fontWeight: 600, letterSpacing: '-0.01em' }}>{t('followingTab')}</strong>
+            <span style={{ fontSize: 14, lineHeight: '21px', color: 'var(--muted)' }}>{t('nHosts', { n: app.following.length })}</span>
+            <span style={{ display: 'flex' }}>
+              {app.following.slice(0, 3).map((f, i) => {
+                const [kind, id] = f.split(':')
+                const p = kind === 'person' ? profiles[id] : organisations.find((o) => o.id === id)
+                return (
+                  p && (
+                    <span key={f} style={{ marginInlineStart: i ? -10 : 0, borderRadius: '50%', boxShadow: '0 0 0 2px var(--grey)', display: 'flex', background: 'var(--white)' }}>
+                      {kind === 'person' ? <Avatar name={p.name} img={p.avatar} size={24} /> : <OrgLogo org={p} size={24} />}
+                    </span>
+                  )
+                )
+              })}
             </span>
             <ChevronRight size={18} className="flip-rtl" />
           </button>
-          <div className="section-head">
-            <h2 className="h2">{t('aboutMe')}</h2>
-            <button className="link" onClick={() => setEditing(true)}>
-              {t('edit')}
-            </button>
+          <div style={{ display: 'grid', gap: 8 }}>
+            {section(t('aboutMe'))}
+            {user.bio ? (
+              <p style={{ margin: 0, background: 'var(--grey)', borderRadius: 20, padding: '15px', minHeight: 72, fontSize: 14, lineHeight: '21px', color: '#000' }}>{user.bio}</p>
+            ) : (
+              <button
+                onClick={() => nav('/profile/edit')}
+                style={{ background: 'var(--grey)', borderRadius: 20, padding: 15, minHeight: 72, textAlign: 'start', fontSize: 14, color: 'var(--muted)' }}
+              >
+                + {t('addBio')}
+              </button>
+            )}
           </div>
-          {user.bio ? (
-            <p
-              className="card"
-              style={{
-                padding: '12px 14px',
-                fontSize: 15,
-                margin: 0,
-              }}
-            >
-              {user.bio}
-            </p>
-          ) : (
-            <button
-              className="card"
-              onClick={() => setEditing(true)}
-              style={{
-                width: '100%',
-                padding: '12px 14px',
-                textAlign: 'start',
-                fontSize: 15,
-                color: 'var(--muted)',
-              }}
-            >
-              + {t('addBio')}
-            </button>
-          )}
-          <div className="section-head">
-            <h2 className="h2">{t('interests')}</h2>
-            <button className="link" onClick={() => nav('/signup/interests?edit=1')}>
-              {t('edit')}
-            </button>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 8,
-            }}
-          >
-            {interests.map((interest, i) => (
-              <InterestChip key={interest} id={interest} index={i} />
-            ))}
-          </div>
-          <p
-            style={{
-              fontSize: 15,
-              color: 'var(--muted)',
-              margin: '12px 0 0',
-            }}
-          >
-            {t('interestsHint')}
-          </p>
-          <BadgeSection />
-          <section ref={settingsRef}>
-            <div className="section-head">
-              <h2 className="h2">{t('settings')}</h2>
+          <div style={{ display: 'grid', gap: 13 }}>
+            {section(
+              t('interests'),
+              <button className="link" onClick={() => nav('/signup/interests?edit=1')} style={{ color: '#000' }}>
+                {t('edit')}
+              </button>,
+            )}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, max-content)', gap: '10px 9px' }}>
+              {interests.map((interest, i) => (
+                <InterestChip key={interest} id={interest} index={i} />
+              ))}
             </div>
-            <button
-              className="row"
-              style={{
-                width: '100%',
-                padding: '14px 0',
-                borderBottom: '1px solid var(--grey-2)',
-              }}
-              onClick={() => setLangOpen(true)}
-            >
-              <Globe size={20} />
-              <span
-                style={{
-                  flex: 1,
-                  textAlign: 'start',
-                  fontWeight: 600,
-                }}
-              >
-                {t('appLanguage')}
-              </span>
-              <span className="tiny">{languages.find((language) => language.id === user.language)?.name}</span>
-              <ChevronRight size={18} className="flip-rtl" />
-            </button>
-            {[
-              ['showJoined', t('showJoined'), t('showJoinedSub')],
-              ['reminders', t('reminders'), t('remindersSub')],
-              ['suggestions', t('weekly'), t('weeklySub')],
-              ['news', t('news'), t('newsSub')],
-            ].map(([f, S, N]) => (
-              <div
-                key={f}
-                className="row"
-                style={{
-                  padding: '14px 0',
-                  borderBottom: '1px solid var(--grey-2)',
-                }}
-              >
-                <span
-                  style={{
-                    flex: 1,
-                  }}
-                >
-                  <strong
+            <p style={{ fontSize: 14, lineHeight: '21px', color: 'var(--muted)', margin: '-4px 0 0' }}>{t('interestsHint')}</p>
+          </div>
+          <div style={{ display: 'grid', gap: 12 }}>
+            {section(
+              t('badgesTitle'),
+              <>
+                <span className="eyebrow">{t('nOfM', { n: earned.length, m: badges.length })}</span>
+                <button className="link" style={{ fontSize: 14, color: 'var(--ink)' }} onClick={() => nav('/stickers')}>
+                  {t('seeAll')}
+                </button>
+              </>,
+            )}
+            <div className="row" style={{ justifyContent: 'space-between', background: 'var(--grey)', borderRadius: 20, padding: '14px 12px' }}>
+              {earned.slice(0, 4).map((b) => (
+                <button key={b.id} onClick={() => setOpenSticker(b)} style={{ position: 'relative', width: 60, height: 70 }} aria-label={t(`badge_${b.id}`)}>
+                  <BadgeIcon b={b} earned size={60} />
+                  <span
                     style={{
-                      display: 'block',
-                      fontSize: 16,
+                      position: 'absolute',
+                      top: 52,
+                      left: 27,
+                      transform: 'translateX(-50%)',
+                      background: 'var(--ink)',
+                      color: 'var(--white)',
+                      borderRadius: 999,
+                      padding: '2px 7px',
+                      fontFamily: 'var(--mono)',
+                      fontSize: 11,
+                      lineHeight: '14px',
+                      fontWeight: 500,
                     }}
                   >
-                    {S}
-                  </strong>
-                  <span className="tiny">{N}</span>
-                </span>
-                <Switch on={prefs[f]} onChange={togglePref(f, S)} label={S} />
-              </div>
-            ))}
-            <div
-              className="row"
-              style={{
-                padding: '14px 0',
-                borderBottom: '1px solid var(--grey-2)',
-              }}
-            >
-              <span
-                style={{
-                  flex: 1,
-                }}
-              >
-                <strong
-                  style={{
-                    display: 'block',
-                    fontSize: 16,
-                  }}
-                >
-                  {t('showBadgesSetting')}
-                </strong>
-                <span className="tiny">{t('showBadgesSub')}</span>
-              </span>
-              <Switch
-                on={user.showBadges}
-                onChange={(f) => {
-                  app.setUser({
-                    showBadges: f,
-                  })
-                  app.showToast(
-                    t(f ? 'settingOn' : 'settingOff', {
-                      label: t('showBadgesSetting'),
-                    }),
-                  )
-                }}
-                label={t('showBadgesSetting')}
-              />
+                    {stats[b.stat]}
+                  </span>
+                </button>
+              ))}
             </div>
-            <div
-              className="row"
-              style={{
-                padding: '14px 0',
-                borderBottom: '1px solid var(--grey-2)',
-              }}
-            >
-              <Mail size={20} />
-              <span
-                style={{
-                  flex: 1,
-                }}
-              >
-                <strong
-                  style={{
-                    display: 'block',
-                    fontSize: 16,
-                  }}
-                >
-                  {user.role === 'host' ? t('workEmail') : user.phone ? t('phoneNumber') : t('emailLabel')}
-                </strong>
-                <span className="tiny" dir="ltr">
-                  {user.role === 'host' ? user.workEmail : user.phone || user.email || t('notAdded')}
-                </span>
-              </span>
-            </div>
-            <button
-              className="row"
-              style={{
-                width: '100%',
-                padding: '14px 0',
-                borderBottom: '1px solid var(--grey-2)',
-              }}
-              onClick={() => setConfirm('switch')}
-            >
-              <Repeat size={20} />
-              <span
-                style={{
-                  flex: 1,
-                  textAlign: 'start',
-                  fontWeight: 600,
-                }}
-              >
-                {user.role === 'host' ? t('switchToGuest') : t('switchToHost')}
-              </span>
-              <ChevronRight size={18} className="flip-rtl" />
-            </button>
-            <button
-              className="row"
-              style={{
-                width: '100%',
-                padding: '16px 0',
-                color: 'var(--orange)',
-                fontWeight: 600,
-              }}
-              onClick={() => setConfirm('logout')}
-            >
-              <LogOut size={20} className="flip-rtl" /> {t('logOut')}
-            </button>
-            <button
-              className="row"
-              style={{
-                width: '100%',
-                padding: '4px 0 16px',
-                color: 'var(--muted)',
-                fontSize: 14,
-              }}
-              onClick={() => setConfirm('reset')}
-            >
-              <RotateCcw size={16} /> {t('resetDemo')}
-            </button>
-          </section>
-          <BecomeHostCard placement="bottom" />
+            <p style={{ fontSize: 14, lineHeight: '21px', color: 'var(--muted)', margin: 0 }}>{t('stickersSub')}</p>
+          </div>
+          {user.role !== 'host' && <HostPromo />}
         </div>
       </div>
+      <StickerSheet b={openSticker} stats={stats} onClose={() => setOpenSticker(null)} />
       <NavBar />
-      <EditProfile open={editing} onClose={() => setEditing(false)} />
+    </Screen>
+  )
+}
+function SetGroup({ title, children }) {
+  return (
+    <section style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ paddingInlineStart: 4, font: "500 12px/16px 'Roboto Mono', monospace", letterSpacing: '0.05em', textTransform: 'uppercase', color: '#737373' }}>
+        {title}
+      </div>
+      <div style={{ background: '#F1F0EC', borderRadius: 22, padding: '2px 16px' }}>{children}</div>
+    </section>
+  )
+}
+function SetRow({ Icon, label, sub, value, onClick, right, last, big }) {
+  const Tag = onClick ? 'button' : 'div'
+  return (
+    <Tag
+      onClick={onClick}
+      style={{ display: 'flex', alignItems: 'center', width: '100%', minHeight: 52, textAlign: 'start', padding: '12px 0', gap: 12, borderBottom: last ? 0 : '1px solid #E2E0DA', color: 'var(--ink)' }}
+    >
+      {typeof Icon === 'string' ? (
+        <span aria-hidden style={{ width: 20, flex: 'none', font: '500 16px/20px Inter, sans-serif', color: '#000' }}>{Icon}</span>
+      ) : (
+        <Icon size={18} aria-hidden style={{ flex: 'none', width: 20 }} />
+      )}
+      <span style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <span style={{ fontSize: 16, lineHeight: '24px' }}>{label}</span>
+        {sub && <span style={{ fontSize: 14, lineHeight: '20px', color: '#737373' }}>{sub}</span>}
+      </span>
+      {value && <span style={{ fontSize: 14, lineHeight: '21px', color: '#737373', whiteSpace: 'nowrap' }}>{value}</span>}
+      {right ?? (onClick && <ChevronRight size={big ? 28 : 16} strokeWidth={big ? 1.5 : 2} className="flip-rtl" color="#737373" />)}
+    </Tag>
+  )
+}
+export function SettingsScreen() {
+  const nav = useNavigate()
+  const app = useApp()
+  const { t } = useI18n()
+  const { user } = app
+  const [prefs, setPrefs] = useState({ translate: true, showJoined: true, reminders: true, news: true, suggestions: true })
+  const [langOpen, setLangOpen] = useState(false)
+  const [confirm, setConfirm] = useState(null)
+  const pref = (key, label) => (
+    <Switch
+      on={prefs[key]}
+      label={label}
+      onChange={(on) => {
+        setPrefs((p) => ({ ...p, [key]: on }))
+        app.showToast(t(on ? 'settingOn' : 'settingOff', { label }))
+      }}
+    />
+  )
+  const langName = languages.find((l) => l.id === user.language)?.name ?? 'English'
+  const phone = `•••• ${(user.phone || '4821').replace(/\D/g, '').slice(-4)}`
+  return (
+    <Screen>
+      <div className="scroll" style={{ padding: '62px 20px 40px', background: 'var(--white)' }}>
+        <div className="row" style={{ gap: 12, marginBottom: 11 }}>
+          <BackButton />
+          <h1 style={{ margin: 0, font: '600 28px/34px Inter, sans-serif', letterSpacing: '-0.02em', color: 'var(--ink)' }}>{t('settings')}</h1>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <SetGroup title={t('setLanguage')}>
+          <SetRow Icon={Globe} label={t('appLanguage')} value={langName} onClick={() => setLangOpen(true)} />
+          <SetRow Icon="Aa" label={t('translateComments')} right={pref('translate', t('translateComments'))} />
+          <SetRow Icon={MessageSquare} label={t('iSpeak')} value={t('iSpeakValue')} onClick={() => setLangOpen(true)} last />
+        </SetGroup>
+        <SetGroup title={t('setPrivacy')}>
+          <SetRow Icon={Lock} label={t('whoCanSee')} value={t('groupMembers')} onClick={() => app.showToast(t('whoCanSeeToast'))} />
+          <SetRow Icon={CalendarDays} label={t('showJoined')} sub={t('showJoinedSubNew')} right={pref('showJoined', t('showJoined'))} />
+          <SetRow
+            Icon={Award}
+            label={t('showBadgesSetting')}
+            sub={t('showBadgesSub')}
+            last
+            right={
+              <Switch
+                on={user.showBadges}
+                label={t('showBadgesSetting')}
+                onChange={(on) => {
+                  app.setUser({ showBadges: on })
+                  app.showToast(t(on ? 'settingOn' : 'settingOff', { label: t('showBadgesSetting') }))
+                }}
+              />
+            }
+          />
+        </SetGroup>
+        <SetGroup title={t('setNotifications')}>
+          <SetRow Icon={Bell} label={t('reminders')} sub={t('remindersSub')} right={pref('reminders', t('reminders'))} />
+          <SetRow Icon={CalendarDays} label={t('weekly')} sub={t('weeklySub')} right={pref('suggestions', t('weekly'))} />
+          <SetRow Icon={Megaphone} label={t('news')} sub={t('newsSub')} right={pref('news', t('news'))} last />
+        </SetGroup>
+        <SetGroup title={t('setHelp')}>
+          <SetRow Icon={CircleHelp} label={t('contactCvd')} onClick={() => app.showToast(t('contactCvdToast'))} big />
+          <SetRow Icon={BookOpen} label={t('guidelines')} onClick={() => app.showToast(t('guidelinesToast'))} big />
+          <SetRow Icon={Flag} label={t('reportProblem')} onClick={() => app.showToast(t('reportToast'))} last big />
+        </SetGroup>
+        <SetGroup title={t('setAccount')}>
+          <SetRow Icon={Smartphone} label={user.role === 'host' ? t('workEmail') : t('phoneNumber')} value={user.role === 'host' ? user.workEmail : phone} last />
+        </SetGroup>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, paddingInlineStart: 4 }}>
+          <button style={{ textAlign: 'start', padding: '8px 0', fontSize: 16, lineHeight: '24px', color: '#C2410C' }} onClick={() => setConfirm('logout')}>
+            {t('logOut')}
+          </button>
+          <button style={{ textAlign: 'start', padding: '4px 0', fontSize: 14, lineHeight: '21px', color: '#737373' }} onClick={() => app.showToast(t('deleteAccountToast'))}>
+            {t('deleteAccount')}
+          </button>
+        </div>
+        </div>
+        <button className="row tiny" style={{ gap: 6, padding: '24px 4px 0', color: 'var(--muted)' }} onClick={() => setConfirm('reset')}>
+          <RotateCcw size={14} /> {t('resetDemo')}
+        </button>
+      </div>
       <Sheet open={langOpen} onClose={() => setLangOpen(false)} title={t('appLanguage')}>
-        <div
-          className="stack"
-          style={{
-            gap: 8,
-          }}
-        >
+        <div className="stack" style={{ gap: 8 }}>
           {languages.map((language) => (
             <button
               key={language.id}
               className="card"
               onClick={() => {
-                app.setUser({
-                  language: language.id,
-                })
+                app.setUser({ language: language.id })
                 setLangOpen(false)
-                app.showToast(
-                  t('languageSet', {
-                    lang: language.name,
-                  }),
-                )
+                app.showToast(t('languageSet', { lang: language.name }))
               }}
-              style={{
-                padding: '12px 16px',
-                textAlign: 'start',
-                background: user.language === language.id ? 'var(--lime)' : 'var(--grey)',
-              }}
+              style={{ padding: '12px 16px', textAlign: 'start', background: user.language === language.id ? 'var(--lime)' : 'var(--grey)' }}
             >
               <strong>{language.name}</strong>
             </button>
           ))}
         </div>
       </Sheet>
-      <Sheet
-        open={!!confirm}
-        onClose={() => setConfirm(null)}
-        title={
-          confirm === 'reset'
-            ? t('resetTitle')
-            : confirm === 'switch'
-              ? user.role === 'host'
-                ? t('switchTitleGuest')
-                : t('switchTitleHost')
-              : t('logOutTitle')
-        }
-      >
+      <Sheet open={!!confirm} onClose={() => setConfirm(null)} title={confirm === 'reset' ? t('resetTitle') : t('logOutTitle')}>
         <p className="body">
-          {confirm === 'reset'
-            ? t('resetText')
-            : confirm === 'switch'
-              ? user.role === 'host'
-                ? t('switchTextGuest')
-                : t('switchTextHost')
-              : user.role === 'host'
-                ? t('logOutTextHost')
-                : t('logOutTextGuest')}
+          {confirm === 'reset' ? t('resetText') : user.role === 'host' ? t('logOutTextHost') : t('logOutTextGuest')}
         </p>
-        <div
-          className="stack"
-          style={{
-            marginTop: 20,
-          }}
-        >
+        <div className="stack" style={{ marginTop: 20 }}>
           <button
             className="btn btn-primary"
             onClick={() => {
-              confirm === 'reset'
-                ? (app.reset(),
-                  nav('/', {
-                    replace: true,
-                  }))
-                : confirm === 'switch'
-                  ? (app.setUser({
-                      role: user.role === 'host' ? 'guest' : 'host',
-                    }),
-                    app.logout(),
-                    nav(user.role === 'host' ? '/signup/phone?login=1' : '/signup/host?login=1', {
-                      replace: true,
-                    }))
-                  : (app.logout(),
-                    nav('/', {
-                      replace: true,
-                    }))
+              confirm === 'reset' ? app.reset() : app.logout()
               setConfirm(null)
+              nav('/', { replace: true })
             }}
           >
-            {t(confirm === 'reset' ? 'resetEverything' : confirm === 'switch' ? 'switchAccount' : 'logOut')}
+            {t(confirm === 'reset' ? 'resetEverything' : 'logOut')}
           </button>
           <button className="btn btn-soft" onClick={() => setConfirm(null)}>
             {t('cancel')}

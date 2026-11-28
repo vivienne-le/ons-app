@@ -27,7 +27,7 @@ export const defaults = {
   onboarded: false,
   user: {
     firstName: 'Ruben',
-    lastName: 'Meyer',
+    lastName: 'de Vries',
     phone: '',
     email: '',
     language: 'en',
@@ -35,12 +35,12 @@ export const defaults = {
     age: '34',
     gender: 'Man',
     area: 'Middelland',
-    interests: [],
+    interests: ['Football', 'Running', 'Games', 'Cooking', 'Cycling'],
     role: 'guest',
     org: '',
     workEmail: '',
     jobTitle: '',
-    pronouns: '',
+    pronouns: 'he/him',
     verifiedBy: '',
     showBadges: true,
     hostCardMoved: false,
@@ -54,15 +54,9 @@ export const defaults = {
   draft: emptyDraft(),
   posts: [],
   hostRequest: null,
-  friends: {
-    mo: 'friends',
-    g5: 'friends',
-    sara: 'friends',
-  },
-  following: ['org:cvd', 'person:noon'],
-  albumAdds: {},
+  following: ['org:cvd', 'org:zorgvrijstaat', 'person:noon', 'person:mo'],
 }
-export const STORAGE_KEY = 'cvd-app-v1'
+export const STORAGE_KEY = 'cvd-app-v3'
 export function loadState() {
   try {
     const a = localStorage.getItem(STORAGE_KEY)
@@ -202,6 +196,9 @@ export function AppProvider({ children }) {
             ...h,
           },
         })),
+      // demo: CVD approves a submitted activity, it goes live
+      approvePost: (id) =>
+        setState((i) => ({ ...i, posts: i.posts.map((p) => (p.id === id ? { ...p, status: 'live' } : p)) })),
       submitDraft: () => {
         const h = `post-${Date.now()}`
         setState((i) => ({
@@ -219,47 +216,11 @@ export function AppProvider({ children }) {
         }))
         return h
       },
-      addPhotos: (h, i) =>
-        setState((j) => {
-          const k = new Date()
-          const l = i.map((m, n) => ({
-            id: `me-${Date.now()}-${n}`,
-            src: m,
-            day: k.getDate(),
-            month: k.getMonth() + 1,
-          }))
-          return {
-            ...j,
-            albumAdds: {
-              ...j.albumAdds,
-              [h]: [...l, ...(j.albumAdds[h] ?? [])],
-            },
-          }
-        }),
-      removePhoto: (h, i) =>
-        setState((j) => ({
-          ...j,
-          albumAdds: {
-            ...j.albumAdds,
-            [h]: (j.albumAdds[h] ?? []).filter((k) => k.id !== i),
-          },
-        })),
       setHostRequest: (h) =>
         setState((i) => ({
           ...i,
           hostRequest: h,
         })),
-      setFriend: (h, i) =>
-        setState((j) => {
-          const k = {
-            ...j.friends,
-          }
-          i ? (k[h] = i) : delete k[h]
-          return {
-            ...j,
-            friends: k,
-          }
-        }),
       toggleFollow: (h) => {
         const i = !state.following.includes(h)
         setState((j) => ({

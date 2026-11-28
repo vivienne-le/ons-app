@@ -1,7 +1,10 @@
-import { useMemo, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Camera, Check, Minus, Plus, Search as SearchIcon, Trash2, X } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Camera, Check, ChevronRight, CircleHelp, Clock, Heart, Info, Mail, ListChecks, Lock, MapPin as PinIcon, Minus, Pencil, Plus, Search as SearchIcon, Trash2, X } from 'lucide-react'
 import { Flower } from '../components/Flower'
+import { MonthCalendar, dayKey } from '../components/MonthCalendar'
+import { CvdBadge, OrgLogo } from '../components/OrgLogo'
+import { organisations } from '../data/events'
 import { Icon } from '../components/Icon'
 import { Avatar } from '../components/Img'
 import { BackButton, Progress, Screen, WhenWhere } from '../components/UI'
@@ -88,14 +91,14 @@ export function FieldLabel({ htmlFor: a, children, aside }) {
         marginBottom: 8,
       }}
     >
-      <label className="eyebrow" htmlFor={a}>
+      <label htmlFor={a} style={{ fontSize: 15, fontWeight: 600 }}>
         {children}
       </label>
       {aside && <span className="tiny">{aside}</span>}
     </div>
   )
 }
-export const postCategories = ['Sport', 'Food', 'Social', 'Creative', 'Outdoors']
+export const postCategories = ['Sport', 'Food', 'Games', 'Crafts', 'Music', 'Walks', 'Language café', 'Other']
 export function PostWhat() {
   const { draft, setDraft } = useApp()
   const { t } = useI18n()
@@ -156,7 +159,7 @@ export function PostWhat() {
                 })
               }
             >
-              {t(catKey[postCategory])}
+              {postCategory === 'Other' ? `+ ${t(catKey[postCategory])}` : t(catKey[postCategory])}
             </button>
           ))}
         </div>
@@ -329,95 +332,19 @@ export function PostWhen() {
         : draft.repeat === 'monthly'
           ? 'repHintMonthly'
           : null
-  const endOk = draft.noEnd || draft.end > draft.start
+  const endOk = draft.end > draft.start
   return (
     <StepLayout step={2} title={t('postWhenTitle')} sub={t('postWhenSub')} canNext={endOk} next="/post/where">
       <div>
         <FieldLabel aside={dateShort(draft.date)}>{t('dateLabel')}</FieldLabel>
-        <div
-          className="card"
-          style={{
-            padding: 14,
+        <MonthCalendar
+          selected={dayKey(2026, 11, draft.date)}
+          onSelect={(k) => {
+            const [y, m, d] = k.split('-').map(Number)
+            y === 2026 && m === 11 && setDraft({ date: d })
           }}
-        >
-          <strong
-            style={{
-              display: 'block',
-              marginBottom: 10,
-              textTransform: 'capitalize',
-            }}
-          >
-            {monthTitle}
-          </strong>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(7, 1fr)',
-              gap: 4,
-              textAlign: 'center',
-            }}
-          >
-            {Array.from(
-              {
-                length: 7,
-              },
-              (e, f) => (
-                <span
-                  key={f}
-                  className="tiny"
-                  aria-hidden
-                  style={{
-                    fontSize: 11,
-                  }}
-                >
-                  {wd(7 + f)}
-                </span>
-              ),
-            )}
-            {Array.from(
-              {
-                length: leadingBlanks,
-              },
-              (e, f) => (
-                <span key={`e${f}`} />
-              ),
-            )}
-            {Array.from(
-              {
-                length: 31,
-              },
-              (e, f) => {
-                const g = f + 1
-                const h = g < TODAY
-                const i = draft.date === g
-                return (
-                  <button
-                    key={g}
-                    type="button"
-                    disabled={h}
-                    aria-pressed={i}
-                    aria-label={`${dayLong(g)} ${dateShort(g)}`}
-                    onClick={() =>
-                      setDraft({
-                        date: g,
-                      })
-                    }
-                    style={{
-                      height: 38,
-                      borderRadius: 12,
-                      fontSize: 15,
-                      fontWeight: i ? 600 : 400,
-                      background: i ? 'var(--ink)' : g === TODAY ? 'var(--white)' : 'transparent',
-                      color: i ? 'var(--white)' : h ? '#BDBBB6' : 'var(--ink)',
-                    }}
-                  >
-                    {g}
-                  </button>
-                )
-              },
-            )}
-          </div>
-        </div>
+          isDisabled={(y, m, d) => y < 2026 || (y === 2026 && (m < 11 || (m === 11 && d < TODAY)))}
+        />
       </div>
       <div>
         <FieldLabel>{t('timeLabel')}</FieldLabel>
@@ -443,7 +370,7 @@ export function PostWhen() {
               <option key={time}>{time}</option>
             ))}
           </select>
-          {!draft.noEnd && (
+          {(
             <>
               <span className="small">{t('toLabel')}</span>
               <select
@@ -466,31 +393,6 @@ export function PostWhen() {
             </>
           )}
         </div>
-        <label
-          className="row"
-          style={{
-            marginTop: 10,
-            gap: 10,
-            fontSize: 15,
-            cursor: 'pointer',
-          }}
-        >
-          <input
-            type="checkbox"
-            checked={draft.noEnd}
-            onChange={(e) =>
-              setDraft({
-                noEnd: e.target.checked,
-              })
-            }
-            style={{
-              width: 20,
-              height: 20,
-              accentColor: 'var(--ink)',
-            }}
-          />
-          {t('noEndTime')}
-        </label>
       </div>
       <div>
         <FieldLabel>{t('repeat')}</FieldLabel>
@@ -582,7 +484,7 @@ export function PostWhen() {
           </strong>
           <button
             type="button"
-            className="icon-btn white"
+            className="icon-btn dark"
             aria-label={t('more')}
             disabled={draft.capacity >= 50}
             onClick={() =>
@@ -956,9 +858,13 @@ export function PostDetails() {
           {steps.length < 6 && (
             <button
               type="button"
-              className="btn btn-sm btn-soft"
+              className="btn btn-sm"
               style={{
                 width: '100%',
+                height: 48,
+                background: 'transparent',
+                border: '1.5px dashed #BDBBB6',
+                fontWeight: 400,
               }}
               onClick={() =>
                 setDraft({
@@ -1013,10 +919,20 @@ export function PostDetails() {
                 className={`chip ${l ? 'on' : ''}`}
                 style={{
                   opacity: m ? 0.4 : 1,
+                  height: 36,
+                  fontSize: 14,
+                  background: l ? undefined : 'var(--white)',
+                  boxShadow: l ? undefined : 'inset 0 0 0 1.5px var(--ink)',
                 }}
                 onClick={() => toggleGood(k)}
               >
-                {l ? <Check size={15} aria-hidden /> : <Plus size={15} aria-hidden />}
+                {l ? (
+                  <Flower accent="lime" size={20}>
+                    <Check size={11} aria-hidden />
+                  </Flower>
+                ) : (
+                  <Plus size={15} aria-hidden />
+                )}
                 {goodOpts.includes(k) ? t(k) : k}
               </button>
             )
@@ -1054,14 +970,19 @@ export function PostDetails() {
           draft.good.length < 4 && (
             <button
               type="button"
-              className="link"
+              className="btn"
               style={{
                 marginTop: 10,
+                width: '100%',
+                height: 48,
+                background: 'transparent',
+                border: '1.5px dashed #BDBBB6',
+                fontWeight: 400,
+                fontSize: 15,
               }}
               onClick={() => setWritingOwn(true)}
             >
-              {'+ '}
-              {t('writeOwn')}
+              <Pencil size={15} aria-hidden /> {t('writeOwn')}
             </button>
           )
         )}
@@ -1456,132 +1377,86 @@ export function PostPreview() {
 }
 export function PostSent() {
   const nav = useNavigate()
-  const { posts } = useApp()
+  const { posts, approvePost, showToast } = useApp()
   const { t } = useI18n()
   const post = posts[0]
-  const nextSteps = ['sent1', 'sent2', 'sent3']
+  // demo: a few seconds later CVD approves it and the host dashboard opens by itself
+  useEffect(() => {
+    if (!post || post.status !== 'review') return
+    const timer = setTimeout(() => {
+      approvePost(post.id)
+      showToast(t('cvdApproved'))
+      nav(`/post/live/${post.id}`, { replace: true })
+    }, 4000)
+    return () => clearTimeout(timer)
+  }, [post?.id])
+  const cvd = organisations.find((o) => o.id === 'cvd')
+  const steps = [
+    { key: 'sentStepSent', sub: post ? `${post.title} · ${t('today')}` : t('today'), state: 'done' },
+    { key: 'sentStepCheck', sub: t('sentStepCheckSub'), state: 'now' },
+    { key: 'sentStepLive', sub: t('sentStepLiveSub'), state: 'later' },
+  ]
   return (
     <Screen lime>
-      <div
-        className="scroll pad safe-top"
-        style={{
-          display: 'grid',
-          alignContent: 'start',
-        }}
-      >
-        <div
-          style={{
-            display: 'grid',
-            placeItems: 'center',
-            marginTop: 30,
-          }}
-          className="pop"
+      <div className="scroll pad safe-top" style={{ display: 'grid', alignContent: 'start', position: 'relative' }}>
+        <button
+          className="icon-btn"
+          style={{ position: 'absolute', top: 'max(48px, env(safe-area-inset-top))', insetInlineEnd: 'var(--pad)', background: 'rgba(255,255,255,.6)' }}
+          aria-label={t('closeLabel')}
+          onClick={() => nav('/home', { replace: true })}
         >
-          <Flower color="var(--white)" size={150}>
-            <Check size={56} />
-          </Flower>
+          <X size={20} />
+        </button>
+        <div style={{ display: 'grid', placeItems: 'center', marginTop: 40 }} className="pop">
+          <CvdBadge size={140} />
         </div>
-        <h1
-          className="h1"
-          style={{
-            textAlign: 'center',
-            marginTop: 24,
-          }}
-        >
+        <h1 className="h-display" style={{ textAlign: 'center', marginTop: 20, fontSize: 36 }}>
           {t('sentTitle')}
         </h1>
-        <p
-          className="body"
-          style={{
-            textAlign: 'center',
-            marginTop: 10,
-          }}
-        >
-          {t('sentSub')}
+        <p className="body" style={{ textAlign: 'center', marginTop: 10 }}>
+          {t('sentSubNew')}
         </p>
-        {post && (
-          <div
-            className="card"
-            style={{
-              background: 'var(--white)',
-              padding: 14,
-              marginTop: 22,
-            }}
-          >
-            <span className="eyebrow">{t('inReview')}</span>
-            <strong
-              style={{
-                display: 'block',
-                fontSize: 18,
-                marginTop: 4,
-              }}
-            >
-              {post.title}
-            </strong>
-          </div>
-        )}
-        <div
-          className="eyebrow"
-          style={{
-            marginTop: 24,
-            color: 'var(--ink)',
-          }}
-        >
-          {t('sentNext')}
-        </div>
-        <ol
-          style={{
-            listStyle: 'none',
-            padding: 0,
-            margin: '10px 0 0',
-            display: 'grid',
-            gap: 10,
-          }}
-        >
-          {nextSteps.map((nextStep, d) => (
-            <li
-              key={nextStep}
-              className="row"
-              style={{
-                gap: 10,
-              }}
-            >
+        <ol style={{ listStyle: 'none', margin: '22px 0 0', padding: 16, background: 'var(--white)', borderRadius: 20, display: 'grid', gap: 0 }}>
+          {steps.map((step, i) => (
+            <li key={step.key} className="row" style={{ gap: 12, alignItems: 'flex-start', position: 'relative', paddingBottom: i < steps.length - 1 ? 14 : 0 }}>
+              {i < steps.length - 1 && (
+                <span
+                  aria-hidden
+                  style={{ position: 'absolute', left: 10, top: 24, bottom: 2, borderLeft: `2px ${step.state === 'done' ? 'solid' : 'dashed'} ${step.state === 'done' ? 'var(--ink)' : '#BDBBB6'}` }}
+                />
+              )}
               <span
                 aria-hidden
                 style={{
-                  width: 28,
-                  height: 28,
+                  width: 22,
+                  height: 22,
                   borderRadius: '50%',
-                  background: d === 0 ? 'var(--ink)' : 'var(--white)',
-                  color: d === 0 ? 'var(--white)' : 'var(--ink)',
+                  flex: 'none',
                   display: 'grid',
                   placeItems: 'center',
-                  fontWeight: 600,
-                  fontSize: 14,
+                  background: step.state === 'done' ? 'var(--ink)' : 'var(--white)',
+                  color: 'var(--white)',
+                  boxShadow: step.state === 'done' ? undefined : `inset 0 0 0 2px ${step.state === 'now' ? 'var(--ink)' : '#BDBBB6'}`,
                 }}
               >
-                {d + 1}
+                {step.state === 'done' && <Check size={13} />}
+                {step.state === 'now' && <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--ink)' }} />}
               </span>
-              <span
-                style={{
-                  fontSize: 16,
-                }}
-              >
-                {t(nextStep)}
+              <span style={{ color: step.state === 'later' ? 'var(--muted)' : 'var(--ink)' }}>
+                <strong style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{t(step.key)}</strong>
+                <span className="tiny">{step.sub}</span>
               </span>
             </li>
           ))}
         </ol>
       </div>
       <div className="bottom-cta">
-        <button
-          className="btn btn-primary"
-          onClick={() =>
-            nav('/home', {
-              replace: true,
-            })
-          }
-        >
+        {post && (
+          <button className="btn btn-primary" onClick={() => nav(`/post/mine/${post.id}`, { replace: true })}>
+            {t('seeMyActivity')}
+          </button>
+        )}
+        <button className={`btn ${post ? 'btn-secondary' : 'btn-primary'}`} onClick={() => nav('/home', { replace: true })}>
           {t('backHome')}
         </button>
       </div>
@@ -1593,6 +1468,7 @@ export function MyPost() {
   const { posts } = useApp()
   const { t } = useI18n()
   const post = useMemo(() => posts.find((b) => b.id === id), [posts, id])
+  if (post?.status === 'live') return <Navigate to={`/post/live/${post.id}`} replace />
   return post ? (
     <Screen>
       <div
@@ -1628,6 +1504,167 @@ export function MyPost() {
     <Screen>
       <div className="pad safe-top">
         <BackButton to="/home" />
+      </div>
+    </Screen>
+  )
+}
+// "Before you host": the house rules, shown before the host flow starts
+const hostRules = [
+  { key: 'rulePublic', Icon: PinIcon, accent: 'lime' },
+  { key: 'rulePlan', Icon: ListChecks, accent: 'turq' },
+  { key: 'ruleWelcome', Icon: Heart, accent: 'pink' },
+  { key: 'ruleOnTime', Icon: Clock, accent: 'orange' },
+  { key: 'rulePrivacy', Icon: Lock, accent: 'lav' },
+  { key: 'ruleHelp', Icon: CircleHelp, color: 'var(--grey)' },
+]
+// Host dashboard once CVD has approved the activity (Figma: Live (host dashboard))
+export function HostLive() {
+  const { id } = useParams()
+  const nav = useNavigate()
+  const { posts, showToast } = useApp()
+  const { t, dayLong, full } = useI18n()
+  const post = posts.find((b) => b.id === id)
+  if (!post) return <Navigate to="/home" replace />
+  const title = post.title || t('demoRunTitle')
+  const day = dayLong(post.date)
+  const when = post.repeat === 'once' ? full(post.date) : t('everyDay', { day: day.charAt(0).toUpperCase() + day.slice(1) })
+  const time = post.noEnd ? post.start : `${post.start} – ${post.end}`
+  const place = post.place || 'Het Park'
+  const going = 9
+  const mono = { font: "500 10px/13px 'Roboto Mono', monospace", letterSpacing: '0.05em', textTransform: 'uppercase' }
+  const actions = [
+    { Icon: Mail, title: t('answerQuestions'), sub: t('answerQuestionsSub'), badge: t('nNew', { n: 1 }), toast: 'answerQuestionsToast' },
+    { Icon: Pencil, title: t('editActivity'), sub: t('editActivitySub'), toast: 'editActivityToast' },
+    { Icon: Clock, title: t('skipWeek'), sub: t('skipWeekSub'), toast: 'skipWeekToast' },
+    { Icon: X, title: t('cancelActivity'), sub: t('cancelActivitySub'), danger: true, toast: 'cancelActivityToast' },
+  ]
+  return (
+    <Screen>
+      <div className="scroll" style={{ background: 'var(--white)', paddingBottom: 40 }}>
+        <div style={{ background: 'var(--ink)', borderRadius: '0 0 32px 32px', height: 330, position: 'relative', color: 'var(--white)' }}>
+          <span style={{ position: 'absolute', left: 20, top: 62 }}>
+            <BackButton variant="white" to="/home" />
+          </span>
+          <span style={{ position: 'absolute', right: 20, top: 70, display: 'flex', alignItems: 'center', gap: 4, background: '#3F9B5F', borderRadius: 100, padding: '4px 12px 4px 8px', font: '600 13px/17px Inter, sans-serif', letterSpacing: '-0.01em' }}>
+            <span style={{ width: 6, height: 6, borderRadius: 3, background: 'var(--white)' }} />
+            {t('liveBadge')}
+          </span>
+          <div style={{ position: 'absolute', left: 20, right: 20, top: 118 }}>
+            <div style={{ font: "500 12px/16px 'Roboto Mono', monospace", letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--lime)' }}>{t('youreHosting')}</div>
+            <h1 style={{ margin: '8px 0 0', font: '600 28px/34px Inter, sans-serif', letterSpacing: '-0.02em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title}</h1>
+            <p style={{ margin: '4px 0 0', fontSize: 12, lineHeight: '18px' }}>
+              {when} · {time} · {place}
+            </p>
+          </div>
+          <div style={{ position: 'absolute', left: 20, right: 20, top: 218, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, color: 'var(--ink)' }}>
+            {[
+              [`${t('nextLabel')} · ${full(post.date)}`, t('nGoing', { n: going }), t('spotsLeft', { n: Math.max(0, (post.capacity || 12) - going) }), 'var(--lime)'],
+              [t('commentsLabel'), '4', t('questionsToAnswer', { n: 1 }), 'var(--pink)'],
+            ].map(([eyebrow, big, sub, bg]) => (
+              <div key={eyebrow} style={{ background: bg, borderRadius: 20, padding: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <span style={mono}>{eyebrow}</span>
+                <strong style={{ font: '600 24px/28px Inter, sans-serif', letterSpacing: '-0.02em' }}>{big}</strong>
+                <span style={{ fontSize: 12, lineHeight: '18px' }}>{sub}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ padding: '24px 20px 0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 24, color: 'var(--ink)' }}>
+            <h2 style={{ margin: 0, font: '600 20px/24px Inter, sans-serif', letterSpacing: '-0.02em' }}>{t('whosComing')}</h2>
+            <button style={{ font: '600 13px/17px Inter, sans-serif', textDecoration: 'underline', color: 'var(--ink)' }} onClick={() => showToast(t('whosComingToast'))}>
+              {t('seeAll')}
+            </button>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
+            <span style={{ display: 'flex' }}>
+              {['mo', 'sara', 'lisa', 'diego', 'christian'].map((p, i) => (
+                <img key={p} src={`${import.meta.env.BASE_URL}img/${p}.jpg`} alt="" style={{ width: 32, height: 32, borderRadius: 16, border: '2px solid var(--white)', objectFit: 'cover', marginInlineEnd: i < 4 ? -8 : 0 }} />
+              ))}
+            </span>
+            <span style={{ fontSize: 12, lineHeight: '18px', color: '#737373' }}>{t('goingNames', { a: 'Mo', b: 'Sara', n: going - 2 })}</span>
+          </div>
+          <div style={{ background: '#F1F0EC', borderRadius: 20, padding: '4px 16px', marginTop: 24 }}>
+            {actions.map((a, i) => (
+              <button
+                key={a.title}
+                onClick={() => showToast(t(a.toast))}
+                style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', padding: '12px 0', textAlign: 'start', borderBottom: i < actions.length - 1 ? '1px solid #E2E0DA' : 0 }}
+              >
+                <span style={{ width: 36, height: 36, borderRadius: 18, background: 'var(--white)', display: 'grid', placeItems: 'center', flex: 'none', color: a.danger ? '#E85D2A' : 'var(--ink)' }}>
+                  <a.Icon size={20} />
+                </span>
+                <span style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <strong style={{ font: '600 15px/20px Inter, sans-serif', letterSpacing: '-0.01em', color: a.danger ? '#E85D2A' : 'var(--ink)' }}>{a.title}</strong>
+                  <span style={{ fontSize: 12, lineHeight: '18px', color: '#737373' }}>{a.sub}</span>
+                </span>
+                {a.badge && <span style={{ background: '#E85D2A', color: 'var(--white)', borderRadius: 100, padding: '2px 8px', font: '600 12px/18px Inter, sans-serif' }}>{a.badge}</span>}
+                {!a.danger && <ChevronRight size={20} className="flip-rtl" color="#737373" />}
+              </button>
+            ))}
+          </div>
+          <p style={{ display: 'flex', gap: 8, alignItems: 'flex-start', margin: '20px 0 0', fontSize: 12, lineHeight: '18px', color: '#737373' }}>
+            <Info size={16} style={{ flex: 'none', marginTop: 1 }} aria-hidden />
+            <span>
+              {t('needHelpDay')} <strong style={{ fontWeight: 600, color: 'var(--ink)' }}>{t('contactCvd')}</strong>. {t('annaContact')}
+            </span>
+          </p>
+        </div>
+      </div>
+    </Screen>
+  )
+}
+export function PostStart() {
+  const nav = useNavigate()
+  const { t } = useI18n()
+  return (
+    <Screen>
+      <div className="scroll" style={{ paddingBottom: 24 }}>
+        <div
+          style={{
+            background: 'var(--ink)',
+            color: 'var(--white)',
+            borderRadius: '0 0 36px 36px',
+            padding: 'max(48px, env(safe-area-inset-top)) var(--pad) 26px',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          <Flower accent="pink" size={150} style={{ position: 'absolute', right: -30, top: -30 }} />
+          <Flower accent="lime" size={70} style={{ position: 'absolute', right: 60, top: 100 }} />
+          <BackButton variant="white" />
+          <div className="eyebrow" style={{ color: 'var(--lime)', marginTop: 18, position: 'relative' }}>
+            {t('becomeHostEyebrow')}
+          </div>
+          <h1 className="h-display" style={{ fontSize: 40, color: 'var(--white)', marginTop: 6, position: 'relative', maxWidth: 220 }}>
+            {t('beforeYouHost')}
+          </h1>
+          <p style={{ fontSize: 15, marginTop: 8, opacity: 0.85, maxWidth: 260, position: 'relative' }}>{t('beforeYouHostSub')}</p>
+        </div>
+        <div className="pad" style={{ marginTop: 10 }}>
+          {hostRules.map(({ key, Icon: RIcon, accent, color }, i) => (
+            <div
+              key={key}
+              className="row"
+              style={{ gap: 14, padding: '14px 0', alignItems: 'flex-start', borderBottom: i < hostRules.length - 1 ? '1px solid var(--grey-2)' : 0 }}
+            >
+              <Flower accent={accent} color={color} size={40}>
+                <RIcon size={17} />
+              </Flower>
+              <span>
+                <strong style={{ display: 'block', fontSize: 16, fontWeight: 600 }}>{t(key)}</strong>
+                <span className="small" style={{ fontSize: 14 }}>
+                  {t(`${key}Sub`)}
+                </span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="bottom-cta">
+        <button className="btn btn-primary" onClick={() => nav('/post')}>
+          {t('gotItStart')}
+        </button>
       </div>
     </Screen>
   )

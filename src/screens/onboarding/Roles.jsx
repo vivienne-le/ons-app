@@ -44,29 +44,11 @@ export function RoleStep() {
     <Screen>
       <div className="scroll pad safe-top">
         <BackButton />
-        <div
-          className="eyebrow"
-          style={{
-            marginTop: 24,
-          }}
-        >
+        <div className="eyebrow" style={{ marginTop: 12 }}>
           {t(isLogin ? 'logIn' : 'createAccount')}
         </div>
-        <h1
-          className="h1"
-          style={{
-            marginTop: 8,
-          }}
-        >
-          {t('roleTitle')}
-        </h1>
-        <p
-          className="small"
-          style={{
-            marginTop: 10,
-            fontSize: 15,
-          }}
-        >
+        <h1 style={{ marginTop: 8, marginBottom: 0, fontSize: 34, lineHeight: '40px', fontWeight: 600, letterSpacing: '-0.02em' }}>{t('roleTitle')}</h1>
+        <p style={{ margin: '8px 0 0', fontSize: 14, lineHeight: '21px', color: 'var(--muted)' }}>
           {t('roleSub')}
         </p>
         <div
@@ -75,6 +57,7 @@ export function RoleStep() {
           className="stack"
           style={{
             marginTop: 24,
+            gap: 12,
           }}
         >
           {options.map(({ id, title, text, Icon, accent: f }) => {
@@ -105,19 +88,14 @@ export function RoleStep() {
                     flex: 1,
                   }}
                 >
-                  <strong
-                    style={{
-                      display: 'block',
-                      fontSize: 20,
-                    }}
-                  >
+                  <strong style={{ display: 'block', fontSize: 20, lineHeight: '26px', fontWeight: 600, letterSpacing: '-0.01em', marginBottom: 4 }}>
                     {title}
                   </strong>
                   <span
                     style={{
                       fontSize: 14,
-                      color: 'var(--muted-2)',
-                      lineHeight: 1.45,
+                      color: '#5C5C5C',
+                      lineHeight: '20px',
                     }}
                   >
                     {text}
@@ -211,37 +189,18 @@ export function HostLoginStep() {
         }}
       >
         <BackButton />
-        <div
-          className="eyebrow"
-          style={{
-            marginTop: 24,
-          }}
-        >
-          {t('host')}
-          {' · '}
-          {t(isLogin ? 'logIn' : 'createAccount')}
+        <div className="eyebrow" style={{ marginTop: 12 }}>
+          {t('hostAccount')}
         </div>
-        <h1
-          className="h1"
-          style={{
-            marginTop: 8,
-          }}
-        >
-          {t('hostSignInTitle')}
-        </h1>
-        <p
-          className="small"
-          style={{
-            marginTop: 10,
-            fontSize: 15,
-          }}
-        >
+        <h1 style={{ marginTop: 8, marginBottom: 0, fontSize: 34, lineHeight: '40px', fontWeight: 600, letterSpacing: '-0.02em' }}>{t('hostSignInTitle')}</h1>
+        <p style={{ margin: '8px 0 0', fontSize: 14, lineHeight: '21px', color: 'var(--muted)' }}>
           {t('hostSignInSub')}
         </p>
         <div
           className="eyebrow label"
           style={{
-            marginTop: 26,
+            marginTop: 24,
+            color: 'var(--ink)',
           }}
           id="org-l"
         >
@@ -272,7 +231,7 @@ export function HostLoginStep() {
             >
               {org}
             </span>{' '}
-            <ChevronDown size={18} />
+            <Check size={20} />
           </button>
         ) : (
           <div
@@ -467,9 +426,7 @@ export function HostProfileStep() {
             marginTop: 24,
           }}
         >
-          {t('host')}
-          {' · '}
-          {user.org}
+          {t('hostAccount')}
         </div>
         <h1
           className="h1"
@@ -573,46 +530,21 @@ export function HostProfileStep() {
             }}
           />
         </div>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 10,
-            marginTop: 22,
-          }}
-        >
-          <div>
-            <label className="eyebrow label" htmlFor="hfn">
-              {t('firstName')}
-            </label>
-            <input
-              id="hfn"
-              className="field"
-              autoComplete="given-name"
-              value={user.firstName}
-              onChange={(c) =>
-                setUser({
-                  firstName: c.target.value,
-                })
-              }
-            />
-          </div>
-          <div>
-            <label className="eyebrow label" htmlFor="hln">
-              {t('lastName')}
-            </label>
-            <input
-              id="hln"
-              className="field"
-              autoComplete="family-name"
-              value={user.lastName}
-              onChange={(c) =>
-                setUser({
-                  lastName: c.target.value,
-                })
-              }
-            />
-          </div>
+        <div style={{ marginTop: 22 }}>
+          <label className="eyebrow label" htmlFor="hfn">
+            {t('firstName')}
+          </label>
+          <input
+            id="hfn"
+            className="field"
+            autoComplete="given-name"
+            value={user.firstName}
+            onChange={(c) =>
+              setUser({
+                firstName: c.target.value,
+              })
+            }
+          />
         </div>
         <label
           className="eyebrow label"
@@ -643,81 +575,37 @@ export function HostProfileStep() {
             })
           }
         />
+        <div className="eyebrow label" style={{ marginTop: 22 }}>
+          {t('howGuestsSee')}
+        </div>
         <div
-          className="card"
-          style={{
-            background: 'var(--turq)',
-            padding: 16,
-            marginTop: 26,
-          }}
+          className="card row"
+          style={{ background: 'var(--lime)', padding: 16, gap: 14, position: 'relative', overflow: 'hidden' }}
         >
-          <div
-            className="eyebrow"
-            style={{
-              color: 'var(--ink)',
-              marginBottom: 10,
-            }}
-          >
-            {t('howGuestsSee')}
-          </div>
-          <div className="row">
-            {user.photo ? (
-              <img
-                src={user.photo}
-                alt=""
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                }}
-              />
-            ) : (
-              <span
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: '50%',
-                  background: 'var(--white)',
-                  display: 'grid',
-                  placeItems: 'center',
-                  fontWeight: 600,
-                }}
-              >
-                {(user.firstName || '?').slice(0, 1)}
-              </span>
-            )}
-            <span>
-              <span
-                style={{
-                  fontSize: 15,
-                }}
-              >
-                {t('hostedBy', {
-                  name: user.firstName.trim() || t('you2'),
-                })}
-              </span>
-              <span
-                className="row"
-                style={{
-                  gap: 6,
-                  marginTop: 2,
-                }}
-              >
-                <span className="tag host">
-                  <BadgeCheck size={12} /> {t('hostBadge')}
-                </span>
-                <span
-                  style={{
-                    fontSize: 13,
-                  }}
-                >
-                  {user.org}
-                  {user.jobTitle ? ` · ${user.jobTitle}` : ''}
-                </span>
-              </span>
+          <Flower color="#E7F269" size={130} style={{ position: 'absolute', right: -30, top: -40 }} />
+          {user.photo ? (
+            <img src={user.photo} alt="" style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', position: 'relative' }} />
+          ) : (
+            <span
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: '50%',
+                background: 'var(--white)',
+                display: 'grid',
+                placeItems: 'center',
+                fontWeight: 600,
+                fontSize: 24,
+                position: 'relative',
+              }}
+            >
+              {(user.firstName || '?').slice(0, 1)}
             </span>
-          </div>
+          )}
+          <span style={{ position: 'relative' }}>
+            <strong style={{ display: 'block', fontSize: 32, fontWeight: 600, lineHeight: 1.1 }}>{user.firstName.trim() || t('you2')}</strong>
+            <span style={{ fontSize: 14 }}>{t('newNeighbour', { area: user.area || 'Middelland' })}</span>
+          </span>
         </div>
       </form>
       <div className="bottom-cta">

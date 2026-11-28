@@ -16,9 +16,9 @@ npm run build    # production build in dist/
 
 - **Sign up** as a guest (phone or email) or as a host (organisation + work email), in 6 languages: English, Dutch, Turkish, Polish, Arabic (right-to-left) and Ukrainian.
 - **Home, Explore and Map**: activities for you, filters, and a map of Middelland with essential services first (toilets, a place to sleep, free meals…).
-- **Activity page**: join, save, share, comments with translation, who's going, a shared photo album after you've been.
+- **Activity page**: join, save, share, comments with translation, who's going.
 - **Plans**: monthly calendar, upcoming, saved and been-to.
-- **Profile**: edit profile and pronouns, "How others see you", badges (rubber stamps), friends and following, your network garden, settings.
+- **Profile**: edit profile and pronouns, "How others see you", badges (rubber stamps), the hosts you follow, settings.
 - **Hosts**: post an activity in 4 steps; guests can ask an organisation to verify them as a host.
 
 ## Where to change things
@@ -27,7 +27,6 @@ npm run build    # production build in dist/
 | --- | --- |
 | Activities, organisations, people in the demo | `src/data/events.js`, `src/data/people.js` |
 | Essential services on the map (placeholder data!) | `src/data/services.js` |
-| Shared-album photos | `src/data/albums.js` |
 | All texts / translations | `src/i18n/en.js` and `nl.js`, `tr.js`, `pl.js`, `ar.js`, `uk.js` |
 | Badges and their goals | `src/components/Badges.jsx` (`badges`) |
 | Colours, fonts, layout | `src/styles/global.css` |

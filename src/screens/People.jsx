@@ -1,13 +1,13 @@
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { Check, Clock, Globe, UserPlus, Users } from 'lucide-react'
-import { BadgeRow } from '../components/Badges'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Check, ChevronRight, Globe, MapPin, MessageCircle, Plus, Users } from 'lucide-react'
+import { BadgeIcon, BadgeRow, StickerTag, badges } from '../components/Badges'
 import { RowCard } from '../components/Cards'
 import { OrgLogo } from '../components/OrgLogo'
 import { Flower } from '../components/Flower'
-import { Avatar } from '../components/Img'
-import { BackButton, NavBar, Screen, SegTabs } from '../components/UI'
-import { byId, interestOptions, organisations } from '../data/events'
-import { eventsOf, hostedBy, orgInfo, orgsOfHost, profiles } from '../data/people'
+import { Avatar, Img } from '../components/Img'
+import { BackButton, NavBar, Screen } from '../components/UI'
+import { byId, organisations } from '../data/events'
+import { hostedBy, orgInfo, orgsOfHost, profileLink, profiles } from '../data/people'
 import { useI18n } from '../i18n/index'
 import { useApp } from '../state/AppState'
 export const orgKindKey = {
@@ -16,76 +16,18 @@ export const orgKindKey = {
   creative: 'orgCreative',
   sport: 'orgSport',
 }
-export function FriendButton({ p: person, compact }) {
-  const { friends, setFriend, showToast } = useApp()
-  const { t } = useI18n()
-  const status = friends[person.id]
-  const btnClass = `btn ${compact ? 'btn-sm' : ''}`
-  return status === 'friends' ? (
-    <button
-      className={`${btnClass} btn-secondary`}
-      aria-label={`${t('friendsLabel')} · ${t('removeFriend')}`}
-      onClick={() => {
-        setFriend(person.id, null)
-        showToast(
-          t('removedFriend', {
-            name: person.name,
-          }),
-          {
-            label: t('undo'),
-            run: () => setFriend(person.id, 'friends'),
-          },
-        )
-      }}
-    >
-      <Check size={17} aria-hidden /> {t('friendsLabel')}
-    </button>
-  ) : status === 'sent' ? (
-    <button
-      className={`${btnClass} btn-soft`}
-      aria-label={`${t('requestSent')} · ${t('cancelRequest')}`}
-      onClick={() => {
-        setFriend(person.id, null)
-        showToast(t('requestCancelled'))
-      }}
-    >
-      <Clock size={17} aria-hidden /> {t('requestSent')}
-    </button>
-  ) : (
-    <button
-      className={`${btnClass} btn-primary`}
-      onClick={() => {
-        setFriend(person.id, 'sent')
-        showToast(
-          t('requestSentToast', {
-            name: person.name,
-          }),
-          {
-            label: t('undo'),
-            run: () => setFriend(person.id, null),
-          },
-        )
-      }}
-    >
-      <UserPlus size={17} aria-hidden /> {t('addFriend')}
-    </button>
-  )
-}
 export function FollowButton({ k: followKey, name, compact }) {
   const { following, toggleFollow, showToast } = useApp()
   const { t } = useI18n()
   const isFollowing = following.includes(followKey)
   return (
     <button
-      className={`btn ${compact ? 'btn-sm' : ''} ${isFollowing ? 'btn-secondary' : 'btn-primary'}`}
+      className={`btn ${compact ? 'btn-sm' : ''} btn-primary`}
       aria-pressed={isFollowing}
-      style={
-        isFollowing
-          ? undefined
-          : {
-              background: 'var(--green)',
-            }
-      }
+      style={{
+        ...(isFollowing ? { background: 'var(--lime)', color: 'var(--ink)' } : {}),
+        ...(compact ? { height: 30, padding: '0 12px', fontSize: 13, gap: 4 } : {}),
+      }}
       onClick={() => {
         const b = toggleFollow(followKey)
         showToast(
@@ -95,12 +37,12 @@ export function FollowButton({ k: followKey, name, compact }) {
         )
       }}
     >
-      {isFollowing ? <Check size={17} aria-hidden /> : null}
+      {isFollowing ? <Check size={compact ? 14 : 17} aria-hidden /> : null}
       {t(isFollowing ? 'followingBtn' : 'follow')}
     </button>
   )
 }
-export function PersonRow({ p: person, right }) {
+export function PersonRow({ p: person, right, sub }) {
   const nav = useNavigate()
   const { t } = useI18n()
   return (
@@ -119,7 +61,8 @@ export function PersonRow({ p: person, right }) {
           textAlign: 'start',
           minWidth: 0,
         }}
-        onClick={() => nav(`/person/${person.id}`)}
+        disabled={!profileLink(person.id)}
+        onClick={() => profileLink(person.id) && nav(profileLink(person.id))}
         aria-label={t('viewProfile', {
           name: person.name,
         })}
@@ -138,7 +81,7 @@ export function PersonRow({ p: person, right }) {
           >
             {person.name}
           </strong>
-          <span className="tiny">{person.area}</span>
+          <span className="tiny">{sub ?? person.area}</span>
         </span>
       </button>
       {right}
@@ -154,196 +97,149 @@ export function personBadges(person, hostingCount) {
   person.interests.length >= 3 && result.push('explorer')
   return result
 }
+// Host details shown on a host's profile (demo data, Noon as in the Figma design)
+export const hostInfo = {
+  noon: {
+    about: 'Hoi! I run the community kitchen at Zorgvrijstaat. Come cook and bake with me. No experience needed, just bring your appetite.',
+    hostingSince: 2023,
+    timesHosted: 52,
+    stickers: [
+      ['firstHost', 1, 'lime'],
+      ['hostFive', 5, 'turq'],
+      ['welcomer', 5, 'pink'],
+      ['verifiedHost', 1, 'lav'],
+    ],
+  },
+}
+const hostDefaults = (person, n) => ({
+  about: '',
+  hostingSince: Math.max(person.since, 2022),
+  timesHosted: n * 6,
+  stickers: [
+    ['firstHost', 1],
+    ['hostFive', n],
+    ['verifiedHost', 1],
+  ],
+})
 export function PersonScreen() {
   const { id = '' } = useParams()
   const nav = useNavigate()
-  const { user } = useApp()
-  const { t, ev, interest } = useI18n()
+  const { following, toggleFollow, showToast } = useApp()
+  const { t, ev, full } = useI18n()
   const person = profiles[id]
-  if (!person)
-    return (
-      <Screen>
-        <div className="pad safe-top">
-          <BackButton />
-        </div>
-      </Screen>
-    )
+  // only hosts have a public profile: neighbours stay private
+  if (!person || !hostedBy(person.id).length) return <Navigate to="/home" replace />
   const hosts = hostedBy(person.id)
+    .map((e) => ev(e))
+    .sort((x, y) => x.date - y.date)
   const orgs = orgsOfHost(person.id)
-  const goesTo = eventsOf(person.id).filter((h) => h.host.id !== person.id)
-  const role = hosts[0] ? ev(hosts[0]).host.role : null
-  const myInterests = user.interests.length ? user.interests : ['Football', 'Cycling', 'Darts']
-  const inCommon = person.interests.filter((h) => myInterests.includes(h)).length
+  const info = { ...hostDefaults(person, hosts.length), ...hostInfo[person.id] }
+  const key = `person:${person.id}`
+  const isFollowing = following.includes(key)
+  const h2 = { flex: 1, margin: 0, font: '600 24px/30px Inter, sans-serif', letterSpacing: '-0.02em', color: 'var(--ink)' }
+  const mono = { font: "500 12px/16px 'Roboto Mono', monospace", letterSpacing: '0.05em', textTransform: 'uppercase' }
+  const chevron = <ChevronRight size={18} className="flip-rtl" color="var(--ink)" style={{ flex: 'none' }} />
   return (
     <Screen>
-      <div
-        className="scroll"
-        style={{
-          paddingBottom: 40,
-        }}
-      >
-        <div
-          style={{
-            background: 'var(--lav)',
-            padding: 'max(52px, env(safe-area-inset-top)) var(--pad) 22px',
-            borderRadius: '0 0 32px 32px',
-          }}
-        >
-          <BackButton />
-          <div
-            style={{
-              display: 'grid',
-              justifyItems: 'center',
-              textAlign: 'center',
-              marginTop: 4,
-            }}
-          >
-            <Avatar name={person.name} img={person.avatar} size={96} ring />
-            <h1
-              className="h1"
-              style={{
-                marginTop: 12,
-              }}
-            >
-              {person.name}
-            </h1>
-            {role && (
-              <span
-                className="tag host"
-                style={{
-                  marginTop: 6,
-                }}
-              >
-                {role}
-              </span>
-            )}
-            <p
-              className="small"
-              style={{
-                marginTop: 8,
-                color: 'var(--ink)',
-              }}
-            >
-              {t('livesIn', {
-                area: person.area,
-              })}
-              {' · '}
-              {t('neighbourSince', {
-                year: person.since,
-              })}
+      <div className="scroll" style={{ background: 'var(--white)' }}>
+        <div style={{ background: 'var(--pink)', borderRadius: '0 0 40px 40px', height: 333, position: 'relative', overflow: 'hidden' }}>
+          <Flower color="#D98BDF" size={182} style={{ position: 'absolute', left: 254, top: 38, transform: 'rotate(14deg)' }} />
+          <span style={{ position: 'absolute', left: 20, top: 62 }}>
+            <BackButton variant="white" />
+          </span>
+          <div style={{ ...mono, position: 'absolute', left: 76, top: 76, color: 'var(--ink)' }}>{t('host')}</div>
+          <span style={{ position: 'absolute', left: 20, top: 117 }}>
+            <Avatar name={person.name} img={person.avatar} size={90} />
+          </span>
+          <div style={{ position: 'absolute', left: 122, top: 126, right: 16, display: 'flex', flexDirection: 'column', gap: 4, color: 'var(--ink)' }}>
+            <p style={{ margin: 0, font: '500 44px/48px Inter, sans-serif', letterSpacing: '-0.03em' }}>{person.name}</p>
+            <p style={{ margin: 0, fontSize: 14, lineHeight: '21px' }}>
+              {person.area} · {t('neighbourSince', { year: person.since })}
             </p>
           </div>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: hosts.length ? '1fr 1fr' : '1fr',
-              gap: 10,
-              marginTop: 18,
-            }}
-          >
-            <FriendButton p={person} />
-            {hosts.length > 0 && <FollowButton k={`person:${person.id}`} name={person.name} />}
+          <div style={{ position: 'absolute', left: 20, right: 20, top: 228, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+            <div style={{ height: 78, borderRadius: 20, background: 'var(--ink)', color: 'var(--white)', padding: '13px 16px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <strong style={{ font: '600 24px/28px Inter, sans-serif', letterSpacing: '-0.02em', color: 'var(--lime)' }}>{hosts.length}</strong>
+              <span style={{ fontSize: 14, lineHeight: '21px' }}>{t('activitiesArrow')}</span>
+            </div>
+            <button
+              aria-pressed={isFollowing}
+              onClick={() => {
+                const on = toggleFollow(key)
+                showToast(t(on ? 'nowFollowing' : 'unfollowed', { name: person.name }))
+              }}
+              style={{ position: 'relative', height: 78, borderRadius: 20, background: isFollowing ? 'var(--lime)' : 'var(--white)', textAlign: 'start', color: 'var(--ink)' }}
+            >
+              <span style={{ position: 'absolute', left: 16, top: 14, display: 'flex' }}>{isFollowing ? <Check size={22} /> : <Plus size={22} />}</span>
+              <strong style={{ position: 'absolute', left: 16, top: 42, font: '600 16px/21px Inter, sans-serif' }}>{t(isFollowing ? 'followingBtn' : 'follow')}</strong>
+            </button>
           </div>
         </div>
-        <div className="pad">
-          <div className="section-head">
-            <h2 className="h2">{t('badgesTitle')}</h2>
+        <div style={{ padding: '8px 20px 40px', display: 'flex', flexDirection: 'column' }}>
+          {info.about && (
+            <div style={{ background: 'var(--lime)', borderRadius: 20, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 10, color: 'var(--ink)' }}>
+              <div style={mono}>{t('aboutName', { name: person.name })}</div>
+              <p style={{ margin: 0, fontSize: 16, lineHeight: '24px' }}>{info.about}</p>
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: 8, marginTop: 10, color: 'var(--ink)' }}>
+            {[
+              [info.hostingSince, t('hostingSince'), 'var(--turq)'],
+              [info.timesHosted, t('timesHosted'), 'var(--pink)'],
+            ].map(([v, l, bg]) => (
+              <div key={l} style={{ flex: 1, background: bg, borderRadius: 20, padding: '14px 12px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <strong style={{ font: '600 22px/28px Inter, sans-serif', letterSpacing: '-0.02em' }}>{v}</strong>
+                <span style={{ fontSize: 12, lineHeight: '16px' }}>{l}</span>
+              </div>
+            ))}
           </div>
-          <div
-            className="card"
-            style={{
-              padding: 10,
-            }}
-          >
-            <BadgeRow ids={personBadges(person, hosts.length)} />
+          <div style={{ display: 'flex', alignItems: 'center', padding: '26px 0 12px' }}>
+            <h2 style={h2}>{t('badgesTitle')}</h2>
           </div>
-          <div className="section-head">
-            <h2 className="h2">{t('interests')}</h2>
-            {inCommon > 0 && (
-              <span className="eyebrow">
-                {t('inCommon', {
-                  n: inCommon,
-                })}
-              </span>
-            )}
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 8,
-            }}
-          >
-            {person.interests.map((h) => {
-              const i = interestOptions.find((interestOption) => interestOption.id === h)
-              const j = myInterests.includes(h)
+          <div style={{ background: '#F1F0EC', borderRadius: 20, padding: '14px 10px', display: 'flex', justifyContent: 'space-between' }}>
+            {info.stickers.map(([bid, n, accent]) => {
+              const b = { ...badges.find((x) => x.id === bid), ...(accent ? { accent } : null) }
               return (
-                <span
-                  key={h}
-                  className="chip"
-                  style={{
-                    background: i ? `var(--${i.accent})` : 'var(--grey)',
-                  }}
-                >
-                  {j && <Check size={14} aria-hidden />}
-                  {interest(h)}
+                <span key={bid} style={{ position: 'relative', width: 64, height: 73 }} title={t(`badge_${bid}`)}>
+                  <BadgeIcon b={b} earned size={64} />
+                  <StickerTag b={{ ...b, goal: n, stat: 'n' }} stats={{ n }} size={64} />
                 </span>
               )
             })}
           </div>
-          {hosts.length > 0 && (
-            <>
-              <div className="section-head">
-                <h2 className="h2">{t('hostsLabel')}</h2>
-                <span className="eyebrow">
-                  {t('nActivities', {
-                    n: hosts.length,
-                  })}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '26px 0 12px' }}>
+            <h2 style={h2}>{t('hostsLabel')}</h2>
+            <span style={{ ...mono, color: '#737373' }}>{t('nActivities', { n: hosts.length })}</span>
+          </div>
+          {orgs.map((org) => (
+            <div key={org.id} style={{ display: 'flex', alignItems: 'center', background: '#F1F0EC', borderRadius: 20, padding: '12px 14px', gap: 12 }}>
+              <OrgLogo org={org} size={44} />
+              <span style={{ flex: 1, minWidth: 0 }}>
+                <strong style={{ display: 'block', font: '600 17px/22px Inter, sans-serif', letterSpacing: '-0.01em', color: 'var(--ink)' }}>{org.name}</strong>
+                <span style={{ fontSize: 12, lineHeight: '18px', color: '#737373' }}>{t('verifiedBy', { org: org.name })}</span>
+              </span>
+              {chevron}
+            </div>
+          ))}
+          {hosts.map((e) => (
+            <button key={e.id} onClick={() => nav(`/event/${e.id}`)} style={{ display: 'flex', alignItems: 'center', width: '100%', textAlign: 'start', padding: '10px 0', gap: 12 }}>
+              <Img name={e.card} photo={e.photo} w={200} alt="" accent={e.accent} icon={e.icon} radius={16} style={{ width: 64, height: 64, flex: 'none' }} />
+              <span style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <span style={{ ...mono, color: 'var(--ink)' }}>
+                  {full(e.date)} · {e.start}
                 </span>
-              </div>
-              {orgs.map((org) => (
-                <button
-                  key={org.id}
-                  className="row"
-                  style={{
-                    marginBottom: 12,
-                    gap: 8,
-                  }}
-                  onClick={() => nav(`/org/${org.id}`)}
-                >
-                  <Users size={16} aria-hidden />
-                  <span
-                    style={{
-                      textDecoration: 'underline',
-                      textUnderlineOffset: 3,
-                      fontSize: 15,
-                    }}
-                  >
-                    {t('hostsWith', {
-                      org: org.name,
-                    })}
-                  </span>
-                </button>
-              ))}
-              <div className="stack">
-                {hosts.map((host) => (
-                  <RowCard key={host.id} e={host} />
-                ))}
-              </div>
-            </>
-          )}
-          {goesTo.length > 0 && (
-            <>
-              <div className="section-head">
-                <h2 className="h2">{t('goesTo')}</h2>
-              </div>
-              <div className="stack">
-                {goesTo.map((h) => (
-                  <RowCard key={h.id} e={h} />
-                ))}
-              </div>
-            </>
-          )}
+                <strong style={{ font: '600 17px/22px Inter, sans-serif', letterSpacing: '-0.01em', color: 'var(--ink)' }}>{e.title}</strong>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, lineHeight: '18px', color: '#737373' }}>
+                  <MapPin size={14} aria-hidden /> {e.place}
+                </span>
+              </span>
+              {chevron}
+            </button>
+          ))}
+          <div style={{ display: 'flex', alignItems: 'center', background: '#F1F0EC', borderRadius: 20, padding: '14px 16px', gap: 12, marginTop: 16 }}>
+            <MessageCircle size={20} aria-hidden style={{ flex: 'none' }} />
+            <span style={{ fontSize: 14, lineHeight: '21px', color: '#5C5C5C' }}>{t('askHostInComments', { name: person.name })}</span>
+          </div>
         </div>
       </div>
     </Screen>
@@ -481,160 +377,89 @@ export function OrgScreen() {
     </Screen>
   )
 }
-export function ConnectionsScreen() {
-  const [params, setParams] = useSearchParams()
-  const nav = useNavigate()
-  const { friends, following } = useApp()
+function FollowChip({ k, name }) {
+  const { following, toggleFollow, showToast } = useApp()
   const { t } = useI18n()
-  const tab = params.get('tab') || 'friends'
-  const friendList = Object.entries(friends)
-    .filter(([, d]) => d === 'friends')
-    .map(([d]) => profiles[d])
-    .filter(Boolean)
-  const sentList = Object.entries(friends)
-    .filter(([, d]) => d === 'sent')
-    .map(([d]) => profiles[d])
-    .filter(Boolean)
+  const on = following.includes(k)
+  return (
+    <button
+      aria-pressed={on}
+      onClick={(x) => {
+        x.stopPropagation()
+        const now = toggleFollow(k)
+        showToast(t(now ? 'nowFollowing' : 'unfollowed', { name }))
+      }}
+      className="row"
+      style={{
+        gap: 6,
+        padding: '7px 12px',
+        borderRadius: 999,
+        background: on ? 'var(--lime)' : 'var(--ink)',
+        color: on ? 'var(--ink)' : 'var(--white)',
+        fontSize: 13,
+        lineHeight: '20px',
+        fontWeight: 600,
+        flex: 'none',
+      }}
+    >
+      {on ? <Check size={16} /> : <Plus size={16} />}
+      {t(on ? 'followingBtn' : 'follow')}
+    </button>
+  )
+}
+export function ConnectionsScreen() {
+  const nav = useNavigate()
+  const { following } = useApp()
+  const { t } = useI18n()
+  const row = (key, avatar, name, sub, onClick) => (
+    <div
+      key={key}
+      className="row"
+      role={onClick ? 'link' : undefined}
+      onClick={onClick}
+      style={{ gap: 12, padding: '14px 0', borderBottom: '1px solid #E4E2DC', cursor: onClick ? 'pointer' : 'default' }}
+    >
+      {avatar}
+      <span style={{ flex: 1, minWidth: 0, display: 'grid', gap: 2 }}>
+        <strong style={{ fontSize: 17, lineHeight: '22px', fontWeight: 600, letterSpacing: '-0.01em' }}>{name}</strong>
+        <span style={{ fontSize: 12, lineHeight: '18px', color: 'var(--muted)' }}>{sub}</span>
+      </span>
+      <FollowChip k={key} name={name} />
+    </div>
+  )
   return (
     <Screen>
-      <div className="scroll pad safe-top with-nav">
-        <div className="row">
+      <div className="scroll" style={{ padding: 'max(62px, env(safe-area-inset-top)) 20px 0' }}>
+        <div className="row" style={{ gap: 12 }}>
           <BackButton to="/profile" />
-          <h1 className="h2">{t('friendsFollowing')}</h1>
+          <h1 style={{ fontSize: 24, lineHeight: '30px', fontWeight: 600, letterSpacing: '-0.02em', margin: 0 }}>{t('followingTab')}</h1>
         </div>
-        <div
-          style={{
-            marginTop: 18,
-          }}
-        >
-          <SegTabs
-            value={tab}
-            onChange={(d) => {
-              setParams(
-                {
-                  tab: d,
-                },
-                {
-                  replace: true,
-                },
-              )
-            }}
-            options={[
-              {
-                id: 'friends',
-                label: (
-                  <>
-                    {t('friendsLabel')}{' '}
-                    <span
-                      style={{
-                        opacity: 0.6,
-                      }}
-                    >
-                      {friendList.length}
-                    </span>
-                  </>
-                ),
-              },
-              {
-                id: 'following',
-                label: (
-                  <>
-                    {t('followingTab')}{' '}
-                    <span
-                      style={{
-                        opacity: 0.6,
-                      }}
-                    >
-                      {following.length}
-                    </span>
-                  </>
-                ),
-              },
-              {
-                id: 'sent',
-                label: (
-                  <>
-                    {t('requestsTab')}{' '}
-                    <span
-                      style={{
-                        opacity: 0.6,
-                      }}
-                    >
-                      {sentList.length}
-                    </span>
-                  </>
-                ),
-              },
-            ]}
-          />
-        </div>
-        <div
-          style={{
-            marginTop: 10,
-          }}
-        >
-          {tab === 'friends' &&
-            (friendList.length ? (
-              friendList.map((d) => <PersonRow key={d.id} p={d} right={<FriendButton compact p={d} />} />)
-            ) : (
-              <EmptyCard title={t('noFriendsYet')} sub={t('noFriendsSub')} />
-            ))}
-          {tab === 'sent' &&
-            (sentList.length ? (
-              sentList.map((d) => <PersonRow key={d.id} p={d} right={<FriendButton compact p={d} />} />)
-            ) : (
-              <EmptyCard title={t('noRequests')} sub={t('noFriendsSub')} />
-            ))}
-          {tab === 'following' &&
-            (following.length ? (
-              following.map((d) => {
-                const [e, f] = d.split(':')
-                if (e === 'person' && profiles[f])
-                  return (
-                    <PersonRow key={d} p={profiles[f]} right={<FollowButton compact k={d} name={profiles[f].name} />} />
-                  )
-                const g = organisations.find((organisation) => organisation.id === f)
-                return g ? (
-                  <div
-                    key={d}
-                    className="row"
-                    style={{
-                      padding: '10px 0',
-                      borderBottom: '1px solid var(--grey-2)',
-                    }}
-                  >
-                    <button
-                      className="row"
-                      style={{
-                        flex: 1,
-                        gap: 12,
-                        textAlign: 'start',
-                      }}
-                      onClick={() => nav(`/org/${g.id}`)}
-                    >
-                      <OrgLogo org={g} size={44} background="var(--turq)" />
-                      <span>
-                        <strong
-                          style={{
-                            display: 'block',
-                            fontSize: 16,
-                          }}
-                        >
-                          {g.name}
-                        </strong>
-                        <span className="tiny">{t(orgKindKey[orgInfo[g.id].kind])}</span>
-                      </span>
-                    </button>
-                    <FollowButton compact k={d} name={g.name} />
-                  </div>
-                ) : null
-              })
-            ) : (
-              <EmptyCard title={t('noFollowingYet')} sub={t('noFollowingSub')} />
-            ))}
+        <p style={{ fontSize: 14, lineHeight: '21px', color: 'var(--muted)', margin: '16px 0 0' }}>{t('followingSub')}</p>
+        <div style={{ paddingTop: 20 }}>
+          {following.length ? (
+            following.map((d) => {
+              const [kind, id] = d.split(':')
+              if (kind === 'person' && profiles[id]) {
+                const p = profiles[id]
+                const org = orgsOfHost(id)[0]
+                return row(
+                  d,
+                  <Avatar name={p.name} img={p.avatar} size={44} />,
+                  p.name,
+                  org ? t('hostsWith', { org: org.name }) : p.area,
+                  profileLink(id) ? () => nav(profileLink(id)) : undefined,
+                )
+              }
+              const g = organisations.find((o) => o.id === id)
+              return g
+                ? row(d, <OrgLogo org={g} size={44} />, g.name, `${t(orgKindKey[orgInfo[g.id].kind])} · ${t('nActivitiesLower', { n: g.events.length })}`)
+                : null
+            })
+          ) : (
+            <EmptyCard title={t('noFollowingYet')} sub={t('noFollowingSub')} />
+          )}
         </div>
       </div>
-      <NavBar />
     </Screen>
   )
 }
