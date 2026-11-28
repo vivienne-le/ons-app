@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { Camera, Check, CircleHelp, Clock, Heart, ListChecks, Lock, MapPin as PinIcon, Minus, Pencil, Plus, Search as SearchIcon, Trash2, X } from 'lucide-react'
 import { Flower } from '../components/Flower'
 import { MonthCalendar, dayKey } from '../components/MonthCalendar'
-import { OrgLogo } from '../components/OrgLogo'
+import { CvdBadge, OrgLogo } from '../components/OrgLogo'
 import { organisations } from '../data/events'
 import { Icon } from '../components/Icon'
 import { Avatar } from '../components/Img'
@@ -1398,7 +1398,7 @@ export function PostSent() {
           <X size={20} />
         </button>
         <div style={{ display: 'grid', placeItems: 'center', marginTop: 40 }} className="pop">
-          <OrgLogo org={cvd} size={140} />
+          <CvdBadge size={140} />
         </div>
         <h1 className="h-display" style={{ textAlign: 'center', marginTop: 20, fontSize: 36 }}>
           {t('sentTitle')}

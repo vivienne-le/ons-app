@@ -1,3 +1,4 @@
+import { CvdHeart } from './OrgLogo'
 import { useState } from 'react'
 import { Flower } from './Flower'
 import { Icon } from './Icon'
@@ -50,6 +51,12 @@ export function Avatar({ name, img: a, size = 40, ring }) {
     flex: 'none',
     boxShadow: ring ? '0 0 0 2px var(--white)' : undefined,
   }
+  if (a === 'cvd')
+    return (
+      <span aria-hidden style={{ ...style, background: 'var(--white)', display: 'grid', placeItems: 'center' }}>
+        <CvdHeart size={size * 0.8} />
+      </span>
+    )
   return failed ? (
     <span
       aria-hidden
