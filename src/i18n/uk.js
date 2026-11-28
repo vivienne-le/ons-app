@@ -858,7 +858,7 @@ export const uk = {
     },
     roles: {
       neighbourhoodHost: 'Організатор із району',
-      cvd: 'CVD',
+      cvd: 'Організація',
     },
     tags: {
       Sport: 'Спорт',

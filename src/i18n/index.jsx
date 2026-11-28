@@ -91,7 +91,7 @@ export function useI18n() {
     const r = (P) => {
       const t = content?.events[P.id]
       const B =
-        P.host.role === 'CVD' ? (content?.roles.cvd ?? 'CVD') : (content?.roles.neighbourhoodHost ?? P.host.role)
+        P.host.role === 'CVD' ? (content?.roles.cvd ?? 'Organisation') : (content?.roles.neighbourhoodHost ?? P.host.role)
       return {
         ...P,
         title: t?.title ?? P.title,

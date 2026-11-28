@@ -858,7 +858,7 @@ export const tr = {
     },
     roles: {
       neighbourhoodHost: 'Mahalle ev sahibi',
-      cvd: 'CVD',
+      cvd: 'Kuruluş',
     },
     tags: {
       Sport: 'Spor',

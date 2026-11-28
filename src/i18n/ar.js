@@ -857,7 +857,7 @@ export const ar = {
     },
     roles: {
       neighbourhoodHost: 'مضيف من الحي',
-      cvd: 'CVD',
+      cvd: 'منظمة',
     },
     tags: {
       Sport: 'رياضة',

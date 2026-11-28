@@ -858,7 +858,7 @@ export const pl = {
     },
     roles: {
       neighbourhoodHost: 'Gospodarz z sąsiedztwa',
-      cvd: 'CVD',
+      cvd: 'Organizacja',
     },
     tags: {
       Sport: 'Sport',

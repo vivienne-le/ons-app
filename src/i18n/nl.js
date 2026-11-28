@@ -859,7 +859,7 @@ export const nl = {
     },
     roles: {
       neighbourhoodHost: 'Buurthost',
-      cvd: 'CVD',
+      cvd: 'Organisatie',
     },
     tags: {
       Sport: 'Sport',

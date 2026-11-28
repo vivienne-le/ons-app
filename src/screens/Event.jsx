@@ -320,31 +320,24 @@ export function EventScreen() {
             <button
               className="row"
               style={{
-                gap: 8,
+                gap: 4,
                 textAlign: 'start',
               }}
               onClick={() => {
                 const T = profileLink(e.host.id)
-                T && nav(T)
+                // organisation pages aren't in Figma yet, so only people link through
+                T && !T.startsWith('/org/') && nav(T)
               }}
               aria-label={t('viewProfile', {
                 name: e.host.name,
               })}
             >
-              <Avatar name={e.host.name} img={e.host.avatar} size={30} />
-              <span
-                style={{
-                  fontSize: 15,
-                  color: 'var(--muted)',
-                  textDecoration: 'underline',
-                  textUnderlineOffset: 3,
-                  textDecorationColor: 'var(--grey-2)',
-                }}
-              >
-                {t('hostedByRole', {
-                  name: e.host.name,
-                  role: e.host.role,
-                })}
+              <Avatar name={e.host.name} img={e.host.avatar} size={40} />
+              <span style={{ fontSize: 16, lineHeight: '24px', color: '#737373' }}>
+                {t('hostedBy', { name: '' })}
+                <strong style={{ fontWeight: 600, color: 'var(--ink)' }}>{e.host.name}</strong>
+                {' · '}
+                {e.host.role}
               </span>
             </button>
           </div>
